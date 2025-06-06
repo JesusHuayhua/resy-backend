@@ -41,8 +41,6 @@ mi-proyecto-soa/
 └── README.md
 ```
 
-## Building and running the project
-
 ### Main project setup
 - Build: Execute ```compile.bat``` within ```back``` folder using ```cmd.exe``` or VS Code terminal
 	- If additional features were to be added, implement considering:
