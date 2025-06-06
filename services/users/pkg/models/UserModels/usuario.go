@@ -11,6 +11,6 @@ type Usuario struct {
 	Correo          string    `json:"correo"`
 	FechaNacimiento time.Time `json:"fecha_nacimiento"`
 	Contrasenia     string    `json:"contrasenia"`
-	RolID           int       `json:"rol_id"`
-	EstadoAcceso    bool      `json:"estado_acceso"`
+	Rol
+	EstadoAcceso bool `json:"estado_acceso"`
 }

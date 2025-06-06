@@ -1,4 +1,4 @@
-package BDoperators
+package utils
 
 import (
 	"database/sql"

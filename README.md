@@ -34,3 +34,6 @@ mi-proyecto-soa/
 ├── go.sum
 └── README.md
 ```
+
+Para manejo de variables: Se usó el formato CamelCase --> Nombre
+Para manejo de funciones: Se usó el formato pascalCase --> asignarPedido
