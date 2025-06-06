@@ -26,7 +26,7 @@ type DBManager struct {
 	DB *sql.DB
 }
 
-func NewDBManager(configPath string) (*DBManager, error) {
+func NuevoDBManager(configPath string) (*DBManager, error) {
 	file, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, fmt.Errorf("error al leer el archivo JSON: %v", err)
@@ -51,7 +51,8 @@ func NewDBManager(configPath string) (*DBManager, error) {
 	)
 
 	db, err := sql.Open(config.Driver, connStr)
-	_, err = db.Exec("SET search_path TO restaurante, public")
+
+	_, err = db.Exec("SET search_path TO 'ResyDB', public")
 	if err != nil {
 		return nil, fmt.Errorf("error al configurar search_path: %v", err)
 	}
@@ -67,7 +68,7 @@ func NewDBManager(configPath string) (*DBManager, error) {
 	return &DBManager{DB: db}, nil
 }
 
-// Close cierra la conexión
-func (m *DBManager) Close() {
+// Cerrar cierra la conexión
+func (m *DBManager) Cerrar() {
 	m.DB.Close()
 }
