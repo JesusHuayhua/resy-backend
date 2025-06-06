@@ -18,12 +18,10 @@ func InsertNewUser(db *sql.DB, nombres string, apellidos string, correo string, 
 		Correo:          correo,
 		FechaNacimiento: fechaNacimiento,
 		Contrasenia:     contrasenia,
-		Rol: UserModels.Rol{
-			ID: rolID,
-		},
+		RolID:           rolID,
 	}
 
-	if err := crud.Insert("usuario", data); err != nil {
+	if err := crud.Insert(`"Usuario"`, data); err != nil {
 		log.Printf("Error inserting user data: %v", err)
 		return err
 	}
@@ -40,11 +38,8 @@ func UpdateUser(db *sql.DB, id int, nombres string, apellidos string, correo str
 		Correo:          correo,
 		FechaNacimiento: fechaNacimiento,
 		Contrasenia:     contrasenia,
-		Rol: UserModels.Rol{
-			ID:        rolID,
-			NombreRol: nombreRol,
-		},
-		EstadoAcceso: estadoAcceso,
+		RolID:           rolID,
+		EstadoAcceso:    estadoAcceso,
 	}
 
 	if err := crud.Update("usuario", strconv.FormatInt(int64(id), 10), data); err != nil {
@@ -93,8 +88,7 @@ func SelectUsers(db *sql.DB, condicion string, args ...interface{}) ([]UserModel
 			&usuario.Correo,
 			&usuario.FechaNacimiento,
 			&usuario.Contrasenia,
-			&usuario.Rol.ID,
-			&usuario.Rol.NombreRol,
+			&usuario.RolID,
 			&usuario.EstadoAcceso,
 		)
 		if err != nil {

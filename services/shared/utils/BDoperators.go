@@ -35,10 +35,10 @@ func (c *CRUD) Insert(table string, data interface{}) error {
 		field := t.Field(i)
 		value := v.Field(i).Interface()
 
-		// Obtener el nombre de la columna (usando el tag `json` o el nombre del campo)
+		// Obtener el nombre de la columna (usando el tag `db` o el nombre del campo)
 		column := strings.ToLower(field.Name)
-		if jsonTag := field.Tag.Get("json"); jsonTag != "" {
-			column = strings.Split(jsonTag, ",")[0]
+		if dbTag := field.Tag.Get("db"); dbTag != "" {
+			column = strings.Split(dbTag, ",")[0]
 		}
 
 		columns = append(columns, column)
@@ -80,10 +80,10 @@ func (c *CRUD) Update(table string, id string, data interface{}) error {
 		field := t.Field(i)
 		value := v.Field(i).Interface()
 
-		// Obtener el nombre de la columna (usando el tag `json` o el nombre del campo)
+		// Obtener el nombre de la columna (usando el tag `db` o el nombre del campo)
 		column := strings.ToLower(field.Name)
-		if jsonTag := field.Tag.Get("json"); jsonTag != "" {
-			column = strings.Split(jsonTag, ",")[0]
+		if dbTag := field.Tag.Get("db"); dbTag != "" {
+			column = strings.Split(dbTag, ",")[0]
 		}
 
 		updates = append(updates, fmt.Sprintf("%s = $%d", column, i+1))

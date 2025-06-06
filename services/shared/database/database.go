@@ -51,7 +51,8 @@ func NewDBManager(configPath string) (*DBManager, error) {
 	)
 
 	db, err := sql.Open(config.Driver, connStr)
-	_, err = db.Exec("SET search_path TO restaurante, public")
+
+	_, err = db.Exec("SET search_path TO 'ResyDB', public")
 	if err != nil {
 		return nil, fmt.Errorf("error al configurar search_path: %v", err)
 	}

@@ -5,12 +5,12 @@ import (
 )
 
 type Usuario struct {
-	ID              int       `json:"id_usuario"`
-	Nombres         string    `json:"nombres"`
-	Apellidos       string    `json:"apellidos"`
-	Correo          string    `json:"correo"`
-	FechaNacimiento time.Time `json:"fecha_nacimiento"`
-	Contrasenia     string    `json:"contrasenia"`
-	Rol
-	EstadoAcceso bool `json:"estado_acceso"`
+	ID              int       `db:"id_usuario"`
+	Nombres         string    `db:"nombres"`
+	Apellidos       string    `db:"apellidos"`
+	Correo          string    `db:"correo"`
+	FechaNacimiento time.Time `db:"fechanacimiento"`
+	Contrasenia     string    `db:"contrasenia"`
+	RolID           int       `db:"rol"`
+	EstadoAcceso    bool      `db:"estadoacceso"`
 }
