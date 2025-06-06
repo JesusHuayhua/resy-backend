@@ -10,17 +10,7 @@ import (
 	"time"
 )
 
-type UsuarioInsertar struct {
-	Nombres         string    `db:"nombres"`
-	Apellidos       string    `db:"apellidos"`
-	Correo          string    `db:"correo"`
-	FechaNacimiento time.Time `db:"fechanacimiento"`
-	Contrasenia     string    `db:"contrasenia"`
-	Rol             int       `db:"rol"`
-	EstadoAcceso    bool      `db:"estadoacceso"`
-}
-
-type UsuarioActualizar struct {
+type UsuarioVariable struct {
 	Nombres         string    `db:"nombres"`
 	Apellidos       string    `db:"apellidos"`
 	Correo          string    `db:"correo"`
@@ -32,7 +22,7 @@ type UsuarioActualizar struct {
 
 func InsertarNuevoUsuario(db *sql.DB, nombres string, apellidos string, correo string, fechaNacimiento time.Time, contrasenia string, rol int) error {
 	crud := utils.NuevoCRUD(db)
-	datos := UsuarioInsertar{
+	datos := UsuarioVariable{
 		Nombres:         nombres,
 		Apellidos:       apellidos,
 		Correo:          correo,
@@ -46,7 +36,7 @@ func InsertarNuevoUsuario(db *sql.DB, nombres string, apellidos string, correo s
 
 func ActualizarUsuario(db *sql.DB, idUsuario int, nombres string, apellidos string, correo string, fechaNacimiento time.Time, contrasenia string, rol int, estado bool) error {
 	crud := utils.NuevoCRUD(db)
-	datos := UsuarioActualizar{
+	datos := UsuarioVariable{
 		Nombres:         nombres,
 		Apellidos:       apellidos,
 		Correo:          correo,

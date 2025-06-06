@@ -17,7 +17,6 @@ func main() {
 		log.Fatalf("Error al conectar a la BD: %v", err)
 	}
 	defer dbManager.Cerrar()
-
 	// Insertar usuario de prueba
 	_ = bduser.InsertarNuevoUsuario(dbManager.DB, "Nombre", "Apellido", "correo@ejemplo.com", time.Date(1993, time.June, 15, 0, 0, 0, 0, time.UTC), "contrasena", 1)
 	// Actualizar usuario de prueba (por ejemplo, el usuario con id_usuario = 1)
@@ -25,7 +24,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error al actualizar usuario: %v", err)
 	}
-
 	// Seleccionar usuarios (todos)
 	usuarios, err := bduser.SeleccionarUsuarios(dbManager.DB, "id_usuario=1")
 	if err != nil {
