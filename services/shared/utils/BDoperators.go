@@ -88,10 +88,8 @@ func (c *CRUD) Actualizar(tabla string, datos interface{}, whereClause string, w
 		updates = append(updates, fmt.Sprintf("%s = $%d", column, i+1))
 		values = append(values, value)
 	}
-
 	// Agregar los argumentos del WHERE al final
 	values = append(values, whereArgs...)
-
 	// Construir la consulta SQL
 	query := fmt.Sprintf(
 		"UPDATE %s SET %s WHERE %s",

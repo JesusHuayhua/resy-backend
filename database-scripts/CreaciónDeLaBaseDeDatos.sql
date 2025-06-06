@@ -43,14 +43,14 @@ CREATE TYPE "MetodosPago" AS ENUM (
 -- Tablas
 CREATE TABLE "Roles" (
   "id_rol" SERIAL PRIMARY KEY,
-  "nombrerol" VARCHAR(10) NOT NULL
+  "nombrerol" VARCHAR(10) unique NOT NULL
 );
 
 CREATE TABLE "Usuario" (
   "id_usuario" SERIAL PRIMARY KEY,
   "nombres" VARCHAR(50) NOT NULL,
   "apellidos" VARCHAR(50) NOT NULL,
-  "correo" VARCHAR(50) NOT NULL,  -- Longitud aumentada
+  "correo" VARCHAR(50) unique NOT NULL,  -- Longitud aumentada
   "fechanacimiento" DATE,
   "contrasenia" TEXT NOT NULL,  -- Cambiado a TEXT para hashes
   "rol" INT NOT NULL REFERENCES "Roles"("id_rol"),
@@ -83,7 +83,7 @@ CREATE TABLE "Pedido" (
 
 CREATE TABLE "CategoriaPlatos" (
   "id_categoria" SERIAL PRIMARY KEY,
-  "nombre" VARCHAR(20) NOT NULL
+  "nombre" VARCHAR(20) unique NOT NULL
 );
 
 CREATE TABLE "Plato" (
@@ -111,8 +111,8 @@ CREATE TABLE "Menudia" (
 CREATE TABLE "PlatosEnMenudia" (
   "id_dia" INT NOT NULL REFERENCES "Menudia"("id_dia"),
   "id_plato" INT NOT NULL REFERENCES "Plato"("id_plato"),
-  "cantidadDelPlato" INT,
-  "disponibleParaVender" BOOLEAN,
+  "cantidadDelPlato" INT not null,
+  "disponibleParaVender" BOOLEAN default true,
   PRIMARY KEY ("id_dia", "id_plato")  -- PK compuesta
 );
 

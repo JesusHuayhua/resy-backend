@@ -5,29 +5,57 @@ import (
 	"RESI-BACKEND/services/users/pkg/models/UserModels"
 	"database/sql"
 	"fmt"
+	"reflect"
+	"strings"
 	"time"
 )
 
+type UsuarioInsertar struct {
+	Nombres         string    `db:"nombres"`
+	Apellidos       string    `db:"apellidos"`
+	Correo          string    `db:"correo"`
+	FechaNacimiento time.Time `db:"fechanacimiento"`
+	Contrasenia     string    `db:"contrasenia"`
+	Rol             int       `db:"rol"`
+	EstadoAcceso    bool      `db:"estadoacceso"`
+}
+
+type UsuarioActualizar struct {
+	Nombres         string    `db:"nombres"`
+	Apellidos       string    `db:"apellidos"`
+	Correo          string    `db:"correo"`
+	FechaNacimiento time.Time `db:"fechanacimiento"`
+	Contrasenia     string    `db:"contrasenia"`
+	Rol             int       `db:"rol"`
+	EstadoAcceso    bool      `db:"estadoacceso"`
+}
+
 func InsertarNuevoUsuario(db *sql.DB, nombres string, apellidos string, correo string, fechaNacimiento time.Time, contrasenia string, rol int) error {
 	crud := utils.NuevoCRUD(db)
-	datos := UserModels.Usuario{
+	datos := UsuarioInsertar{
 		Nombres:         nombres,
 		Apellidos:       apellidos,
 		Correo:          correo,
 		FechaNacimiento: fechaNacimiento,
 		Contrasenia:     contrasenia,
 		Rol:             rol,
+		EstadoAcceso:    true,
 	}
 	return crud.Insertar(`"Usuario"`, datos)
 }
 
-func ActualizarUsuario(db *sql.DB, idUsuario int, nombres string, apellidos string) error {
+func ActualizarUsuario(db *sql.DB, idUsuario int, nombres string, apellidos string, correo string, fechaNacimiento time.Time, contrasenia string, rol int, estado bool) error {
 	crud := utils.NuevoCRUD(db)
-	datos := UserModels.Usuario{
-		Nombres:   nombres,
-		Apellidos: apellidos,
+	datos := UsuarioActualizar{
+		Nombres:         nombres,
+		Apellidos:       apellidos,
+		Correo:          correo,
+		FechaNacimiento: fechaNacimiento,
+		Contrasenia:     contrasenia,
+		Rol:             rol,
+		EstadoAcceso:    estado,
 	}
-	where := "id_usuario = $3"
+	where := "id_usuario = $8"
 	return crud.Actualizar(`"Usuario"`, datos, where, idUsuario)
 }
 
@@ -40,20 +68,19 @@ func SeleccionarUsuarios(db *sql.DB, condicion string, args ...interface{}) ([]U
 		"nombres",
 		"apellidos",
 		"correo",
-		"fecha_nacimiento",
+		"fechanacimiento",
 		"contrasenia",
-		"id_rol",
-		"nombre_rol",
-		"estado_acceso",
+		"rol",
+		"estadoacceso",
 	}
 
 	var rows *sql.Rows
 	var err error
 
 	if condicion == "" {
-		rows, err = crud.Select("usuario", columnas, "", args...)
+		rows, err = crud.Seleccionar(`"Usuario"`, columnas, "", args...)
 	} else {
-		rows, err = crud.Select("usuario", columnas, condicion, args...)
+		rows, err = crud.Seleccionar(`"Usuario"`, columnas, condicion, args...)
 	}
 
 	if err != nil {
@@ -84,4 +111,34 @@ func SeleccionarUsuarios(db *sql.DB, condicion string, args ...interface{}) ([]U
 	}
 
 	return usuarios, nil
+}
+
+type CRUD struct {
+	db *sql.DB
+}
+
+func (crud *CRUD) Actualizar(tabla string, datos interface{}, condicion string, whereArgs ...interface{}) error {
+	v := reflect.ValueOf(datos)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+	t := v.Type()
+
+	setClauses := make([]string, 0)
+	values := make([]interface{}, 0)
+
+	for i := 0; i < v.NumField(); i++ {
+		field := t.Field(i)
+		value := v.Field(i)
+
+		if field.Tag.Get("db") != "" {
+			setClauses = append(setClauses, fmt.Sprintf("%s = ?", field.Tag.Get("db")))
+			values = append(values, value)
+		}
+	}
+	values = append(values, whereArgs...)
+
+	query := fmt.Sprintf(`UPDATE %s SET %s WHERE %s`, tabla, strings.Join(setClauses, ", "), condicion)
+	_, err := crud.db.Exec(query, values...)
+	return err
 }
