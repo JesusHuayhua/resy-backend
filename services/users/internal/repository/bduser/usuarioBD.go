@@ -5,52 +5,34 @@ import (
 	"RESI-BACKEND/services/users/pkg/models/UserModels"
 	"database/sql"
 	"fmt"
-	"log"
-	"strconv"
 	"time"
 )
 
-func InsertNewUser(db *sql.DB, nombres string, apellidos string, correo string, fechaNacimiento time.Time, contrasenia string, rolID int) error {
-	crud := utils.NewCRUD(db)
-	data := UserModels.Usuario{
+func InsertarNuevoUsuario(db *sql.DB, nombres string, apellidos string, correo string, fechaNacimiento time.Time, contrasenia string, rol int) error {
+	crud := utils.NuevoCRUD(db)
+	datos := UserModels.Usuario{
 		Nombres:         nombres,
 		Apellidos:       apellidos,
 		Correo:          correo,
 		FechaNacimiento: fechaNacimiento,
 		Contrasenia:     contrasenia,
-		RolID:           rolID,
+		Rol:             rol,
 	}
-
-	if err := crud.Insert(`"Usuario"`, data); err != nil {
-		log.Printf("Error inserting user data: %v", err)
-		return err
-	}
-	return nil
+	return crud.Insertar(`"Usuario"`, datos)
 }
 
-func UpdateUser(db *sql.DB, id int, nombres string, apellidos string, correo string, fechaNacimiento time.Time, contrasenia string, rolID int, nombreRol string, estadoAcceso bool) error {
-	crud := utils.NewCRUD(db)
-
-	data := UserModels.Usuario{
-		ID:              id,
-		Nombres:         nombres,
-		Apellidos:       apellidos,
-		Correo:          correo,
-		FechaNacimiento: fechaNacimiento,
-		Contrasenia:     contrasenia,
-		RolID:           rolID,
-		EstadoAcceso:    estadoAcceso,
+func ActualizarUsuario(db *sql.DB, idUsuario int, nombres string, apellidos string) error {
+	crud := utils.NuevoCRUD(db)
+	datos := UserModels.Usuario{
+		Nombres:   nombres,
+		Apellidos: apellidos,
 	}
-
-	if err := crud.Update("usuario", strconv.FormatInt(int64(id), 10), data); err != nil {
-		log.Printf("Error updating user data: %v", err)
-		return err
-	}
-	return nil
+	where := "id_usuario = $3"
+	return crud.Actualizar(`"Usuario"`, datos, where, idUsuario)
 }
 
-func SelectUsers(db *sql.DB, condicion string, args ...interface{}) ([]UserModels.Usuario, error) {
-	crud := utils.NewCRUD(db)
+func SeleccionarUsuarios(db *sql.DB, condicion string, args ...interface{}) ([]UserModels.Usuario, error) {
+	crud := utils.NuevoCRUD(db)
 	var usuarios []UserModels.Usuario
 
 	columnas := []string{
@@ -82,13 +64,13 @@ func SelectUsers(db *sql.DB, condicion string, args ...interface{}) ([]UserModel
 	for rows.Next() {
 		var usuario UserModels.Usuario
 		err := rows.Scan(
-			&usuario.ID,
+			&usuario.IdUsuario,
 			&usuario.Nombres,
 			&usuario.Apellidos,
 			&usuario.Correo,
 			&usuario.FechaNacimiento,
 			&usuario.Contrasenia,
-			&usuario.RolID,
+			&usuario.Rol,
 			&usuario.EstadoAcceso,
 		)
 		if err != nil {

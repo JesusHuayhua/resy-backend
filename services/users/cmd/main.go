@@ -11,13 +11,13 @@ import (
 )
 
 func main() {
-	dbManager, err := database.NewDBManager("conf2/key.json")
+	dbManager, err := database.NuevoDBManager("conf2/key.json")
 	if err != nil {
 		log.Fatalf("Error al conectar a la BD: %v", err)
 	}
-	defer dbManager.Close()
-	err = bduser.InsertNewUser(dbManager.DB, "Nombre", "Apellido", "correo@ejemplo.com", time.Date(1993, time.June, 15, 0, 0, 0, 0, time.UTC), "contrasena", 1)
+	defer dbManager.Cerrar()
+	err = bduser.InsertarNuevoUsuario(dbManager.DB, "Nombre", "Apellido", "correo@ejemplo.com", time.Date(1993, time.June, 15, 0, 0, 0, 0, time.UTC), "contrasena", 1)
 	if err != nil {
-		log.Fatalf("Error al conectar a la BD: %v", err)
+		log.Fatalf("Error al insertar usuario: %v", err)
 	}
 }

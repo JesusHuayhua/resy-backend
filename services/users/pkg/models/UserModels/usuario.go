@@ -1,16 +1,14 @@
 package UserModels
 
-import (
-	"time"
-)
+import "time"
 
 type Usuario struct {
-	ID              int       `db:"id_usuario"`
+	IdUsuario       int       `db:"id_usuario"`
 	Nombres         string    `db:"nombres"`
 	Apellidos       string    `db:"apellidos"`
 	Correo          string    `db:"correo"`
 	FechaNacimiento time.Time `db:"fechanacimiento"`
 	Contrasenia     string    `db:"contrasenia"`
-	RolID           int       `db:"rol"`
+	Rol             int       `db:"rol"`
 	EstadoAcceso    bool      `db:"estadoacceso"`
 }
