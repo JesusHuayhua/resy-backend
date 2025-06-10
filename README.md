@@ -9,7 +9,7 @@
 ## Jerarquia de directorios
 
 ```
-mi-proyecto-soa/
+soa/
 ├── services/
 │   ├── users/
 │       ├── cmd/
