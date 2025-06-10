@@ -13,30 +13,30 @@ mi-proyecto-soa/
 ├── services/
 │   ├── users/
 │       ├── cmd/
-│       │   └── main.go         			  # Punto de entrada del servicio de usuarios, contiene su configuracion y como arranca el servicio
-│       │   │   ├── internal/          				 # Todos lo que no se espera que sea importado por otros servicios
-│       │   ├── api/              			  # Handlers HTTP, controladores, mas que todo como se conecta el fronted con el servicio
+│       │   └── main.go         			  
+│       │   │   ├── internal/          				 
+│       │   ├── api/              			  
 │       │   │   └── user_handlers.go
-│       │   ├── core/             			  # Lógica de negocio principal (domain, use cases)
+│       │   ├── core/             			 
 │       │   │   ├── domain/
 │       │   │   │   └── user.go
 │       │   │   └── user_service.go
-│       │   └── repository/       			  # Capa de acceso a datos (interactúa con la DB)
+│       │   └── repository/       			  
 │       │       └── user_repository.go
-│       └── pkg/                 		      # Código reusable y compartido por otros servicios (opcional)
+│       └── pkg/                 		      
 │           └── models/
 │               └── user_shared_models.go
 │
 ├── shared/
-│   ├── config/                   			  # Archivos de configuración globales
+│   ├── config/                   			   
 │   │   └── config.go
-│   ├── database/                   	      # Aqui el Singleton porque tenemos una DB compartida
+│   ├── database/                   	     
 │   │   └── common_db.go
-│   ├── utils/                    			  # Funciones de utilidad comunes
+│   ├── utils/                    			 
 │   │   └── helpers.go
-│   └── proto/                    			  # Definiciones de gRPC o modelos compartidos (si aplica)
+│   └── proto/                    			  
 │       └── common.proto
-├── go.mod                        			  # Módulo Go principal
+├── go.mod                        			   
 ├── go.sum
 └── README.md
 ```
