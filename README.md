@@ -41,15 +41,15 @@ mi-proyecto-soa/
 └── README.md
 ```
 
-### Build para testeo local
+### Build para testeo local 
 - Build: Execute ```compile.bat``` within ```back``` folder using ```cmd.exe``` or VS Code terminal
 	- If additional features were to be added, implement considering:
 		```go 
 		import(
-			"back/src/example_package"   //example_package would be the new directory within "src" dir.
+			"mi-proyecto-soa/dir1/example_package"   //example_package would be the new directory within "dir1" example directory.
 		)
 		```
-		Add as needed inside ```src``` directory, **DO NOT CHANGE THE DIRECTORY HIERARCHY**.  
+		Add as needed inside each ```dir1``` directory, **DO NOT CHANGE THE DIRECTORY HIERARCHY**.  
 		
 - Run:  Either ```go run main.go``` or debug within VS Code.
 
