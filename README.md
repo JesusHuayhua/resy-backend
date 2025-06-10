@@ -14,7 +14,7 @@ soa/
 │   ├── users/
 │       ├── cmd/
 │       │   └── main.go         			  
-│       │   │   ├── internal/          				 
+│       │   ├── internal/          				 
 │       │   ├── api/              			  
 │       │   │   └── user_handlers.go
 │       │   ├── core/             			 
