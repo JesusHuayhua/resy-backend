@@ -52,7 +52,7 @@ soa/
 		"soa/example_dir/example_package"   //example_package would be the new directory within "example_dir" example directory.
 	)
 	```
-	Add as needed inside each ```example_dir``` directory, **DO NOT CHANGE THE DIRECTORY HIERARCHY**.  
+	Add as needed inside each ```example_dir``` directory, **DO NOT CHANGE THE TOP-LEVEL DIRECTORY HIERARCHY (soa)**.  
 		
 
 ### Recommendations
