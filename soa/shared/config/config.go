@@ -1,5 +1,10 @@
 package config
 
-func LoadConfig() {
+type ConfigData struct {
+	DatabaseURL string
+}
 
+// using yml for this
+func LoadConfig() ConfigData {
+	return ConfigData{}
 }
