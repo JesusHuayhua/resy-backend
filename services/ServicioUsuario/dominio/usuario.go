@@ -7,6 +7,7 @@ type Usuario struct {
 	Nombres         string    `db:"nombres"`
 	Apellidos       string    `db:"apellidos"`
 	Correo          string    `db:"correo"`
+	Telefono        string    `db:"telefono"`
 	FechaNacimiento time.Time `db:"fechanacimiento"`
 	Contrasenia     string    `db:"contrasenia"`
 	Rol             int       `db:"rol"`
