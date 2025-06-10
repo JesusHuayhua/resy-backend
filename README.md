@@ -42,14 +42,14 @@ soa/
 ```
 
 ### Build para testeo local 
-- Build: Execute ```compile.bat``` within ```back``` folder using ```cmd.exe``` or VS Code terminal
+- Build: Execute ```build.bat``` within ```soa``` folder using ```cmd.exe``` or ```VS Code terminal```
 	- If additional features were to be added, implement considering:
 		```go 
 		import(
-			"mi-proyecto-soa/dir1/example_package"   //example_package would be the new directory within "dir1" example directory.
+			"soa/example_dir/example_package"   //example_package would be the new directory within "example_dir" example directory.
 		)
 		```
-		Add as needed inside each ```dir1``` directory, **DO NOT CHANGE THE DIRECTORY HIERARCHY**.  
+		Add as needed inside each ```example_dir``` directory, **DO NOT CHANGE THE DIRECTORY HIERARCHY**.  
 		
 - Run:  Either ```go run main.go``` or debug within VS Code.
 
