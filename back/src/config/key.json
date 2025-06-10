@@ -1,9 +1,0 @@
-{
-    "driver": "postgres",
-    "tipo_de_driver": "PostgreSQL",
-    "base_de_datos": "postgres",
-    "nombre_de_host": "localhost",
-    "puerto": "5432",
-    "usuario": "postgres",
-    "contrasenha": "JwpEg9CTmkEJw973E_EltxN5SnsDFeosrFRg7bIW6lRLXV7uvg=="
-}
