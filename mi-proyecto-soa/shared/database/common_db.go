@@ -6,12 +6,13 @@ import (
 	"log"
 	"sync"
 
-	_ "github.com/lib/pq" // O el driver de tu BD compartida
 	"mi-proyecto-soa/shared/config"
+
+	_ "github.com/lib/pq" // O el driver de tu BD compartida
 )
 
 var (
-	commonDBInstance *sql.DB // La instancia de la conexión a la base de datos común
+	commonDBInstance *sql.DB   // La instancia de la conexión a la base de datos común
 	commonOnce       sync.Once // Para asegurar que la conexión se inicializa una sola vez
 )
 
@@ -22,9 +23,7 @@ func InitCommonDB() *sql.DB {
 
 		var err error
 		// Asumiendo que la URL para la DB compartida está en cfg.CommonDatabaseURL
-		// O que es la única DatabaseURL en la configuración global
-		dbURL := cfg.DatabaseURL // Usamos la misma variable de ejemplo, pero ten claro que es la global
-		
+		dbURL := cfg.DatabaseURL                            // Usamos la misma variable de ejemplo, pero ten claro que es la global
 		commonDBInstance, err = sql.Open("postgres", dbURL) // Reemplaza "postgres" y dbURL
 		if err != nil {
 			log.Fatalf("Error al abrir la conexión a la base de datos compartida: %v", err)

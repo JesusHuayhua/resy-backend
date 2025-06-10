@@ -8,13 +8,13 @@
 
 ## Jerarquia de directorios
 
-```lua
+```
 mi-proyecto-soa/
 ├── services/
 │   ├── users/
 │       ├── cmd/
 │       │   └── main.go         			  # Punto de entrada del servicio de usuarios, contiene su configuracion y como arranca el servicio
-│       │         │   ├── internal/           # Todos lo que no se espera que sea importado por otros servicios
+│       │   │   ├── internal/          				 # Todos lo que no se espera que sea importado por otros servicios
 │       │   ├── api/              			  # Handlers HTTP, controladores, mas que todo como se conecta el fronted con el servicio
 │       │   │   └── user_handlers.go
 │       │   ├── core/             			  # Lógica de negocio principal (domain, use cases)
@@ -41,7 +41,7 @@ mi-proyecto-soa/
 └── README.md
 ```
 
-### Setup del proyecto principal
+### Build para testeo local
 - Build: Execute ```compile.bat``` within ```back``` folder using ```cmd.exe``` or VS Code terminal
 	- If additional features were to be added, implement considering:
 		```go 
