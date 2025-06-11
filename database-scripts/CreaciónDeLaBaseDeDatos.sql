@@ -51,6 +51,7 @@ CREATE TABLE "Usuario" (
   "nombres" VARCHAR(50) NOT NULL,
   "apellidos" VARCHAR(50) NOT NULL,
   "correo" VARCHAR(50) unique NOT NULL,  -- Longitud aumentada
+  "telefono" varchar(15) unique not null,
   "fechanacimiento" DATE,
   "contrasenia" TEXT NOT NULL,  -- Cambiado a TEXT para hashes
   "rol" INT NOT NULL REFERENCES "Roles"("id_rol"),
