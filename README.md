@@ -2,38 +2,11 @@
 
 Estructura general del proyecto:
 
-```lua
-mi-proyecto-soa/
-├── services/
-│   ├── users/
-│       ├── cmd/
-│       │   └── main.go         # Punto de entrada del servicio de usuarios, contiene su configuracion y como arranca el servicio
-│       │         │   ├── internal/           # Todos lo que no se espera que sea importado por otros servicios
-│       │   ├── api/              # Handlers HTTP, controladores, mas que todo como se conecta el fronted con el servicio
-│       │   │   └── user_handlers.go
-│       │   ├── core/             # Lógica de negocio principal (domain, use cases)
-│       │   │   ├── domain/
-│       │   │   │   └── user.go
-│       │   │   └── user_service.go
-│       │   └── repository/       # Capa de acceso a datos (interactúa con la DB)
-│       │       └── user_repository.go
-│       └── pkg/                  # Código reusable y compartido por otros servicios (opcional)
-│           └── models/
-│               └── user_shared_models.go
-│
-├── shared/
-│   ├── config/                   # Archivos de configuración globales
-│   │   └── config.go
-│   ├── database/                   # Aqui el Singleton porque tenemos una DB compartida
-│   │   └── common_db.go
-│   ├── utils/                    # Funciones de utilidad comunes
-│   │   └── helpers.go
-│   └── proto/                    # Definiciones de gRPC o modelos compartidos (si aplica)
-│       └── common.proto
-├── go.mod                        # Módulo Go principal
-├── go.sum
-└── README.md
-```
-
-Prueba
-miaos
+ResiBackend #Nombre de la carpeta despues de hacer gitclone
+├───database-scripts #Almacena los scripts usados en BD
+└───services #Almacena los servicios que usará el frontend
+    ├───ServicioMenu #Servicio abocado a las necesidades del menu
+    └───ServicioUsuario #Servicio abocado a las necesidades del modulo de usuarios
+        ├───dominio #Maneja todas las clases necesarias para manejar el trabajo
+        ├───persistencia #Conexion a base de datos
+        └───servicio #interfaces para el flujo de información con el frontend
