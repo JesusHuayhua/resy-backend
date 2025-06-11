@@ -1,7 +1,7 @@
 # Backend - RESI
 
 Estructura general del proyecto:
-
+```lua
 ResiBackend #Nombre de la carpeta despues de hacer gitclone
 ├───database-scripts #Almacena los scripts usados en BD
 └───services #Almacena los servicios que usará el frontend
@@ -10,3 +10,4 @@ ResiBackend #Nombre de la carpeta despues de hacer gitclone
         ├───dominio #Maneja todas las clases necesarias para manejar el trabajo
         ├───persistencia #Conexion a base de datos
         └───servicio #interfaces para el flujo de información con el frontend
+```
