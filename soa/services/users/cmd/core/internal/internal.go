@@ -1,4 +1,10 @@
 package internal
 
-type Data struct {
-}
+type StatusCode int
+
+const (
+	InProgress StatusCode = iota + 1
+	Busy
+	Halted
+	Error
+)
