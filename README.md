@@ -6,7 +6,7 @@
 3. **DBeaver 25.0.1** for GUI 
 4. **Golang** tested with ```go version go1.24.1 windows/amd64```
 
-## Jerarquia de directorios
+## Jerarquia de directorios (falta actualizar)
 
 ```
 soa/
@@ -14,8 +14,8 @@ soa/
 │   ├── users/
 │       ├── cmd/
 │       │   └── main.go         			  
-│       │   ├── internal/          				 
-│       │   ├── api/              			  
+│       │   ├── internal/          			# Todo lo que tenga que ver con estatus del servicio.	 
+│       │   ├── api/              			# Falta implementarlo.
 │       │   │   └── user_handlers.go
 │       │   ├── core/             			 
 │       │   │   ├── domain/
@@ -58,3 +58,8 @@ soa/
 ### Recommendations
 - *Windows*: Make sure the enviroment variable PATH contains the path with the golang binaries, the path is usually ```C:\Go\bin``` 
 - *Linux*: T.B.D
+
+
+### Referencias adicionales
+1. https://www.velotio.com/engineering-blog/build-a-containerized-microservice-in-golang
+
