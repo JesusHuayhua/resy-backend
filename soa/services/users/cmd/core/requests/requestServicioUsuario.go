@@ -5,7 +5,7 @@ import (
 )
 
 type GetRequest struct {
-	Filters []internal.Data `json:"data,omitempty"`
+	Filters []internal.StatusCode `json:"status,omitempty"`
 }
 
 type StatusRequest struct {
