@@ -1,4 +1,4 @@
-package usecase
+package requests
 
 import (
 	"soa/services/users/cmd/core/internal"
