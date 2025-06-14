@@ -1,11 +1,10 @@
-package services
+package interfaces
 
 import (
 	"context"
 	"fmt"
 	"net/http"
 	"os"
-	"soa/services/users/cmd/core"
 	UserModels "soa/services/users/cmd/core/domain"
 	"soa/services/users/cmd/core/internal"
 	"time"

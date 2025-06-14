@@ -1,4 +1,4 @@
-package requests
+package response
 
 import (
 	"soa/services/users/cmd/core/internal"
