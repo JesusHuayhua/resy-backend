@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"soa/shared/config"
+	"soa/services/users/pkg/core/shared/config"
 	"sync"
 
 	_ "github.com/lib/pq" // O el driver de tu BD compartida

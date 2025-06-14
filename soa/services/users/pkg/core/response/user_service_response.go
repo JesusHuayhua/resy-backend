@@ -1,7 +1,7 @@
 package response
 
 import (
-	"soa/services/users/cmd/core/internal"
+	"soa/services/users/pkg/core/internal"
 )
 
 type GetRequest struct {
