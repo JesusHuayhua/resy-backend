@@ -14,5 +14,5 @@ type UsuarioVariable struct {
 }
 type UsuarioBD struct {
 	IdUsuario int `db:"id_usuario"`
-	usuario   UsuarioVariable
+	U         UsuarioVariable
 }
