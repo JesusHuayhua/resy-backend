@@ -4,26 +4,23 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"soa/services/users/pkg/core/shared/config"
+	"soa/services/users/pkg/repository/shared/config"
 	"sync"
 
 	_ "github.com/lib/pq" // O el driver de tu BD compartida
 )
 
 var (
-	commonDBInstance *sql.DB   // La instancia de la conexión a la base de datos común
-	commonOnce       sync.Once // Para asegurar que la conexión se inicializa una sola vez
+	commonDBInstance *sql.DB
+	commonOnce       sync.Once
 )
 
-// InitCommonDB inicializa la conexión a la base de datos compartida utilizando el patrón Singleton.
 func InitCommonDB() *sql.DB {
 	commonOnce.Do(func() {
-		cfg := config.LoadConfig() // Carga la configuración del servicio, que incluye la URL de la DB.
-
+		cfg := config.LoadConfig()
 		var err error
-		// Asumiendo que la URL para la DB compartida está en cfg.CommonDatabaseURL
-		dbURL := cfg.DatabaseURL                            // Usamos la misma variable de ejemplo, pero ten claro que es la global
-		commonDBInstance, err = sql.Open("postgres", dbURL) // Reemplaza "postgres" y dbURL
+		dbURL := cfg.DatabaseURL
+		commonDBInstance, err = sql.Open("postgres", dbURL)
 		if err != nil {
 			log.Fatalf("Error al abrir la conexión a la base de datos compartida: %v", err)
 		}
@@ -41,7 +38,6 @@ func InitCommonDB() *sql.DB {
 	return commonDBInstance
 }
 
-// CloseCommonDB cierra la conexión a la base de datos compartida.
 func CloseCommonDB() {
 	if commonDBInstance != nil {
 		err := commonDBInstance.Close()

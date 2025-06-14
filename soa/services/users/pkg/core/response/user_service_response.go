@@ -1,11 +1,7 @@
 package response
 
-import (
-	"soa/services/users/pkg/core/internal"
-)
-
 type GetRequest struct {
-	Filters []internal.StatusCode `json:"status,omitempty"`
+	Filters []string `json:"status,omitempty"`
 }
 
 type StatusRequest struct {

@@ -33,7 +33,7 @@ func init() {
 	crud = repository.NuevoCRUD()
 }
 
-func (s1 *ServicioUsuario) Get(_ context.Context, userId string) {
+func (s1 *ServicioUsuario) Get(_ context.Context, filters ...internal.Filter) {
 
 }
 

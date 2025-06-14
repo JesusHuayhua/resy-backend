@@ -62,4 +62,6 @@ soa/
 
 ### Referencias adicionales
 1. https://www.velotio.com/engineering-blog/build-a-containerized-microservice-in-golang
+2. https://gokit.io/examples/stringsvc.html
+3. https://github.com/athun-me/GO-microservice-clean-architecture/tree/master
 
