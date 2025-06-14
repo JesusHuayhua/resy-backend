@@ -82,8 +82,6 @@ func (c *CRUD) Actualizar(tabla string, datos interface{}, whereClause string, w
 		strings.Join(updates, ", "),
 		whereClause,
 	)
-
-	// Ejecutar la consulta
 	_, err := c.DB.Exec(query, values...)
 	if err != nil {
 		return fmt.Errorf("error al actualizar en la tabla %s: %v", tabla, err)
@@ -92,7 +90,6 @@ func (c *CRUD) Actualizar(tabla string, datos interface{}, whereClause string, w
 	return nil
 }
 
-// Eliminar elimina un registro de la tabla especificada
 func (c *CRUD) Eliminar(tabla string, id string) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", tabla)
 	_, err := c.DB.Exec(query, id)
@@ -103,19 +100,14 @@ func (c *CRUD) Eliminar(tabla string, id string) error {
 }
 
 func (c *CRUD) Seleccionar(tabla string, columnas []string, whereClause string, args ...interface{}) (*sql.Rows, error) {
-	// Construir la lista de columnas
 	cols := "*"
 	if len(columnas) > 0 {
 		cols = strings.Join(columnas, ", ")
 	}
-	// Construir la consulta SQL
 	query := fmt.Sprintf("SELECT %s FROM %s", cols, tabla)
-
-	// Agregar WHERE si se especificó
 	if whereClause != "" {
 		query += " WHERE " + whereClause
 	}
-	// Ejecutar la consulta
 	rows, err := c.DB.Query(query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("error al realizar select en tabla %s: %v", tabla, err)
