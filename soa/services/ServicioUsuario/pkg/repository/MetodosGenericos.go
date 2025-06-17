@@ -32,3 +32,7 @@ func (r *UserRepositoryImpl) Eliminar(tabla string, id string) error {
 func (r *UserRepositoryImpl) Seleccionar(tabla string, columnas []string, whereClause string, args ...interface{}) (*sql.Rows, error) {
 	return r.crud.Seleccionar(tabla, columnas, whereClause, args...)
 }
+
+func (r *UserRepositoryImpl) Crud() *database.CRUD {
+	return r.crud
+}
