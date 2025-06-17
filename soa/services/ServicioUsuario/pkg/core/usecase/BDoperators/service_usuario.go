@@ -1,9 +1,9 @@
-package interfaces
+package Bdoperators
 
 import (
 	UserModels "ServicioUsuario/pkg/core/domain"
 	"ServicioUsuario/pkg/core/internal"
-	"ServicioUsuario/pkg/core/usecase"
+	"ServicioUsuario/pkg/core/usecase/interfaces"
 	"ServicioUsuario/pkg/repository"
 	repoInterface "ServicioUsuario/pkg/repository/interfaces"
 	"context"
@@ -23,7 +23,8 @@ type ServicioUsuario struct {
 	cryptConfig crypton.Config
 }
 
-func NuevoServicioUsuario(db *sql.DB, cryptConfig crypton.Config) usecase.Service {
+// Corrige el tipo de retorno a interfaces.Service
+func NuevoServicioUsuario(db *sql.DB, cryptConfig crypton.Config) interfaces.Service {
 	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	crud := repository.NewUserRepository(db)
@@ -34,12 +35,17 @@ func NuevoServicioUsuario(db *sql.DB, cryptConfig crypton.Config) usecase.Servic
 	}
 }
 
-func (s *ServicioUsuario) Get(_ context.Context, filters ...internal.Filter) {
+// Corrige la firma para que retorne valores
+func (s *ServicioUsuario) Get(_ context.Context, filters ...internal.Filter) (internal.StatusCode, []UserModels.UsuarioBD, error) {
 	// Implementar lógica de filtrado si es necesario
+	// Por ahora retorna todos los usuarios
+	return s.SeleccionarUsuarios("", nil)
 }
 
-func (s *ServicioUsuario) Status(_ context.Context, userId string) {
+// Corrige la firma para que retorne valores
+func (s *ServicioUsuario) Status(_ context.Context, userId string) (internal.StatusCode, error) {
 	// Implementar lógica de status si es necesario
+	return internal.InProgress, nil
 }
 
 func (s *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
@@ -71,6 +77,7 @@ func (s *ServicioUsuario) InsertarNuevoUsuario(nombres, apellidos, correo, telef
 	return internal.InProgress, nil
 }
 
+// Corrige la firma y el uso de where
 func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, correo, telefono string, fechaNacimiento time.Time, contrasenia string, rol int, estado bool) (internal.StatusCode, error) {
 	// Encriptar la contraseña si se proporciona una nueva
 	contraseniaEncriptada := contrasenia
@@ -92,9 +99,18 @@ func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, c
 		Rol:             rol,
 		EstadoAcceso:    estado,
 	}
-	where := "id_usuario = $9"
+	where := "id_usuario = $1"
 	if err := s.crud.Actualizar(`"Usuario"`, datos, where, idUsuario); err != nil {
 		s.logger.Log("err", fmt.Sprintf("error al actualizar usuario: %v", err))
+		return internal.Error, err
+	}
+	return internal.InProgress, nil
+}
+
+// Implementa EliminarUsuario
+func (s *ServicioUsuario) EliminarUsuario(id int) (internal.StatusCode, error) {
+	if err := s.crud.Eliminar(`"Usuario"`, fmt.Sprintf("%d", id)); err != nil {
+		s.logger.Log("err", fmt.Sprintf("error al eliminar usuario: %v", err))
 		return internal.Error, err
 	}
 	return internal.InProgress, nil
@@ -144,6 +160,7 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interfac
 	return internal.InProgress, usuarios, nil
 }
 
+// Métodos auxiliares para roles (no están en la interfaz principal)
 func (s *ServicioUsuario) InsertarNuevoRol(nombreRol string) error {
 	datos := UserModels.Rol{
 		NombreRol: nombreRol,
@@ -155,7 +172,7 @@ func (s *ServicioUsuario) ActualizarRol(idRol int, nombreRol string) error {
 	datos := UserModels.Rol{
 		NombreRol: nombreRol,
 	}
-	where := "id_rol = $2"
+	where := "id_rol = $1"
 	return s.crud.Actualizar(`"Roles"`, datos, where, idRol)
 }
 
