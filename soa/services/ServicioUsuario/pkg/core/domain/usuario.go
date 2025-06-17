@@ -13,6 +13,6 @@ type UsuarioVariable struct {
 	EstadoAcceso    bool      `db:"estadoacceso"`
 }
 type UsuarioBD struct {
-	IdUsuario int `db:"id_usuario"`
-	U         UsuarioVariable
+	IdUsuario   int `db:"id_usuario"`
+	DataUsuario UsuarioVariable
 }
