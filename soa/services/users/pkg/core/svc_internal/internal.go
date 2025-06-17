@@ -1,4 +1,4 @@
-package internal
+package svc_internal
 
 type Filter struct {
 	Key   string `json:"key"`

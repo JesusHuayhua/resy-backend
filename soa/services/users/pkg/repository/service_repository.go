@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"reflect"
-	commonDB "soa/services/users/pkg/core/shared/database"
 	"soa/services/users/pkg/repository/interfaces"
+	commonDB "soa/services/users/pkg/repository/shared/database"
 	"strings"
 )
 

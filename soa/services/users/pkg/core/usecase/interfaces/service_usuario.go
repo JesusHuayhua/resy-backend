@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 	UserModels "soa/services/users/pkg/core/domain"
-	"soa/services/users/pkg/core/internal"
+	"soa/services/users/pkg/core/svc_internal"
 	"soa/services/users/pkg/core/usecase"
 	"soa/services/users/pkg/repository"
 	repoInterface "soa/services/users/pkg/repository/interfaces"
@@ -33,20 +33,20 @@ func init() {
 	crud = repository.NuevoCRUD()
 }
 
-func (s1 *ServicioUsuario) Get(_ context.Context, filters ...internal.Filter) {
-
+func (s1 *ServicioUsuario) Get(_ context.Context, filters ...svc_internal.Filter) error {
+	return nil
 }
 
-func (s2 *ServicioUsuario) Status(_ context.Context, userId string) {
-
+func (s1 *ServicioUsuario) Status(_ context.Context, userId string) (svc_internal.StatusCode, error) {
+	return svc_internal.InProgress, fmt.Errorf("None")
 }
 
-func (s3 *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
+func (s1 *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 	logger.Log("Checking status")
 	return http.StatusOK, nil
 }
 
-func (s4 *ServicioUsuario) InsertarNuevoUsuario(nombres string, apellidos string, correo string, telefono string, fechaNacimiento time.Time, contrasenia string, rol int) (internal.StatusCode, error) {
+func (s1 *ServicioUsuario) InsertarNuevoUsuario(nombres string, apellidos string, correo string, telefono string, fechaNacimiento time.Time, contrasenia string, rol int) (svc_internal.StatusCode, error) {
 	datos := UserModels.UsuarioVariable{
 		Nombres:         nombres,
 		Apellidos:       apellidos,
@@ -57,10 +57,10 @@ func (s4 *ServicioUsuario) InsertarNuevoUsuario(nombres string, apellidos string
 		Rol:             rol,
 		EstadoAcceso:    true,
 	}
-	return internal.InProgress, crud.Insertar(`"Usuario"`, datos)
+	return svc_internal.InProgress, crud.Insertar(`"Usuario"`, datos)
 }
 
-func (s4 *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres string, apellidos string, correo string, telefono string, fechaNacimiento time.Time, contrasenia string, rol int, estado bool) (internal.StatusCode, error) {
+func (s1 *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres string, apellidos string, correo string, telefono string, fechaNacimiento time.Time, contrasenia string, rol int, estado bool) (svc_internal.StatusCode, error) {
 	datos := UserModels.UsuarioVariable{
 		Nombres:         nombres,
 		Apellidos:       apellidos,
@@ -72,10 +72,10 @@ func (s4 *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres string, apel
 		EstadoAcceso:    estado,
 	}
 	where := "id_usuario = $9"
-	return internal.InProgress, crud.Actualizar(`"Usuario"`, datos, where, idUsuario)
+	return svc_internal.InProgress, crud.Actualizar(`"Usuario"`, datos, where, idUsuario)
 }
 
-func (s5 *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interface{}) (internal.StatusCode, []UserModels.UsuarioVariable, error) {
+func (s1 *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interface{}) (svc_internal.StatusCode, []UserModels.UsuarioVariable, error) {
 	var usuarios []UserModels.UsuarioVariable
 	columnas := []string{"id_usuario", "nombres", "apellidos", "correo", "telefono",
 		"fechanacimiento", "contrasenia", "rol", "estadoacceso",
@@ -88,7 +88,7 @@ func (s5 *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interfa
 		rows, err = crud.Seleccionar(`"Usuario"`, columnas, condicion, args...)
 	}
 	if err != nil {
-		return internal.Error, nil, fmt.Errorf("error en Select: %v", err)
+		return svc_internal.Error, nil, fmt.Errorf("error en Select: %v", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -102,24 +102,24 @@ func (s5 *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interfa
 			&usuario.U.EstadoAcceso,
 		)
 		if err != nil {
-			return internal.Error, nil, fmt.Errorf("error al escanear fila: %v", err)
+			return svc_internal.Error, nil, fmt.Errorf("error al escanear fila: %v", err)
 		}
 		usuarios = append(usuarios, usuario.U)
 	}
 	if err = rows.Err(); err != nil {
-		return internal.Error, nil, fmt.Errorf("error al escanear fila: %v", err)
+		return svc_internal.Error, nil, fmt.Errorf("error al escanear fila: %v", err)
 	}
-	return internal.InProgress, usuarios, nil
+	return svc_internal.InProgress, usuarios, nil
 }
 
-func (s6 *ServicioUsuario) InsertarNuevoRol(nombreRol string) {
+func (s1 *ServicioUsuario) InsertarNuevoRol(nombreRol string) {
 	datos := UserModels.Rol{
 		NombreRol: nombreRol,
 	}
 	crud.Insertar(`"Roles"`, datos)
 }
 
-func (s7 *ServicioUsuario) ActualizarRol(idRol int, nombreRol string) {
+func (s1 *ServicioUsuario) ActualizarRol(idRol int, nombreRol string) {
 	datos := UserModels.Rol{
 		NombreRol: nombreRol,
 	}
@@ -127,7 +127,7 @@ func (s7 *ServicioUsuario) ActualizarRol(idRol int, nombreRol string) {
 	crud.Actualizar(`"Roles"`, datos, where, idRol)
 }
 
-func (s8 *ServicioUsuario) SeleccionarRoles(condicion string, args ...interface{}) ([]UserModels.RolDB, error) {
+func (s1 *ServicioUsuario) SeleccionarRoles(condicion string, args ...interface{}) ([]UserModels.RolDB, error) {
 	var roles []UserModels.RolDB
 	columnas := []string{"id_rol", "nombrerol"}
 	var rows *sql.Rows
