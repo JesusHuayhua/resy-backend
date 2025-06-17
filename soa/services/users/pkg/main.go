@@ -1,15 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
 	"soa/services/users/pkg/api/middleware/endpoints"
+	pb "soa/services/users/pkg/api/middleware/protobuf"
 	"soa/services/users/pkg/api/middleware/transport"
 	"soa/services/users/pkg/core/usecase/interfaces"
+	"syscall"
 
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
-	"github.com/go-kit/kit/transport/grpc/_grpc_test/pb"
 	"github.com/go-kit/log"
 	"github.com/oklog/oklog/pkg/group"
 	"google.golang.org/grpc"
@@ -65,11 +68,26 @@ func main() {
 		g.Add(func() error {
 			logger.Log("transport", "gRPC", "addr", grpcAddr)
 			baseServer := grpc.NewServer(grpc.UnaryInterceptor(kitgrpc.Interceptor))
-			pb.RegisterTestServer(baseServer, grpcServer)
+			pb.RegisterUsuarioServer(baseServer, grpcServer)
 			return baseServer.Serve(grpcListener)
 		}, func(error) {
 			grpcListener.Close()
 		})
 	}
-
+	{
+		cancelInterrupt := make(chan struct{})
+		g.Add(func() error {
+			c := make(chan os.Signal, 1)
+			signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+			select {
+			case sig := <-c:
+				return fmt.Errorf("received signal %s", sig)
+			case <-cancelInterrupt:
+				return nil
+			}
+		}, func(error) {
+			close(cancelInterrupt)
+		})
+	}
+	logger.Log("exit", g.Run())
 }

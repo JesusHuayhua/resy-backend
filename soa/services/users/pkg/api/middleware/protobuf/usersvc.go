@@ -1,6 +1,10 @@
 package protobuf
 
-import "context"
+import (
+	"context"
+
+	grpc "google.golang.org/grpc"
+)
 
 type StatusReply_Status int32
 
@@ -53,4 +57,39 @@ type UsuarioServer interface {
 	Usuario(context.Context, *UsuarioRequest) (*UsuarioReply, error)
 	Status(context.Context, *StatusRequest) (*StatusReply, error)
 	ServiceStatus(context.Context, *ServiceStatusRequest) (*ServiceStatusReply, error)
+}
+
+var _UsuarioSvc_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.UsuarioSvc",
+	HandlerType: (*UsuarioServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Get",
+			Handler:    _UsuarioSvc_Get_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "usersvc.proto",
+}
+
+func _UsuarioSvc_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsuarioServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Watermark/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsuarioServer).Get(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func RegisterUsuarioServer(s *grpc.Server, srv UsuarioServer) {
+	s.RegisterService(&_UsuarioSvc_serviceDesc, srv)
 }
