@@ -1,0 +1,14 @@
+syntax = "proto3";
+package pb;
+
+message GetRequest {
+    message Filters {
+        string key = 1;
+        string value = 2;
+    }
+    repeated Filters filters = 1;
+}
+
+message StatusRequest {
+    string ticketID = 1;
+}
