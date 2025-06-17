@@ -2,8 +2,7 @@ package UserModels
 
 import "time"
 
-type Usuario struct {
-	IdUsuario       int       `db:"id_usuario"`
+type UsuarioVariable struct {
 	Nombres         string    `db:"nombres"`
 	Apellidos       string    `db:"apellidos"`
 	Correo          string    `db:"correo"`
@@ -12,4 +11,8 @@ type Usuario struct {
 	Contrasenia     string    `db:"contrasenia"`
 	Rol             int       `db:"rol"`
 	EstadoAcceso    bool      `db:"estadoacceso"`
+}
+type UsuarioBD struct {
+	IdUsuario int `db:"id_usuario"`
+	U         UsuarioVariable
 }

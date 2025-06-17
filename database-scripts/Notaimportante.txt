@@ -1,7 +1,0 @@
-NO SEAN PELOTUDOS DE ANDARME CAMBIANDO LA BD :)
-
-Si no saben crear la BD en dbeaver, Vean este video: 
-
-No se como asignar permisos admin y usuario al dbveaber COCO/rodrigo YA SABES :)
-
-usuario: --> "usuario": "postgres",
