@@ -7,7 +7,7 @@ import (
 	"soa/services/users/pkg/repository/shared/config"
 	"sync"
 
-	_ "github.com/lib/pq" // O el driver de tu BD compartida
+	_ "github.com/lib/pq"
 )
 
 var (
@@ -17,9 +17,8 @@ var (
 
 func InitCommonDB() *sql.DB {
 	commonOnce.Do(func() {
-		cfg := config.LoadConfig()
+		dbURL := config.LoadConfig()
 		var err error
-		dbURL := cfg.DatabaseURL
 		commonDBInstance, err = sql.Open("postgres", dbURL)
 		if err != nil {
 			log.Fatalf("Error al abrir la conexión a la base de datos compartida: %v", err)
