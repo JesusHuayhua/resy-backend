@@ -20,7 +20,7 @@ var (
 	crud   repoInterface.UserRepository
 )
 
-func nuevoServicio() usecase.Service {
+func NuevoServicio() usecase.Service {
 	return &ServicioUsuario{}
 }
 func (s1 *ServicioUsuario) Get(_ context.Context, filters ...svc_internal.Filter) error {
