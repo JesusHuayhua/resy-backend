@@ -1,15 +1,32 @@
 package response
 
+import "soa/services/users/pkg/core/svc_internal"
+
 type GetRequest struct {
-	Filters []string `json:"status,omitempty"`
+	Filters []svc_internal.Filter `json:"status,omitempty"`
 }
 
 type StatusRequest struct {
 	TicketID string `json:"ticketID,omitempty"`
 }
 
+type GetResponse struct {
+	Err string `json:"err,omitempty"`
+}
+
 type StatusResponse struct {
-	Status int `json:"status"`
+	Status svc_internal.StatusCode `json:"status"`
+	Err    string                  `json:"err,omitempty"`
+}
+
+type UsuarioRequest struct {
+	TicketID string `json:"ticketID"`
+	Option   string `json:"option"`
+}
+
+type UsuarioResponse struct {
+	Code int    `json:"code"`
+	Err  string `json:"err"`
 }
 
 type ServiceStatusRequest struct {
