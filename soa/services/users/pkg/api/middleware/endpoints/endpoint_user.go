@@ -19,7 +19,7 @@ type Set struct {
 	UsuarioEndpoint       endpoint.Endpoint
 }
 
-func NewEndpoints(svc interfaces.ServicioUsuario) Set {
+func NewEndpoints(svc interfaces.UserService) Set {
 	return Set{
 		GetEndpoint:           MakeGetEndpoint(svc),
 		StatusEndpoint:        MakeStatusEndpoint(svc),
@@ -28,7 +28,7 @@ func NewEndpoints(svc interfaces.ServicioUsuario) Set {
 	}
 }
 
-func MakeGetEndpoint(svc interfaces.ServicioUsuario) endpoint.Endpoint {
+func MakeGetEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(response.GetRequest)
 		err := svc.Get(ctx, req.Filters...)
@@ -39,7 +39,7 @@ func MakeGetEndpoint(svc interfaces.ServicioUsuario) endpoint.Endpoint {
 	}
 }
 
-func MakeStatusEndpoint(svc interfaces.ServicioUsuario) endpoint.Endpoint {
+func MakeStatusEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(response.StatusRequest)
 		status, err := svc.Status(ctx, req.TicketID)
@@ -50,7 +50,7 @@ func MakeStatusEndpoint(svc interfaces.ServicioUsuario) endpoint.Endpoint {
 	}
 }
 
-func MakeServiceStatusEndpoint(svc interfaces.ServicioUsuario) endpoint.Endpoint {
+func MakeServiceStatusEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		_ = request.(response.ServiceStatusRequest)
 		code, err := svc.ServiceStatus(ctx)
@@ -61,7 +61,7 @@ func MakeServiceStatusEndpoint(svc interfaces.ServicioUsuario) endpoint.Endpoint
 	}
 }
 
-func MakeUsuarioEndpoint(svc interfaces.ServicioUsuario) endpoint.Endpoint {
+func MakeUsuarioEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(response.UsuarioRequest)
 		code, err := svc.Usuario(ctx, req.TicketID, req.Option)
@@ -106,6 +106,18 @@ func (s *Set) Status(ctx context.Context, ticketID string) (svc_internal.StatusC
 		return svc_internal.Error, errors.New(stsResp.Err)
 	}
 	return stsResp.Status, nil
+}
+
+func (s *Set) Usuario(ctx context.Context, ticketID, option string) (int, error) {
+	resp, err := s.UsuarioEndpoint(ctx, response.UsuarioRequest{TicketID: ticketID, Option: option})
+	wmResp := resp.(response.UsuarioResponse)
+	if err != nil {
+		return wmResp.Code, err
+	}
+	if wmResp.Err != "" {
+		return wmResp.Code, errors.New(wmResp.Err)
+	}
+	return wmResp.Code, nil
 }
 
 var logger log.Logger

@@ -13,14 +13,20 @@ import (
 	log "github.com/go-kit/log"
 )
 
-type ServicioUsuario struct{}
+type ServicioUsuario struct {
+}
 
 var (
 	logger log.Logger
 	crud   repoInterface.UserRepository
 )
 
-func NuevoServicio() usecase.Service {
+type UserService interface {
+	usecase.Service
+	Usuario(ctx context.Context, userID, option string) (int, error)
+}
+
+func NuevoServicio() UserService {
 	return &ServicioUsuario{}
 }
 func (s1 *ServicioUsuario) Get(_ context.Context, filters ...svc_internal.Filter) error {
