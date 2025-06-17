@@ -2,11 +2,12 @@ package transport
 
 import (
 	"context"
-	grpctransport "grpc"
 	"soa/services/users/pkg/api/middleware/endpoints"
 	"soa/services/users/pkg/api/middleware/protobuf"
 	"soa/services/users/pkg/core/response"
 	"soa/services/users/pkg/core/svc_internal"
+
+	grpctransport "github.com/go-kit/kit/transport/grpc"
 )
 
 type grpcServer struct {
