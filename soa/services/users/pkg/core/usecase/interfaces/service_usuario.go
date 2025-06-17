@@ -119,6 +119,8 @@ func (s1 *ServicioUsuario) InsertarNuevoRol(nombreRol string) {
 	crud.Insertar(`"Roles"`, datos)
 }
 
+//rol va separado, diferente api
+
 func (s1 *ServicioUsuario) ActualizarRol(idRol int, nombreRol string) {
 	datos := UserModels.Rol{
 		NombreRol: nombreRol,
