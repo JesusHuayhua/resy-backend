@@ -52,7 +52,7 @@ func CloseCommonDB() {
 // Requiere try catch (esto puede tirar un error.)
 func GetCommonDB() *sql.DB {
 	if commonDBInstance == nil {
-		log.Fatal("La conexión a la base de datos compartida no ha sido inicializada. Inicializando...")
+		log.Printf("La conexión a la base de datos compartida no ha sido inicializada. Inicializando...")
 		InitCommonDB()
 	}
 	return commonDBInstance

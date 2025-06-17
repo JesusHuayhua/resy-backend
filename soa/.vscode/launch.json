@@ -6,7 +6,7 @@
       "type": "go",
       "request": "launch",
       "mode": "auto", 
-      "program": "${workspaceFolder}\\services\\users\\pkg\\main.go",
+      "program": "${workspaceFolder}\\services\\users\\pkg",
       "cwd":     "${workspaceFolder}",
       "stopOnEntry": true,
       "args":    [],
