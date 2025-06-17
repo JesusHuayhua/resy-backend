@@ -58,6 +58,12 @@ CREATE TABLE "Usuario" (
   "estadoacceso" BOOLEAN default true
 );
 
+CREATE TABLE "RecuperacionPassword" (
+  correo VARCHAR(50) PRIMARY key references "Usuario"("correo"),
+  token VARCHAR(32) NOT NULL,
+  expira_en TIMESTAMP NOT NULL
+);
+
 CREATE TABLE "Mensaje" (
   "idMensaje" SERIAL PRIMARY KEY,
   "idDestinatario" INT NOT NULL REFERENCES "Usuario"("id_usuario"),

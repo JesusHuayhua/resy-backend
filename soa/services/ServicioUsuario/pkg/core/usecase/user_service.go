@@ -1,8 +1,8 @@
 package usecase
 
 import (
+	"ServicioUsuario/pkg/core/internal"
 	"context"
-	"soa/services/users/pkg/core/internal"
 )
 
 type Service interface {

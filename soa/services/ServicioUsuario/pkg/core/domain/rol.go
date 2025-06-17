@@ -1,8 +1,8 @@
 package UserModels
 
 type RolDB struct {
-	ID        int    `json:"id_rol"`
-	NombreRol string `json:"nombrerol"`
+	ID      int `db:"id_rol"`
+	DataRol Rol
 }
 
 type Rol struct {
