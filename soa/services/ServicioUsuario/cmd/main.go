@@ -1,14 +1,16 @@
 package main
 
 import (
-	ServicioUsuario "ServicioUsuario/pkg/core/usecase/interfaces"
-	"fmt"
+	/*
+		ServicioUsuario "ServicioUsuario/pkg/core/usecase/interfaces"
+		"fmt"
+		"time"
+	*/
 	"log"
-	"time"
 
 	crypton "github.com/Shauanth/Singleton_Encription_ServiceGolang/crypton"
 	"github.com/Shauanth/Singleton_Encription_ServiceGolang/database"
-	_ "github.com/lib/pq" // O el driver que uses para tu base de datos
+	_ "github.com/lib/pq" //Driver Para base de datos postgreSQL
 )
 
 func main() {
@@ -32,9 +34,9 @@ func main() {
 	}
 	defer dbManager.Cerrar()
 	// Inicializa el servicio de usuario
-	servicioUsuario := ServicioUsuario.NuevoServicioUsuario(dbManager.DB, encriptacionKey)
+	/*servicioUsuario := ServicioUsuario.NuevoServicioUsuario(dbManager.DB, encriptacionKey)
 	// Ejemplo de uso: insertar un usuario
-	status, err := servicioUsuario.insertarNuevoUsuario(
+	status, err := servicioUsuario.InsertarNuevoUsuario(
 		"Juan", "Pérez", "juan.perez@email.com", "123456789",
 		time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC), "mi_contraseña_segura", 1,
 	)
@@ -43,6 +45,5 @@ func main() {
 	} else {
 		fmt.Printf("Usuario insertado, status: %v\n", status)
 	}
-
-	// Aquí puedes continuar con el resto de tu lógica (servidor HTTP, etc.)
+	*/
 }
