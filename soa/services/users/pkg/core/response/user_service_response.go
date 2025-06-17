@@ -19,9 +19,14 @@ type StatusResponse struct {
 	Err    string                  `json:"err,omitempty"`
 }
 
+type UsuarioRequest struct {
+	TicketID string `json:"ticketID"`
+	Option   string `json:"option"`
+}
+
 type UsuarioResponse struct {
-	ticketID string `json:"ticketID"`
-	option   string `json:"option"`
+	Code int    `json:"code"`
+	Err  string `json:"err"`
 }
 
 type ServiceStatusRequest struct {

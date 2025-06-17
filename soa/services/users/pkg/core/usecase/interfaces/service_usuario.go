@@ -2,16 +2,13 @@ package interfaces
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
-	UserModels "soa/services/users/pkg/core/domain"
 	"soa/services/users/pkg/core/svc_internal"
 	"soa/services/users/pkg/core/usecase"
 	"soa/services/users/pkg/repository"
 	repoInterface "soa/services/users/pkg/repository/interfaces"
-	"time"
 
 	log "github.com/go-kit/log"
 )
@@ -26,13 +23,6 @@ var (
 func nuevoServicio() usecase.Service {
 	return &ServicioUsuario{}
 }
-
-func init() {
-	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
-	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-	crud = repository.NuevoCRUD()
-}
-
 func (s1 *ServicioUsuario) Get(_ context.Context, filters ...svc_internal.Filter) error {
 	return nil
 }
@@ -45,6 +35,18 @@ func (s1 *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 	logger.Log("Checking status")
 	return http.StatusOK, nil
 }
+
+func (s1 *ServicioUsuario) Usuario(_ context.Context, userId string, option string) (int, error) {
+	return 1, fmt.Errorf("temp")
+}
+
+func init() {
+	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+	crud = repository.NuevoCRUD()
+}
+
+/*
 
 func (s1 *ServicioUsuario) InsertarNuevoUsuario(nombres string, apellidos string, correo string, telefono string, fechaNacimiento time.Time, contrasenia string, rol int) (svc_internal.StatusCode, error) {
 	datos := UserModels.UsuarioVariable{
@@ -119,8 +121,7 @@ func (s1 *ServicioUsuario) InsertarNuevoRol(nombreRol string) {
 	crud.Insertar(`"Roles"`, datos)
 }
 
-//rol va separado, diferente api
-
+// rol va separado, diferente api
 func (s1 *ServicioUsuario) ActualizarRol(idRol int, nombreRol string) {
 	datos := UserModels.Rol{
 		NombreRol: nombreRol,
@@ -160,3 +161,4 @@ func (s1 *ServicioUsuario) SeleccionarRoles(condicion string, args ...interface{
 	}
 	return roles, nil
 }
+*/

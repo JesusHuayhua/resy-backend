@@ -1,4 +1,4 @@
-package middleware
+package endpoints
 
 import (
 	"context"
@@ -24,7 +24,7 @@ func NewEndpoints(svc interfaces.ServicioUsuario) Set {
 		GetEndpoint:           MakeGetEndpoint(svc),
 		StatusEndpoint:        MakeStatusEndpoint(svc),
 		ServiceStatusEndpoint: MakeServiceStatusEndpoint(svc),
-		//UsuarioEndpoint:       MakeUsuarioEndpoint(svc),
+		UsuarioEndpoint:       MakeUsuarioEndpoint(svc),
 	}
 }
 
@@ -61,17 +61,16 @@ func MakeServiceStatusEndpoint(svc interfaces.ServicioUsuario) endpoint.Endpoint
 	}
 }
 
-/*
 func MakeUsuarioEndpoint(svc interfaces.ServicioUsuario) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		req := request.(response.UsuarioResponse)
-		err := svc.Usuario(ctx, req.ticketID, req.option)
+		req := request.(response.UsuarioRequest)
+		code, err := svc.Usuario(ctx, req.TicketID, req.Option)
 		if err != nil {
-
+			return response.UsuarioResponse{Code: code, Err: err.Error()}, nil
 		}
+		return response.UsuarioResponse{Code: code, Err: ""}, nil
 	}
 }
-*/
 
 func (s *Set) Get(ctx context.Context, filters ...svc_internal.Filter) error {
 	resp, err := s.GetEndpoint(ctx, response.GetRequest{Filters: filters})
