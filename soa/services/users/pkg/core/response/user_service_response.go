@@ -19,14 +19,26 @@ type StatusResponse struct {
 	Err    string                  `json:"err,omitempty"`
 }
 
+type RolesRequest struct {
+	TipoOp int
+	Args   []svc_internal.Filter
+}
+
+type RolesResponse struct {
+	Code int         `json:"status"`
+	Err  string      `json:"err,omitempty"`
+	Data interface{} `json:"data,omitempty"`
+}
+
 type UsuarioRequest struct {
 	TipoOp int                   `json:"tipo_op"`
 	Args   []svc_internal.Filter `json:"args,omitempty"`
 }
 
 type UsuarioResponse struct {
-	Code int    `json:"code"`
-	Err  string `json:"err"`
+	Code int         `json:"status"`
+	Err  string      `json:"err,omitempty"`
+	Data interface{} `json:"data,omitempty"`
 }
 
 type ServiceStatusRequest struct {

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	UserModels "soa/services/users/pkg/core/domain"
+	"soa/services/users/pkg/core/response"
 	"soa/services/users/pkg/core/svc_internal"
 	"soa/services/users/pkg/core/usecase"
 	"soa/services/users/pkg/repository"
@@ -27,7 +28,8 @@ var (
 
 type UserService interface {
 	usecase.Service
-	Usuario(ctx context.Context, tipoOP int, args []svc_internal.Filter) (int, error)
+	Usuario(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.UsuarioResponse
+	Roles(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.RolesResponse
 }
 
 func NuevoServicio() UserService {
@@ -46,9 +48,9 @@ func (s1 *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 	return http.StatusOK, nil
 }
 
-func InsertarUsuario(args []svc_internal.Filter) int {
+func InsertarUsuario(args []svc_internal.Filter) (int, string) {
 	if len(args) != 7 {
-		return http.StatusNotAcceptable
+		return http.StatusNotAcceptable, "[INSERTAR] Error insertando usuario con los parametros"
 	}
 	d, _ := time.Parse("02/01/2006", args[4].Value)
 	r, _ := strconv.Atoi(args[6].Value)
@@ -62,13 +64,13 @@ func InsertarUsuario(args []svc_internal.Filter) int {
 		Rol:             r,
 		EstadoAcceso:    true,
 	}
-	crud.Insertar(`"Usuario"`, datos)
-	return http.StatusOK
+	err := crud.Insertar(`"Usuario"`, datos)
+	return http.StatusOK, err.Error()
 }
 
-func ActualizarUsuario(args []svc_internal.Filter) int {
+func ActualizarUsuario(args []svc_internal.Filter) (int, string) {
 	if len(args) != 7 {
-		return http.StatusNotAcceptable
+		return http.StatusNotAcceptable, "[ACTUALIZAR] Error en los parametros pasados"
 	}
 	idUsuario, _ := strconv.Atoi(args[0].Value)
 	rol, _ := strconv.Atoi(args[7].Value)
@@ -85,11 +87,11 @@ func ActualizarUsuario(args []svc_internal.Filter) int {
 		EstadoAcceso:    estado != 0,
 	}
 	where := "id_usuario = $9"
-	crud.Actualizar(`"Usuario"`, datos, where, idUsuario)
-	return http.StatusOK
+	err := crud.Actualizar(`"Usuario"`, datos, where, idUsuario)
+	return http.StatusOK, err.Error()
 }
 
-func SeleccionarUsuarios(args []svc_internal.Filter) int {
+func SeleccionarUsuarios(args []svc_internal.Filter) ([]UserModels.UsuarioVariable, int) {
 	var usuarios []UserModels.UsuarioVariable
 	columnas := []string{"id_usuario", "nombres", "apellidos", "correo", "telefono",
 		"fechanacimiento", "contrasenia", "rol", "estadoacceso",
@@ -104,7 +106,7 @@ func SeleccionarUsuarios(args []svc_internal.Filter) int {
 		rows, err = crud.Seleccionar(`"Usuario"`, columnas, condicion, args)
 	}
 	if err != nil {
-		return http.StatusNotAcceptable
+		return nil, http.StatusNotAcceptable
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -118,36 +120,58 @@ func SeleccionarUsuarios(args []svc_internal.Filter) int {
 			&usuario.U.EstadoAcceso,
 		)
 		if err != nil {
-			return http.StatusNotAcceptable
+			return nil, http.StatusNotAcceptable
 		}
 		usuarios = append(usuarios, usuario.U)
 	}
 	if err = rows.Err(); err != nil {
-		return http.StatusNotAcceptable
+		return nil, http.StatusNotAcceptable
 	}
-	return http.StatusOK
+	return usuarios, http.StatusNotAcceptable
 }
 
-func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
+func (s1 *ServicioUsuario) Roles(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.RolesResponse {
 	logger.Log("[User] Parseando informacion")
 	var httpCode int
 	switch tipo := tipoOP; tipo {
 	case 1:
 		{
-			httpCode = InsertarUsuario(args)
+			//httpCode = InsertarUsuario(args)
 		}
 	case 2:
 		{
-			httpCode = ActualizarUsuario(args)
+			//httpCode = ActualizarUsuario(args)
 		}
 	case 3:
 		{
-			httpCode = SeleccionarUsuarios(args)
+			//httpCode = SeleccionarUsuarios(args)
 		}
 	}
 
 	logger.Log("[User] Insertado")
-	return httpCode, nil
+	return response.RolesResponse{Code: int(svc_internal.Error), Data: "[ERROR] Invalid service"}
+}
+
+func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) response.UsuarioResponse {
+	logger.Log("[User] Parseando informacion")
+	switch tipo := tipoOP; tipo {
+	case 1:
+		{
+			int_code, status := InsertarUsuario(args)
+			return response.UsuarioResponse{Code: int_code, Data: status}
+		}
+	case 2:
+		{
+			int_code, status := ActualizarUsuario(args)
+			return response.UsuarioResponse{Code: int_code, Data: status}
+		}
+	case 3:
+		{
+			usuarios, status := SeleccionarUsuarios(args)
+			return response.UsuarioResponse{Code: status, Data: usuarios}
+		}
+	}
+	return response.UsuarioResponse{Code: int(svc_internal.Error), Err: "[ERROR] Invalid service"}
 }
 
 func init() {

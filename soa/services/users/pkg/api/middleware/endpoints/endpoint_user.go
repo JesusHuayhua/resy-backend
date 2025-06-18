@@ -3,6 +3,7 @@ package endpoints
 import (
 	"context"
 	"errors"
+	"net/http"
 	"os"
 	"soa/services/users/pkg/core/response"
 	"soa/services/users/pkg/core/svc_internal"
@@ -17,6 +18,7 @@ type Set struct {
 	ServiceStatusEndpoint endpoint.Endpoint
 	StatusEndpoint        endpoint.Endpoint
 	UsuarioEndpoint       endpoint.Endpoint
+	RolesEndpoint         endpoint.Endpoint
 }
 
 func NewEndpoints(svc interfaces.UserService) Set {
@@ -25,6 +27,18 @@ func NewEndpoints(svc interfaces.UserService) Set {
 		StatusEndpoint:        MakeStatusEndpoint(svc),
 		ServiceStatusEndpoint: MakeServiceStatusEndpoint(svc),
 		UsuarioEndpoint:       MakeUsuarioEndpoint(svc),
+		RolesEndpoint:         MakeRolesEndpoint(svc),
+	}
+}
+
+func MakeRolesEndpoint(svc interfaces.UserService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		req := request.(response.RolesRequest)
+		data := svc.Roles(ctx, req.TipoOp, req.Args)
+		if data.Err != "" {
+			return response.RolesResponse{Code: data.Code, Err: data.Err}, nil
+		}
+		return response.RolesResponse{Code: data.Code, Err: ""}, nil
 	}
 }
 
@@ -64,11 +78,11 @@ func MakeServiceStatusEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 func MakeUsuarioEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(response.UsuarioRequest)
-		code, err := svc.Usuario(ctx, req.TipoOp, req.Args)
-		if err != nil {
-			return response.UsuarioResponse{Code: code, Err: err.Error()}, nil
+		data := svc.Usuario(ctx, req.TipoOp, req.Args)
+		if data.Code != http.StatusOK {
+			return response.UsuarioResponse{Code: data.Code, Data: data.Data}, nil
 		}
-		return response.UsuarioResponse{Code: code, Err: ""}, nil
+		return response.UsuarioResponse{Code: data.Code, Data: ""}, nil
 	}
 }
 
@@ -110,6 +124,18 @@ func (s *Set) Status(ctx context.Context, ticketID string) (svc_internal.StatusC
 
 func (s *Set) Usuario(ctx context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
 	resp, err := s.UsuarioEndpoint(ctx, response.UsuarioRequest{TipoOp: tipoOP, Args: args})
+	userResponse := resp.(response.UsuarioResponse)
+	if err != nil {
+		return userResponse.Code, err
+	}
+	if userResponse.Err != "" {
+		return userResponse.Code, errors.New(userResponse.Err)
+	}
+	return userResponse.Code, nil
+}
+
+func (s *Set) Roles(ctx context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
+	resp, err := s.RolesEndpoint(ctx, response.UsuarioRequest{TipoOp: tipoOP, Args: args})
 	userResponse := resp.(response.UsuarioResponse)
 	if err != nil {
 		return userResponse.Code, err
