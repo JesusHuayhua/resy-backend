@@ -16,7 +16,7 @@ import (
 func NewHTTPHandler(ep endpoints.Set) http.Handler {
 	m := http.NewServeMux()
 
-	m.Handle("/healthz", httptransport.NewServer(
+	m.Handle("/service_status", httptransport.NewServer(
 		ep.ServiceStatusEndpoint,
 		decodeHTTPServiceStatusRequest,
 		encodeResponse,
@@ -43,6 +43,7 @@ func NewHTTPHandler(ep endpoints.Set) http.Handler {
 func decodeHTTPUsersRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var req response.UsuarioRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
+
 	if err != nil {
 		return nil, err
 	}

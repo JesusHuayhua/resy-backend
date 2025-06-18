@@ -23,7 +23,7 @@ var (
 
 type UserService interface {
 	usecase.Service
-	Usuario(ctx context.Context, userID, option string) (int, error)
+	Usuario(ctx context.Context, tipoOP int, args []svc_internal.Filter) (int, error)
 }
 
 func NuevoServicio() UserService {
@@ -42,7 +42,7 @@ func (s1 *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 	return http.StatusOK, nil
 }
 
-func (s1 *ServicioUsuario) Usuario(_ context.Context, userId string, option string) (int, error) {
+func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
 	return 1, fmt.Errorf("temp")
 }
 

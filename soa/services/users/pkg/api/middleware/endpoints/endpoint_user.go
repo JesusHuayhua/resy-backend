@@ -64,7 +64,7 @@ func MakeServiceStatusEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 func MakeUsuarioEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(response.UsuarioRequest)
-		code, err := svc.Usuario(ctx, req.TicketID, req.Option)
+		code, err := svc.Usuario(ctx, req.TipoOp, req.Args)
 		if err != nil {
 			return response.UsuarioResponse{Code: code, Err: err.Error()}, nil
 		}
@@ -108,16 +108,16 @@ func (s *Set) Status(ctx context.Context, ticketID string) (svc_internal.StatusC
 	return stsResp.Status, nil
 }
 
-func (s *Set) Usuario(ctx context.Context, ticketID, option string) (int, error) {
-	resp, err := s.UsuarioEndpoint(ctx, response.UsuarioRequest{TicketID: ticketID, Option: option})
-	wmResp := resp.(response.UsuarioResponse)
+func (s *Set) Usuario(ctx context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
+	resp, err := s.UsuarioEndpoint(ctx, response.UsuarioRequest{TipoOp: tipoOP, Args: args})
+	userResponse := resp.(response.UsuarioResponse)
 	if err != nil {
-		return wmResp.Code, err
+		return userResponse.Code, err
 	}
-	if wmResp.Err != "" {
-		return wmResp.Code, errors.New(wmResp.Err)
+	if userResponse.Err != "" {
+		return userResponse.Code, errors.New(userResponse.Err)
 	}
-	return wmResp.Code, nil
+	return userResponse.Code, nil
 }
 
 var logger log.Logger

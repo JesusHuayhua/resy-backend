@@ -20,8 +20,8 @@ type StatusResponse struct {
 }
 
 type UsuarioRequest struct {
-	TicketID string `json:"ticketID"`
-	Option   string `json:"option"`
+	TipoOp int                   `json:"tipo_op"`
+	Args   []svc_internal.Filter `json:"args,omitempty"`
 }
 
 type UsuarioResponse struct {
