@@ -104,7 +104,7 @@ func toInternalFilters(in []*protobuf.Filter) []svc_internal.Filter {
 
 func decodeGRPCUsuarioRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {
 	req := grpcReq.(*protobuf.UsuarioRequest)
-	return response.UsuarioRequest{TipoOp: int(req.TipoOp), Args: toInternalFilters(req.Args)}, nil
+	return response.GenericRequest{TipoOp: int(req.TipoOp), Args: toInternalFilters(req.Args)}, nil
 }
 
 func decodeGRPCServiceStatusRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {
