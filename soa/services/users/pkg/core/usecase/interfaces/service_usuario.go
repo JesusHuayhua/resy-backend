@@ -99,11 +99,10 @@ func SeleccionarUsuarios(args []svc_internal.Filter) ([]UserModels.UsuarioVariab
 	var rows *sql.Rows
 	var err error
 	condicion := args[0].Value
-
 	if condicion == "" {
-		rows, err = crud.Seleccionar(`"Usuario"`, columnas, "", args)
+		rows, err = crud.Seleccionar(`"Usuario"`, columnas, "", args[1:])
 	} else {
-		rows, err = crud.Seleccionar(`"Usuario"`, columnas, condicion, args)
+		rows, err = crud.Seleccionar(`"Usuario"`, columnas, condicion, args[1:])
 	}
 	if err != nil {
 		return nil, http.StatusNotAcceptable
@@ -130,24 +129,64 @@ func SeleccionarUsuarios(args []svc_internal.Filter) ([]UserModels.UsuarioVariab
 	return usuarios, http.StatusNotAcceptable
 }
 
+func InsertarNuevoRol(args []svc_internal.Filter) (int, string) {
+	if len(args) != 1 {
+		return http.StatusNotAcceptable, "[ROL_INSERTAR] No se pudo insertar rol por argumentos invalidos"
+	}
+	datos := UserModels.Rol{
+		NombreRol: args[0].Value,
+	}
+	err := crud.Insertar(`"Roles"`, datos)
+	return http.StatusOK, err.Error()
+}
+
+func SeleccionarRoles(args []svc_internal.Filter) ([]UserModels.RolDB, int) {
+	var roles []UserModels.RolDB
+	columnas := []string{"id_rol", "nombrerol"}
+	var rows *sql.Rows
+	var err error
+	condicion := args[0].Value
+	if condicion == "" {
+		rows, err = crud.Seleccionar(`"Roles"`, columnas, "", args[1:])
+	} else {
+		rows, err = crud.Seleccionar(`"Roles"`, columnas, condicion, args[1:])
+	}
+	if err != nil {
+		return nil, http.StatusNotAcceptable
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var rol UserModels.RolDB
+		err := rows.Scan(
+			&rol.ID,
+			&rol.NombreRol,
+		)
+		if err != nil {
+			return nil, http.StatusNotAcceptable
+		}
+		roles = append(roles, rol)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, http.StatusNotAcceptable
+	}
+	return roles, http.StatusOK
+}
+
 func (s1 *ServicioUsuario) Roles(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.RolesResponse {
 	logger.Log("[User] Parseando informacion")
-	var httpCode int
 	switch tipo := tipoOP; tipo {
 	case 1:
 		{
-			//httpCode = InsertarUsuario(args)
+			int_code, status := InsertarNuevoRol(args)
+			return response.RolesResponse{Code: int_code, Data: status}
 		}
 	case 2:
 		{
-			//httpCode = ActualizarUsuario(args)
-		}
-	case 3:
-		{
-			//httpCode = SeleccionarUsuarios(args)
+			roles, status := SeleccionarRoles(args)
+			return response.RolesResponse{Code: status, Data: roles}
 		}
 	}
-
 	logger.Log("[User] Insertado")
 	return response.RolesResponse{Code: int(svc_internal.Error), Data: "[ERROR] Invalid service"}
 }
@@ -179,54 +218,3 @@ func init() {
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	crud = repository.NuevoCRUD()
 }
-
-/*
-
-func (s1 *ServicioUsuario) InsertarNuevoRol(nombreRol string) {
-	datos := UserModels.Rol{
-		NombreRol: nombreRol,
-	}
-	crud.Insertar(`"Roles"`, datos)
-}
-
-// rol va separado, diferente api
-func (s1 *ServicioUsuario) ActualizarRol(idRol int, nombreRol string) {
-	datos := UserModels.Rol{
-		NombreRol: nombreRol,
-	}
-	where := "id_rol = $2"
-	crud.Actualizar(`"Roles"`, datos, where, idRol)
-}
-
-func (s1 *ServicioUsuario) SeleccionarRoles(condicion string, args ...interface{}) ([]UserModels.RolDB, error) {
-	var roles []UserModels.RolDB
-	columnas := []string{"id_rol", "nombrerol"}
-	var rows *sql.Rows
-	var err error
-	if condicion == "" {
-		rows, err = crud.Seleccionar(`"Roles"`, columnas, "", args...)
-	} else {
-		rows, err = crud.Seleccionar(`"Roles"`, columnas, condicion, args...)
-	}
-	if err != nil {
-		return nil, fmt.Errorf("error en Select: %v", err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var rol UserModels.RolDB
-		err := rows.Scan(
-			&rol.ID,
-			&rol.NombreRol,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("error al escanear fila: %v", err)
-		}
-		roles = append(roles, rol)
-	}
-	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("error después de iterar filas: %v", err)
-	}
-	return roles, nil
-}
-*/
