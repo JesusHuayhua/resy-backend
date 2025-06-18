@@ -3,11 +3,13 @@ package transport
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"os"
 	"soa/services/users/pkg/api/middleware/endpoints"
 	"soa/services/users/pkg/core/response"
 	"soa/services/users/pkg/core/svc_internal"
+	"strconv"
 
 	"github.com/go-kit/kit/log"
 	httptransport "github.com/go-kit/kit/transport/http"
@@ -40,12 +42,38 @@ func NewHTTPHandler(ep endpoints.Set) http.Handler {
 	return m
 }
 
+// Dos formas: JSON o URL, esto es lo de menos, para facilidad de testing, usare URL schema.
 func decodeHTTPUsersRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var req response.UsuarioRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
-
-	if err != nil {
+	/*
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			return nil, err
+		}
+	*/
+	if err := r.ParseForm(); err != nil {
 		return nil, err
+	}
+	q := r.URL.Query()
+	opStr := q.Get("tipo_op")
+	if opStr == "" {
+		return nil, errors.New("falta el parámetro tipo_op")
+	}
+	op, err := strconv.Atoi(opStr)
+	if err != nil {
+		return nil, errors.New("tipo_op debe ser entero")
+	}
+	req.TipoOp = op
+	for k, vals := range q {
+		if k == "tipo_op" {
+			continue
+		}
+		for _, v := range vals {
+			req.Args = append(req.Args, svc_internal.Filter{
+				Key:   k,
+				Value: v,
+			})
+		}
 	}
 	return req, nil
 }

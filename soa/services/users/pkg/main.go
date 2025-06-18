@@ -31,6 +31,8 @@ func envString(env, fallback string) string {
 	return e
 }
 
+// curl "http://localhost:8081/users?tipo_op=1&nombres=Rodrigo&apellidos=Medina"
+
 func main() {
 	var (
 		logger   log.Logger

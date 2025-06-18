@@ -43,7 +43,8 @@ func (s1 *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 }
 
 func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
-	return 1, fmt.Errorf("temp")
+	logger.Log("[User] Hit user form")
+
 }
 
 func init() {
