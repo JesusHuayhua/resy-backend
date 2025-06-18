@@ -2,6 +2,7 @@ package interfaces
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
@@ -88,47 +89,22 @@ func ActualizarUsuario(args []svc_internal.Filter) int {
 	return http.StatusOK
 }
 
-func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
-	logger.Log("[User] Parseando informacion")
-	var httpCode int
-	switch tipo := tipoOP; tipo {
-	case 1:
-		{
-			httpCode = InsertarUsuario(args)
-		}
-	case 2:
-		{
-			actualizar_usuario(args)
-		}
-
-	}
-
-	logger.Log("[User] Insertado")
-	return httpCode, nil
-}
-
-func init() {
-	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
-	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-	crud = repository.NuevoCRUD()
-}
-
-/*
-
-func (s1 *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interface{}) (svc_internal.StatusCode, []UserModels.UsuarioVariable, error) {
+func SeleccionarUsuarios(args []svc_internal.Filter) int {
 	var usuarios []UserModels.UsuarioVariable
 	columnas := []string{"id_usuario", "nombres", "apellidos", "correo", "telefono",
 		"fechanacimiento", "contrasenia", "rol", "estadoacceso",
 	}
 	var rows *sql.Rows
 	var err error
+	condicion := args[0].Value
+
 	if condicion == "" {
-		rows, err = crud.Seleccionar(`"Usuario"`, columnas, "", args...)
+		rows, err = crud.Seleccionar(`"Usuario"`, columnas, "", args)
 	} else {
-		rows, err = crud.Seleccionar(`"Usuario"`, columnas, condicion, args...)
+		rows, err = crud.Seleccionar(`"Usuario"`, columnas, condicion, args)
 	}
 	if err != nil {
-		return svc_internal.Error, nil, fmt.Errorf("error en Select: %v", err)
+		return http.StatusNotAcceptable
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -142,15 +118,45 @@ func (s1 *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interfa
 			&usuario.U.EstadoAcceso,
 		)
 		if err != nil {
-			return svc_internal.Error, nil, fmt.Errorf("error al escanear fila: %v", err)
+			return http.StatusNotAcceptable
 		}
 		usuarios = append(usuarios, usuario.U)
 	}
 	if err = rows.Err(); err != nil {
-		return svc_internal.Error, nil, fmt.Errorf("error al escanear fila: %v", err)
+		return http.StatusNotAcceptable
 	}
-	return svc_internal.InProgress, usuarios, nil
+	return http.StatusOK
 }
+
+func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
+	logger.Log("[User] Parseando informacion")
+	var httpCode int
+	switch tipo := tipoOP; tipo {
+	case 1:
+		{
+			httpCode = InsertarUsuario(args)
+		}
+	case 2:
+		{
+			httpCode = ActualizarUsuario(args)
+		}
+	case 3:
+		{
+			httpCode = SeleccionarUsuarios(args)
+		}
+	}
+
+	logger.Log("[User] Insertado")
+	return httpCode, nil
+}
+
+func init() {
+	logger = log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
+	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
+	crud = repository.NuevoCRUD()
+}
+
+/*
 
 func (s1 *ServicioUsuario) InsertarNuevoRol(nombreRol string) {
 	datos := UserModels.Rol{
