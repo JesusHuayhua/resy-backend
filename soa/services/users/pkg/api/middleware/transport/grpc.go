@@ -124,7 +124,7 @@ func decodeGRPCStatusResponse(_ context.Context, grpcReply interface{}) (interfa
 func decodeGRPCUsuarioResponse(ctx context.Context, grpcReply interface{}) (interface{}, error) {
 	reply := grpcReply.(*protobuf.UsuarioReply)
 	//Nota: reply.Err no esta actualizado, gRPC se avanzara despues.
-	return response.UsuarioResponse{Code: int(reply.Code), Data: reply.Err}, nil
+	return response.GenericResponse{Code: int(reply.Code), Data: reply.Err}, nil
 }
 
 func decodeGRPCServiceStatusResponse(ctx context.Context, grpcReply interface{}) (interface{}, error) {

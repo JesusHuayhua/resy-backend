@@ -28,8 +28,8 @@ var (
 
 type UserService interface {
 	usecase.Service
-	Usuario(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.UsuarioResponse
-	Roles(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.RolesResponse
+	Usuario(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.GenericResponse
+	Roles(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.GenericResponse
 }
 
 func NuevoServicio() UserService {
@@ -173,44 +173,44 @@ func SeleccionarRoles(args []svc_internal.Filter) ([]UserModels.RolDB, int) {
 	return roles, http.StatusOK
 }
 
-func (s1 *ServicioUsuario) Roles(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.RolesResponse {
+func (s1 *ServicioUsuario) Roles(ctx context.Context, tipoOP int, args []svc_internal.Filter) response.GenericResponse {
 	logger.Log("[User] Parseando informacion")
 	switch tipo := tipoOP; tipo {
 	case 1:
 		{
 			int_code, status := InsertarNuevoRol(args)
-			return response.RolesResponse{Code: int_code, Data: status}
+			return response.GenericResponse{Code: int_code, Data: status}
 		}
 	case 2:
 		{
 			roles, status := SeleccionarRoles(args)
-			return response.RolesResponse{Code: status, Data: roles}
+			return response.GenericResponse{Code: status, Data: roles}
 		}
 	}
 	logger.Log("[User] Insertado")
-	return response.RolesResponse{Code: int(svc_internal.Error), Data: "[ERROR] Invalid service"}
+	return response.GenericResponse{Code: int(svc_internal.Error), Data: "[ERROR] Invalid service"}
 }
 
-func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) response.UsuarioResponse {
+func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) response.GenericResponse {
 	logger.Log("[User] Parseando informacion")
 	switch tipo := tipoOP; tipo {
 	case 1:
 		{
 			int_code, status := InsertarUsuario(args)
-			return response.UsuarioResponse{Code: int_code, Data: status}
+			return response.GenericResponse{Code: int_code, Data: status}
 		}
 	case 2:
 		{
 			int_code, status := ActualizarUsuario(args)
-			return response.UsuarioResponse{Code: int_code, Data: status}
+			return response.GenericResponse{Code: int_code, Data: status}
 		}
 	case 3:
 		{
 			usuarios, status := SeleccionarUsuarios(args)
-			return response.UsuarioResponse{Code: status, Data: usuarios}
+			return response.GenericResponse{Code: status, Data: usuarios}
 		}
 	}
-	return response.UsuarioResponse{Code: int(svc_internal.Error), Err: "[ERROR] Invalid service"}
+	return response.GenericResponse{Code: int(svc_internal.Error), Err: "[ERROR] Invalid service"}
 }
 
 func init() {

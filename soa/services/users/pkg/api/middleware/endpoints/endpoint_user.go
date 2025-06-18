@@ -36,9 +36,9 @@ func MakeRolesEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 		req := request.(response.GenericRequest)
 		data := svc.Roles(ctx, req.TipoOp, req.Args)
 		if data.Err != "" {
-			return response.RolesResponse{Code: data.Code, Err: data.Err}, nil
+			return response.GenericResponse{Code: data.Code, Err: data.Err}, nil
 		}
-		return response.RolesResponse{Code: data.Code, Err: ""}, nil
+		return response.GenericResponse{Code: data.Code, Err: ""}, nil
 	}
 }
 
@@ -80,9 +80,9 @@ func MakeUsuarioEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 		req := request.(response.GenericRequest)
 		data := svc.Usuario(ctx, req.TipoOp, req.Args)
 		if data.Code != http.StatusOK {
-			return response.UsuarioResponse{Code: data.Code, Data: data.Data}, nil
+			return response.GenericResponse{Code: data.Code, Data: data.Data}, nil
 		}
-		return response.UsuarioResponse{Code: data.Code, Data: ""}, nil
+		return response.GenericResponse{Code: data.Code, Data: ""}, nil
 	}
 }
 
@@ -124,7 +124,7 @@ func (s *Set) Status(ctx context.Context, ticketID string) (svc_internal.StatusC
 
 func (s *Set) Usuario(ctx context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
 	resp, err := s.UsuarioEndpoint(ctx, response.GenericRequest{TipoOp: tipoOP, Args: args})
-	userResponse := resp.(response.UsuarioResponse)
+	userResponse := resp.(response.GenericResponse)
 	if err != nil {
 		return userResponse.Code, err
 	}
@@ -136,7 +136,7 @@ func (s *Set) Usuario(ctx context.Context, tipoOP int, args []svc_internal.Filte
 
 func (s *Set) Roles(ctx context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
 	resp, err := s.RolesEndpoint(ctx, response.GenericRequest{TipoOp: tipoOP, Args: args})
-	userResponse := resp.(response.UsuarioResponse)
+	userResponse := resp.(response.GenericResponse)
 	if err != nil {
 		return userResponse.Code, err
 	}

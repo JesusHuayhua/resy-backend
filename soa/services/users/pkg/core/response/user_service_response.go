@@ -19,13 +19,7 @@ type StatusResponse struct {
 	Err    string                  `json:"err,omitempty"`
 }
 
-type RolesResponse struct {
-	Code int         `json:"status"`
-	Err  string      `json:"err,omitempty"`
-	Data interface{} `json:"data,omitempty"`
-}
-
-type UsuarioResponse struct {
+type GenericResponse struct {
 	Code int         `json:"status"`
 	Err  string      `json:"err,omitempty"`
 	Data interface{} `json:"data,omitempty"`
