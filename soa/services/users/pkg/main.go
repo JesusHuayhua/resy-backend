@@ -62,7 +62,7 @@ func main() {
 		})
 	}
 	{
-		//NO TOCAR EL PUERTO DE ESTA HUEVADA, ES WIP.
+		//NO TOCAR EL PUERTO DE GRPC, ES WIP. VAS A CRASHEAR LA APLICACION.
 		grpcListener, err := net.Listen("tcp", grpcAddr)
 		if err != nil {
 			logger.Log("transport", "gRPC", "during", "Listen", "err", err)
