@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	UserModels "soa/services/users/pkg/core/domain"
 	"soa/services/users/pkg/core/svc_internal"
 	"soa/services/users/pkg/core/usecase"
 	"soa/services/users/pkg/repository"
 	repoInterface "soa/services/users/pkg/repository/interfaces"
+	"strconv"
+	"time"
 
 	log "github.com/go-kit/log"
 )
@@ -42,9 +45,66 @@ func (s1 *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 	return http.StatusOK, nil
 }
 
-func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
-	logger.Log("[User] Hit user form")
+func InsertarUsuario(args []svc_internal.Filter) int {
+	if len(args) != 7 {
+		return http.StatusNotAcceptable
+	}
+	d, _ := time.Parse("02/01/2006", args[4].Value)
+	r, _ := strconv.Atoi(args[6].Value)
+	datos := UserModels.UsuarioVariable{
+		Nombres:         args[0].Value,
+		Apellidos:       args[1].Value,
+		Correo:          args[2].Value,
+		Telefono:        args[3].Value,
+		FechaNacimiento: d,
+		Contrasenia:     args[5].Value,
+		Rol:             r,
+		EstadoAcceso:    true,
+	}
+	crud.Insertar(`"Usuario"`, datos)
+	return http.StatusOK
+}
 
+func ActualizarUsuario(args []svc_internal.Filter) int {
+	if len(args) != 7 {
+		return http.StatusNotAcceptable
+	}
+	idUsuario, _ := strconv.Atoi(args[0].Value)
+	rol, _ := strconv.Atoi(args[7].Value)
+	d, _ := time.Parse("02/01/2006", args[5].Value)
+	estado, _ := strconv.Atoi(args[8].Value)
+	datos := UserModels.UsuarioVariable{
+		Nombres:         args[1].Value,
+		Apellidos:       args[2].Value,
+		Correo:          args[3].Value,
+		Telefono:        args[4].Value,
+		FechaNacimiento: d,
+		Contrasenia:     args[6].Value,
+		Rol:             rol,
+		EstadoAcceso:    estado != 0,
+	}
+	where := "id_usuario = $9"
+	crud.Actualizar(`"Usuario"`, datos, where, idUsuario)
+	return http.StatusOK
+}
+
+func (s1 *ServicioUsuario) Usuario(_ context.Context, tipoOP int, args []svc_internal.Filter) (int, error) {
+	logger.Log("[User] Parseando informacion")
+	var httpCode int
+	switch tipo := tipoOP; tipo {
+	case 1:
+		{
+			httpCode = InsertarUsuario(args)
+		}
+	case 2:
+		{
+			actualizar_usuario(args)
+		}
+
+	}
+
+	logger.Log("[User] Insertado")
+	return httpCode, nil
 }
 
 func init() {
@@ -54,35 +114,6 @@ func init() {
 }
 
 /*
-
-func (s1 *ServicioUsuario) InsertarNuevoUsuario(nombres string, apellidos string, correo string, telefono string, fechaNacimiento time.Time, contrasenia string, rol int) (svc_internal.StatusCode, error) {
-	datos := UserModels.UsuarioVariable{
-		Nombres:         nombres,
-		Apellidos:       apellidos,
-		Correo:          correo,
-		Telefono:        telefono,
-		FechaNacimiento: fechaNacimiento,
-		Contrasenia:     contrasenia,
-		Rol:             rol,
-		EstadoAcceso:    true,
-	}
-	return svc_internal.InProgress, crud.Insertar(`"Usuario"`, datos)
-}
-
-func (s1 *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres string, apellidos string, correo string, telefono string, fechaNacimiento time.Time, contrasenia string, rol int, estado bool) (svc_internal.StatusCode, error) {
-	datos := UserModels.UsuarioVariable{
-		Nombres:         nombres,
-		Apellidos:       apellidos,
-		Correo:          correo,
-		Telefono:        telefono,
-		FechaNacimiento: fechaNacimiento,
-		Contrasenia:     contrasenia,
-		Rol:             rol,
-		EstadoAcceso:    estado,
-	}
-	where := "id_usuario = $9"
-	return svc_internal.InProgress, crud.Actualizar(`"Usuario"`, datos, where, idUsuario)
-}
 
 func (s1 *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interface{}) (svc_internal.StatusCode, []UserModels.UsuarioVariable, error) {
 	var usuarios []UserModels.UsuarioVariable
