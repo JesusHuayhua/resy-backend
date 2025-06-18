@@ -88,9 +88,23 @@ func decodeGRPCStatusRequest(_ context.Context, grpcReq interface{}) (interface{
 	return response.StatusRequest{TicketID: req.TicketID}, nil
 }
 
+func toInternalFilters(in []*protobuf.Filter) []svc_internal.Filter {
+	out := make([]svc_internal.Filter, 0, len(in))
+	for _, f := range in {
+		if f == nil {
+			continue
+		}
+		out = append(out, svc_internal.Filter{
+			Key:   f.Key,
+			Value: f.Value,
+		})
+	}
+	return out
+}
+
 func decodeGRPCUsuarioRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {
 	req := grpcReq.(*protobuf.UsuarioRequest)
-	return response.UsuarioRequest{TicketID: req.TicketID, Option: req.Option}, nil
+	return response.UsuarioRequest{TipoOp: int(req.TipoOp), Args: toInternalFilters(req.Args)}, nil
 }
 
 func decodeGRPCServiceStatusRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {

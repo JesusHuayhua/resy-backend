@@ -16,9 +16,14 @@ var StatusReply_Status_name = map[int32]string{
 	4: "FAILED",
 }
 
+type Filter struct {
+	Key   string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+}
+
 type UsuarioRequest struct {
-	TicketID string `protobuf:"bytes,1,opt,name=ticketID" json:"ticketID,omitempty"`
-	Option   string `protobuf:"bytes,2,opt,name=mark" json:"mark,omitempty"`
+	TipoOp int32     `protobuf:"varint,1,opt,name=tipo_op,json=tipoOp,proto3" json:"tipo_op,omitempty"`
+	Args   []*Filter `protobuf:"bytes,2,rep,name=args,proto3" json:"args,omitempty"`
 }
 
 type UsuarioReply struct {
