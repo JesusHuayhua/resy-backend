@@ -6,39 +6,66 @@
 3. **DBeaver 25.0.1** for GUI 
 4. **Golang** tested with ```go version go1.24.1 windows/amd64```
 
-## Jerarquia de directorios (falta actualizar)
+## Jerarquia de directorios
 
 ```
-soa/
-├── services/
-│   ├── users/
-│       ├── cmd/
-│       │   └── main.go         			  
-│       │   ├── internal/          			# Todo lo que tenga que ver con estatus del servicio.	 
-│       │   ├── api/              			# Falta implementarlo.
-│       │   │   └── user_handlers.go
-│       │   ├── core/             			 
-│       │   │   ├── domain/
-│       │   │   │   └── user.go
-│       │   │   └── user_service.go
-│       │   └── repository/       			  
-│       │       └── user_repository.go
-│       └── pkg/                 		      
-│           └── models/
-│               └── user_shared_models.go
-│
-├── shared/
-│   ├── config/                   			   
-│   │   └── config.go
-│   ├── database/                   	     
-│   │   └── common_db.go
-│   ├── utils/                    			 
-│   │   └── helpers.go
-│   └── proto/                    			  
-│       └── common.proto
-├── go.mod                        			   
-├── go.sum
-└── README.md
+Resy-Backen.
+|   .gitignore
+|   README.md
+|   
++---Datos Extras
+|       Correo oficial Salon Verde.txt
+|       
++---soa
+|   \---services
+|       +---ServicioMenu #servicio para trabajar lo relacionado a Menús 
+|       |       build.bat
+|       |       
+|       \---ServicioUsuario #Servicio para trabajar lo relacionado a Usuarios
+|           |   build.bat
+|           |   go.mod
+|           |   go.sum
+|           |   
+|           +---cmd
+|           |       main.go
+|           |       
+|           \---pkg
+|               +---api
+|               |   \---handlers
+|               |           handlers.go
+|               |           
+|               +---core
+|               |   +---domain
+|               |   |       rol.go
+|               |   |       usuario.go
+|               |   |       
+|               |   +---internal
+|               |   |       internal.go
+|               |   |       
+|               |   +---response
+|               |   |       user_service_response.go
+|               |   |       
+|               |   \---usecase
+|               |       \---backBD
+|               |               Service_Conection_with_BD.go
+|               |               
+|               \---repository
+|                   |   MetodosGenericos.go
+|                   |   
+|                   +---crypton
+|                   |       crypto.go
+|                   |       
+|                   +---database
+|                   |       BDoperators.go
+|                   |       database.go
+|                   |       
+|                   \---interfaces
+|                           interface_repository.go
+|                           
+\---sql
+        Creaci¾nDeLaBaseDeDatos.sql
+        Insert para verificar usuario y roles.sql
+        Notaimportante.txt
 ```
 
 ### Build para testeo local 
