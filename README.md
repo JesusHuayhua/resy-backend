@@ -6,7 +6,7 @@
 3. **DBeaver 25.0.1** for GUI 
 4. **Golang** tested with ```go version go1.24.1 windows/amd64```
 
-## Jerarquia de directorios (falta actualizar)
+## Jerarquia de directorios
 
 ```
 Resy-Backen.
@@ -18,10 +18,10 @@ Resy-Backen.
 |       
 +---soa
 |   \---services
-|       +---ServicioMenu
+|       +---ServicioMenu #servicio para trabajar lo relacionado a Menús 
 |       |       build.bat
 |       |       
-|       \---ServicioUsuario
+|       \---ServicioUsuario #Servicio para trabajar lo relacionado a Usuarios
 |           |   build.bat
 |           |   go.mod
 |           |   go.sum
