@@ -48,19 +48,36 @@ func (s1 *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 	return http.StatusOK, nil
 }
 
+func valor(args []svc_internal.Filter, key string) (string, bool) {
+	for _, f := range args {
+		if f.Key == key {
+			return f.Value, true
+		}
+	}
+	return "", false
+}
+
 func InsertarUsuario(args []svc_internal.Filter) (int, string) {
 	if len(args) != 7 {
 		return http.StatusNotAcceptable, "[INSERTAR] Error insertando usuario con los parametros"
 	}
-	d, _ := time.Parse("02/01/2006", args[4].Value)
-	r, _ := strconv.Atoi(args[6].Value)
+	nombres, _ := valor(args, "nombres")
+	apellidos, _ := valor(args, "apellidos")
+	correo, _ := valor(args, "correo")
+	telefono, _ := valor(args, "telefono")
+	nacStr, _ := valor(args, "fechaNacimiento")
+	pass, _ := valor(args, "contraseña")
+	rolStr, _ := valor(args, "rol")
+
+	d, _ := time.Parse("02/01/2006", nacStr)
+	r, _ := strconv.Atoi(rolStr)
 	datos := UserModels.UsuarioVariable{
-		Nombres:         args[0].Value,
-		Apellidos:       args[1].Value,
-		Correo:          args[2].Value,
-		Telefono:        args[3].Value,
+		Nombres:         nombres,
+		Apellidos:       apellidos,
+		Correo:          correo,
+		Telefono:        telefono,
 		FechaNacimiento: d,
-		Contrasenia:     args[5].Value,
+		Contrasenia:     pass,
 		Rol:             r,
 		EstadoAcceso:    true,
 	}
@@ -72,17 +89,28 @@ func ActualizarUsuario(args []svc_internal.Filter) (int, string) {
 	if len(args) != 7 {
 		return http.StatusNotAcceptable, "[ACTUALIZAR] Error en los parametros pasados"
 	}
-	idUsuario, _ := strconv.Atoi(args[0].Value)
-	rol, _ := strconv.Atoi(args[7].Value)
-	d, _ := time.Parse("02/01/2006", args[5].Value)
-	estado, _ := strconv.Atoi(args[8].Value)
+
+	id, _ := valor(args, "idUsuario")
+	nombres, _ := valor(args, "nombres")
+	apellidos, _ := valor(args, "apellidos")
+	correo, _ := valor(args, "correo")
+	telefono, _ := valor(args, "telefono")
+	fechaNac, _ := valor(args, "fechaNacimiento")
+	pass, _ := valor(args, "contraseña")
+	rolStr, _ := valor(args, "rol")
+	stat, _ := valor(args, "estado")
+
+	idUsuario, _ := strconv.Atoi(id)
+	rol, _ := strconv.Atoi(rolStr)
+	d, _ := time.Parse("02/01/2006", fechaNac)
+	estado, _ := strconv.Atoi(stat)
 	datos := UserModels.UsuarioVariable{
-		Nombres:         args[1].Value,
-		Apellidos:       args[2].Value,
-		Correo:          args[3].Value,
-		Telefono:        args[4].Value,
+		Nombres:         nombres,
+		Apellidos:       apellidos,
+		Correo:          correo,
+		Telefono:        telefono,
 		FechaNacimiento: d,
-		Contrasenia:     args[6].Value,
+		Contrasenia:     pass,
 		Rol:             rol,
 		EstadoAcceso:    estado != 0,
 	}
@@ -93,11 +121,12 @@ func ActualizarUsuario(args []svc_internal.Filter) (int, string) {
 
 func SeleccionarUsuarios(args []svc_internal.Filter) ([]UserModels.UsuarioVariable, int) {
 	var usuarios []UserModels.UsuarioVariable
-	columnas := []string{"id_usuario", "nombres", "apellidos", "correo", "telefono",
+	columnas := []string{"condicion", "id_usuario", "nombres", "apellidos", "correo", "telefono",
 		"fechanacimiento", "contrasenia", "rol", "estadoacceso",
 	}
 	var rows *sql.Rows
 	var err error
+	args = reorderFilters(args, columnas)
 	condicion := args[0].Value
 	if condicion == "" {
 		rows, err = crud.Seleccionar(`"Usuario"`, columnas, "", args[1:])
@@ -140,11 +169,33 @@ func InsertarNuevoRol(args []svc_internal.Filter) (int, string) {
 	return http.StatusOK, err.Error()
 }
 
+func reorderFilters(args []svc_internal.Filter, keyOrder []string) []svc_internal.Filter {
+	grouped := make(map[string][]svc_internal.Filter, len(args))
+	for _, f := range args {
+		grouped[f.Key] = append(grouped[f.Key], f)
+	}
+	ordered := make([]svc_internal.Filter, 0, len(args))
+	for _, key := range keyOrder {
+		if fs, ok := grouped[key]; ok {
+			ordered = append(ordered, fs...)
+			delete(grouped, key)
+		}
+	}
+	for _, f := range args {
+		if fs, ok := grouped[f.Key]; ok && len(fs) > 0 {
+			ordered = append(ordered, fs[0])
+			grouped[f.Key] = fs[1:]
+		}
+	}
+	return ordered
+}
+
 func SeleccionarRoles(args []svc_internal.Filter) ([]UserModels.RolDB, int) {
 	var roles []UserModels.RolDB
-	columnas := []string{"id_rol", "nombrerol"}
+	columnas := []string{"condicion", "id_rol", "nombrerol"}
 	var rows *sql.Rows
 	var err error
+	args = reorderFilters(args, columnas)
 	condicion := args[0].Value
 	if condicion == "" {
 		rows, err = crud.Seleccionar(`"Roles"`, columnas, "", args[1:])

@@ -82,7 +82,7 @@ func MakeUsuarioEndpoint(svc interfaces.UserService) endpoint.Endpoint {
 		if data.Code != http.StatusOK {
 			return response.GenericResponse{Code: data.Code, Data: data.Data}, nil
 		}
-		return response.GenericResponse{Code: data.Code, Data: ""}, nil
+		return response.GenericResponse{Code: data.Code, Data: "error"}, nil
 	}
 }
 

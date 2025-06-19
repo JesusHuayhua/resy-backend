@@ -54,73 +54,6 @@ func NewHTTPHandler(ep endpoints.Set) http.Handler {
 	return m
 }
 
-/*
-
-// Nota: Mejorar esto con funciones genericas.
-func parseInput1(req *response.RolesRequest, r *http.Request) (interface{}, error) {
-	if err := r.ParseForm(); err != nil {
-		return nil, err
-	}
-	q := r.URL.Query()
-	opStr := q.Get("tipo_op")
-	if opStr == "" {
-		return nil, errors.New("falta el parámetro tipo_op")
-	}
-	op, err := strconv.Atoi(opStr)
-	if err != nil {
-		return nil, errors.New("tipo_op debe ser entero")
-	}
-	req.TipoOp = op
-	for k, vals := range q {
-		if k == "tipo_op" {
-			continue
-		}
-		for _, v := range vals {
-			req.Args = append(req.Args, svc_internal.Filter{
-				Key:   k,
-				Value: v,
-			})
-		}
-	}
-	return req, nil
-}
-
-func parseInput2(req *response.UsuarioRequest, r *http.Request) (interface{}, error) {
-	if err := r.ParseForm(); err != nil {
-		return nil, err
-	}
-	q := r.URL.Query()
-	opStr := q.Get("tipo_op")
-	if opStr == "" {
-		return nil, errors.New("falta el parámetro tipo_op")
-	}
-	op, err := strconv.Atoi(opStr)
-	if err != nil {
-		return nil, errors.New("tipo_op debe ser entero")
-	}
-	req.TipoOp = op
-	for k, vals := range q {
-		if k == "tipo_op" {
-			continue
-		}
-		for _, v := range vals {
-			req.Args = append(req.Args, svc_internal.Filter{
-				Key:   k,
-				Value: v,
-			})
-		}
-	}
-	return req, nil
-}
-*/
-
-type HasBaseReq interface {
-	~struct {
-		TipoOp int
-		Args   []svc_internal.Filter
-	}
-}
-
 func parseInput(req response.GenericRequest, r *http.Request) (response.GenericRequest, error) {
 	if err := r.ParseForm(); err != nil {
 		return req, err
@@ -136,14 +69,14 @@ func parseInput(req response.GenericRequest, r *http.Request) (response.GenericR
 	if err != nil {
 		return req, errors.New("tipo_op debe ser entero")
 	}
-	req.TipoOp = op // OK: campo visible
+	req.TipoOp = op
 	for k, vals := range q {
 		if k == "tipo_op" {
 			continue
 		}
 		for _, v := range vals {
 			req.Args = append(req.Args,
-				svc_internal.Filter{Key: k, Value: v}) // OK
+				svc_internal.Filter{Key: k, Value: v})
 		}
 	}
 	return req, nil
@@ -158,12 +91,6 @@ func decodeHTTPRolesRequest(_ context.Context, r *http.Request) (interface{}, er
 // Dos formas: JSON o URL, esto es lo de menos, para facilidad de testing, usare URL schema.
 func decodeHTTPUsersRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var req response.GenericRequest
-	/*
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			return nil, err
-		}
-	*/
 	req_res, _ := parseInput(req, r)
 	return req_res, nil
 }

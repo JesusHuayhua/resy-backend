@@ -31,7 +31,11 @@ func envString(env, fallback string) string {
 	return e
 }
 
-// curl "http://localhost:8081/users?tipo_op=1&nombres=Rodrigo&apellidos=Medina"
+/*
+curl "http://localhost:8081/users?tipo_op=1&nombres=cpp&apellidos=ruso&correo=cppruso@huevon.com&telefono=997430450&fechaNacimiento=03/05/2020&contraseña=huevon&&rol=23"
+curl "http://localhost:8081/users?tipo_op=2&nombres=cpp&apellidos=ruso&correo=cppruso@huevon.com&telefono=997430450&fechaNacimiento=03/05/2020&contraseña=huevon&&rol=23&&estado=1"
+curl "http://localhost:8081/users?tipo_op=3&condicion=&nombres=cpp&apellidos=ruso&correo=cppruso@huevon.com&telefono=997430450&fechaNacimiento=03/05/2020&contraseña=huevon&&rol=23&&estado=1"
+*/
 
 func main() {
 	var (
