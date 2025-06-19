@@ -125,7 +125,7 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args []interface
 	var usuarios []UserModels.UsuarioBD
 	columnas := []string{
 		"id_usuario", "nombres", "apellidos", "correo",
-		"telefono", "fechanacimiento", "contrasenia", "rol", "estadoacceso",
+		"telefono", "direccion", "fechanacimiento", "contrasenia", "rol", "estadoacceso",
 	}
 	var rows *sql.Rows
 	var err error
@@ -148,6 +148,7 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args []interface
 			&usuario.DataUsuario.Apellidos,
 			&usuario.DataUsuario.Correo,
 			&usuario.DataUsuario.Telefono,
+			&usuario.DataUsuario.Direccion,
 			&usuario.DataUsuario.FechaNacimiento,
 			&contraseniaEncriptada,
 			&usuario.DataUsuario.Rol,
