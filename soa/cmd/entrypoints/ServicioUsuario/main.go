@@ -1,13 +1,12 @@
-package main
+package entrypoints
 
 import (
-	"ServicioUsuario/pkg/api/handlers"
-	"ServicioUsuario/pkg/core/usecase/backBD"
 	"log"
 	"net/http"
-
-	"ServicioUsuario/pkg/repository/crypton"
-	"ServicioUsuario/pkg/repository/database"
+	"soa/pkg/services/ServicioUsuario/api/handlers"
+	"soa/pkg/services/ServicioUsuario/core/usecase/backBD"
+	"soa/pkg/services/ServicioUsuario/repository/crypton"
+	"soa/pkg/services/ServicioUsuario/repository/database"
 
 	_ "github.com/lib/pq" //Driver Para base de datos postgreSQL
 )

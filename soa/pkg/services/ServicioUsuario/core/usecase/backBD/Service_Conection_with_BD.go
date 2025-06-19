@@ -1,11 +1,11 @@
 package backBD
 
 import (
-	UserModels "ServicioUsuario/pkg/core/domain"
-	"ServicioUsuario/pkg/core/internal"
-	"ServicioUsuario/pkg/repository"
-	"ServicioUsuario/pkg/repository/crypton"
-	repoInterface "ServicioUsuario/pkg/repository/interfaces"
+	UserModels "ServicioUsuario/core/domain"
+	"ServicioUsuario/core/internal"
+	"ServicioUsuario/repository"
+	"ServicioUsuario/repository/crypton"
+	repoInterface "ServicioUsuario/repository/interfaces"
 	"context"
 	"crypto/rand"
 	"database/sql"
