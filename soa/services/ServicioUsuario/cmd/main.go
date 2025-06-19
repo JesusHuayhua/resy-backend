@@ -34,14 +34,45 @@ func main() {
 	defer dbManager.Cerrar()
 	servicio := backBD.NuevoServicioUsuario(dbManager.DB, encriptacionKey)
 	server := handlers.NewServer(servicio)
-
 	http.HandleFunc("/usuarios", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
 			server.InsertarUsuario(w, r)
 		case http.MethodGet:
 			server.ListarUsuarios(w, r)
+		case http.MethodPut:
+			server.ActualizarUsuario(w, r)
+		case http.MethodDelete:
+			server.EliminarUsuario(w, r)
 		default:
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+	http.HandleFunc("/roles", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			server.InsertarRol(w, r)
+		case http.MethodGet:
+			server.ListarRoles(w, r)
+		case http.MethodPut:
+			server.ActualizarRol(w, r)
+		case http.MethodDelete:
+			server.EliminarRol(w, r)
+		default:
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+	http.HandleFunc("/recuperar", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			server.IniciarRecuperacionPassword(w, r)
+		} else {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+	http.HandleFunc("/recuperar/confirmar", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			server.RecuperarPassword(w, r)
+		} else {
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
 	})
