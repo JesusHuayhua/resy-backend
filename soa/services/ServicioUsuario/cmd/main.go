@@ -1,12 +1,14 @@
 package main
 
 import (
+	"ServicioUsuario/pkg/api/handlers"
+	"ServicioUsuario/pkg/core/usecase/backBD"
 	"log"
+	"net/http"
 
-	ServicioUsuario "ServicioUsuario/pkg/core/usecase/BDoperators"
+	"ServicioUsuario/pkg/repository/crypton"
+	"ServicioUsuario/pkg/repository/database"
 
-	"github.com/Shauanth/Singleton_Encription_ServiceGolang/crypton"
-	"github.com/Shauanth/Singleton_Encription_ServiceGolang/database"
 	_ "github.com/lib/pq" //Driver Para base de datos postgreSQL
 )
 
@@ -14,12 +16,12 @@ func main() {
 	databaseInformation := database.Config{
 		Driver:       "postgres",
 		TipoDriver:   "PostgreSQL",
-		DBName:       "postgres",
-		Host:         "localhost",
+		DBName:       "ingesoft1",
+		Host:         "ingesoft1.cyofngbo9tfh.us-east-1.rds.amazonaws.com",
 		Port:         "5432",
-		User:         "postgres",
+		User:         "ingesoft1",
 		DatabaseName: "ResyDB",
-		Password:     "a5i3aJtCcU0P56OTDmXSGb/kfkZY1/lEGdh5eVsbomGgL6ss7Q==",
+		Password:     "WwF3OBYuf8Tx1opemwPSc4LrAMv2NDQLZ/mYh4HPwcVZymIShg==",
 	}
 	encriptacionKey := crypton.Config{
 		EncryptionKey: "53WDFETRFQFC1?*OS!0LNSADJUER2YU8",
@@ -30,18 +32,50 @@ func main() {
 		log.Fatalf("Error al conectar a la BD: %v", err)
 	}
 	defer dbManager.Cerrar()
-	// Inicializa el servicio de usuario
-	_ = ServicioUsuario.NuevoServicioUsuario(dbManager.DB, encriptacionKey)
-	// Ejemplo de uso: insertar un usuario
-	/*
-		status, err := servicioUsuario.InsertarNuevoUsuario(
-			"Juan", "Pérez", "juan.perez@email.com", "123456789",
-			time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC), "mi_contraseña_segura", 1,
-		)
-		if err != nil {
-			fmt.Printf("Error al insertar usuario: %v\n", err)
-		} else {
-			fmt.Printf("Usuario insertado, status: %v\n", status)
+	servicio := backBD.NuevoServicioUsuario(dbManager.DB, encriptacionKey)
+	server := handlers.NewServer(servicio)
+	http.HandleFunc("/usuarios", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			server.InsertarUsuario(w, r)
+		case http.MethodGet:
+			server.ListarUsuarios(w, r)
+		case http.MethodPut:
+			server.ActualizarUsuario(w, r)
+		case http.MethodDelete:
+			server.EliminarUsuario(w, r)
+		default:
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
-	*/
+	})
+	http.HandleFunc("/roles", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			server.InsertarRol(w, r)
+		case http.MethodGet:
+			server.ListarRoles(w, r)
+		case http.MethodPut:
+			server.ActualizarRol(w, r)
+		case http.MethodDelete:
+			server.EliminarRol(w, r)
+		default:
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+	http.HandleFunc("/recuperar", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			server.IniciarRecuperacionPassword(w, r)
+		} else {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+	http.HandleFunc("/recuperar/confirmar", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			server.RecuperarPassword(w, r)
+		} else {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+	log.Println("Servidor escuchando en :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

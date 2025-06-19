@@ -1,10 +1,10 @@
-package Bdoperators
+package backBD
 
 import (
 	UserModels "ServicioUsuario/pkg/core/domain"
 	"ServicioUsuario/pkg/core/internal"
-	"ServicioUsuario/pkg/core/usecase/interfaces"
 	"ServicioUsuario/pkg/repository"
+	"ServicioUsuario/pkg/repository/crypton"
 	repoInterface "ServicioUsuario/pkg/repository/interfaces"
 	"context"
 	"crypto/rand"
@@ -16,7 +16,6 @@ import (
 	"os"
 	"time"
 
-	crypton "github.com/Shauanth/Singleton_Encription_ServiceGolang/crypton"
 	log "github.com/go-kit/log"
 	"gopkg.in/gomail.v2"
 )
@@ -28,7 +27,7 @@ type ServicioUsuario struct {
 }
 
 // Permite la Conexion de un nuevo usuario para hacer operaciones CRUD con la base de datos
-func NuevoServicioUsuario(db *sql.DB, cryptConfig crypton.Config) interfaces.Service {
+func NuevoServicioUsuario(db *sql.DB, cryptConfig crypton.Config) *ServicioUsuario {
 	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	crud := repository.NewUserRepository(db)
