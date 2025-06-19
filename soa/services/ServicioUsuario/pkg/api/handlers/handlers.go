@@ -62,6 +62,7 @@ func (s *Server) ListarUsuarios(w http.ResponseWriter, r *http.Request) {
 // PUT /usuarios/{id}
 func (s *Server) ActualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	type reqBody struct {
+		Id              int    `json:"id"`
 		Nombres         string `json:"nombres"`
 		Apellidos       string `json:"apellidos"`
 		Correo          string `json:"correo"`
@@ -70,11 +71,6 @@ func (s *Server) ActualizarUsuario(w http.ResponseWriter, r *http.Request) {
 		Contrasenia     string `json:"contrasenia"`
 		Rol             int    `json:"rol"`
 		EstadoAcceso    bool   `json:"estadoacceso"`
-	}
-	id := r.URL.Query().Get("id")
-	if id == "" {
-		http.Error(w, "Falta el parámetro id", http.StatusBadRequest)
-		return
 	}
 	var req reqBody
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -86,9 +82,7 @@ func (s *Server) ActualizarUsuario(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Fecha inválida", http.StatusBadRequest)
 		return
 	}
-	var idInt int
-	fmt.Sscanf(id, "%d", &idInt)
-	status, err := s.Svc.ActualizarUsuario(idInt, req.Nombres, req.Apellidos, req.Correo, req.Telefono, fecha, req.Contrasenia, req.Rol, req.EstadoAcceso)
+	status, err := s.Svc.ActualizarUsuario(req.Id, req.Nombres, req.Apellidos, req.Correo, req.Telefono, fecha, req.Contrasenia, req.Rol, req.EstadoAcceso)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -142,6 +136,7 @@ func (s *Server) ActualizarRol(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	type reqBody struct {
+		Id        int    `json:"id"`
 		NombreRol string `json:"nombrerol"`
 	}
 	var req reqBody
@@ -149,9 +144,7 @@ func (s *Server) ActualizarRol(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "JSON inválido", http.StatusBadRequest)
 		return
 	}
-	var idInt int
-	fmt.Sscanf(id, "%d", &idInt)
-	status, err := s.Svc.ActualizarRol(idInt, req.NombreRol)
+	status, err := s.Svc.ActualizarRol(req.Id, req.NombreRol)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

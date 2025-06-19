@@ -65,37 +65,48 @@ func (c *CRUD) Insertar(tabla string, datos interface{}) error {
 
 // Actualizar actualiza registros en la tabla especificada con una condición flexible
 func (c *CRUD) Actualizar(tabla string, datos interface{}, whereClause string, whereArgs ...interface{}) error {
-	// Obtener el tipo y valor de la estructura
 	v := reflect.ValueOf(datos)
 	if v.Kind() == reflect.Ptr {
 		v = v.Elem()
 	}
 	t := v.Type()
 
-	// Preparar las columnas y los valores
 	var updates []string
 	var values []interface{}
+	paramIdx := 1
 
 	for i := 0; i < v.NumField(); i++ {
 		field := t.Field(i)
-		value := v.Field(i).Interface()
-
-		// Obtener el nombre de la columna (usando el tag `db` o el nombre del campo)
+		dbTag := field.Tag.Get("db")
 		column := field.Name
-		if dbTag := field.Tag.Get("db"); dbTag != "" {
+		if dbTag != "" {
 			column = strings.Split(dbTag, ",")[0]
 		}
-		updates = append(updates, fmt.Sprintf("%s = $%d", column, i+1))
-		values = append(values, value)
+		// Omitir campos que sean id_usuario (case-insensitive)
+		if strings.EqualFold(column, "id_usuario") {
+			continue
+		}
+		updates = append(updates, fmt.Sprintf("%s = $%d", column, paramIdx))
+		values = append(values, v.Field(i).Interface())
+		paramIdx++
 	}
-	// Agregar los argumentos del WHERE al final
-	values = append(values, whereArgs...)
+	// Agregar los argumentos del WHERE al final, con el siguiente índice de parámetro
+	whereClauseFinal := whereClause
+	for i := range whereArgs {
+		whereParamIdx := paramIdx + i
+		// Reemplazar $1, $2, ... en whereClause por el índice correcto
+		placeholder := fmt.Sprintf("$%d", i+1)
+		wherePlaceholder := fmt.Sprintf("$%d", whereParamIdx)
+		whereClauseFinal = strings.Replace(whereClauseFinal, placeholder, wherePlaceholder, 1)
+		values = append(values, whereArgs[i])
+	}
+
 	// Construir la consulta SQL
 	query := fmt.Sprintf(
 		"UPDATE %s SET %s WHERE %s",
 		tabla,
 		strings.Join(updates, ", "),
-		whereClause,
+		whereClauseFinal,
 	)
 
 	// Ejecutar la consulta
