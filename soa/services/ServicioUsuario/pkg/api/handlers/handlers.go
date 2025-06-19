@@ -17,15 +17,24 @@ func NewServer(svc *BDoperators.ServicioUsuario) *Server {
 	return &Server{Svc: svc}
 }
 
+// habilitarCORS configura los encabezados CORS para permitir solicitudes de cualquier origen.
+func habilitarCORS(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+}
+
 // POST /usuarios
 // InsertarUsuario maneja la creación de un nuevo usuario a través de una petición HTTP POST.
 // Decodifica el cuerpo de la petición, valida los datos y llama al servicio correspondiente.
 func (s *Server) InsertarUsuario(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	type reqBody struct {
 		Nombres         string `json:"nombres"`
 		Apellidos       string `json:"apellidos"`
 		Correo          string `json:"correo"`
 		Telefono        string `json:"telefono"`
+		Direccion       string `json:"direccion"`
 		FechaNacimiento string `json:"fechanacimiento"`
 		Contrasenia     string `json:"contrasenia"`
 		Rol             int    `json:"rol"`
@@ -41,7 +50,7 @@ func (s *Server) InsertarUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	status, err := s.Svc.InsertarNuevoUsuario(
-		req.Nombres, req.Apellidos, req.Correo, req.Telefono, fecha, req.Contrasenia, req.Rol,
+		req.Nombres, req.Apellidos, req.Correo, req.Telefono, req.Direccion, fecha, req.Contrasenia, req.Rol,
 	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -53,6 +62,7 @@ func (s *Server) InsertarUsuario(w http.ResponseWriter, r *http.Request) {
 
 // GET /usuarios
 func (s *Server) ListarUsuarios(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	_, usuarios, err := s.Svc.SeleccionarUsuarios("", []interface{}{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -64,12 +74,14 @@ func (s *Server) ListarUsuarios(w http.ResponseWriter, r *http.Request) {
 
 // PUT /usuarios/{id}
 func (s *Server) ActualizarUsuario(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	type reqBody struct {
 		Id              int    `json:"id"`
 		Nombres         string `json:"nombres"`
 		Apellidos       string `json:"apellidos"`
 		Correo          string `json:"correo"`
 		Telefono        string `json:"telefono"`
+		Direccion       string `json:"direccion"`
 		FechaNacimiento string `json:"fechanacimiento"`
 		Contrasenia     string `json:"contrasenia"`
 		Rol             int    `json:"rol"`
@@ -85,7 +97,7 @@ func (s *Server) ActualizarUsuario(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Fecha inválida", http.StatusBadRequest)
 		return
 	}
-	status, err := s.Svc.ActualizarUsuario(req.Id, req.Nombres, req.Apellidos, req.Correo, req.Telefono, fecha, req.Contrasenia, req.Rol, req.EstadoAcceso)
+	status, err := s.Svc.ActualizarUsuario(req.Id, req.Nombres, req.Apellidos, req.Correo, req.Telefono, req.Direccion, fecha, req.Contrasenia, req.Rol, req.EstadoAcceso)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -96,6 +108,7 @@ func (s *Server) ActualizarUsuario(w http.ResponseWriter, r *http.Request) {
 
 // DELETE /usuarios/{id}
 func (s *Server) EliminarUsuario(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		http.Error(w, "Falta el parámetro id", http.StatusBadRequest)
@@ -114,6 +127,7 @@ func (s *Server) EliminarUsuario(w http.ResponseWriter, r *http.Request) {
 
 // POST /roles
 func (s *Server) InsertarRol(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	type reqBody struct {
 		NombreRol string `json:"nombrerol"`
 	}
@@ -133,6 +147,7 @@ func (s *Server) InsertarRol(w http.ResponseWriter, r *http.Request) {
 
 // PUT /roles/{id}
 func (s *Server) ActualizarRol(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		http.Error(w, "Falta el parámetro id", http.StatusBadRequest)
@@ -158,6 +173,7 @@ func (s *Server) ActualizarRol(w http.ResponseWriter, r *http.Request) {
 
 // DELETE /roles/{id}
 func (s *Server) EliminarRol(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		http.Error(w, "Falta el parámetro id", http.StatusBadRequest)
@@ -176,6 +192,7 @@ func (s *Server) EliminarRol(w http.ResponseWriter, r *http.Request) {
 
 // GET /roles
 func (s *Server) ListarRoles(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	_, roles, err := s.Svc.SeleccionarRoles("", nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -187,6 +204,7 @@ func (s *Server) ListarRoles(w http.ResponseWriter, r *http.Request) {
 
 // POST /recuperar
 func (s *Server) IniciarRecuperacionPassword(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	type reqBody struct {
 		Correo string `json:"correo"`
 	}
@@ -206,6 +224,7 @@ func (s *Server) IniciarRecuperacionPassword(w http.ResponseWriter, r *http.Requ
 
 // POST /recuperar/confirmar
 func (s *Server) RecuperarPassword(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
 	type reqBody struct {
 		Correo        string `json:"correo"`
 		Token         string `json:"token"`

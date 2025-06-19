@@ -55,7 +55,7 @@ func (s *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 }
 
 // Inserta un nuevo usuario en la base de datos y encripta su contraseña
-func (s *ServicioUsuario) InsertarNuevoUsuario(nombres, apellidos, correo, telefono string, fechaNacimiento time.Time, contrasenia string, rol int) (internal.StatusCode, error) {
+func (s *ServicioUsuario) InsertarNuevoUsuario(nombres, apellidos, correo, telefono, direccion string, fechaNacimiento time.Time, contrasenia string, rol int) (internal.StatusCode, error) {
 	// Encriptar la contraseña antes de guardar
 	contraseniaEncriptada, err := crypton.Encrypt(contrasenia, s.cryptConfig)
 	if err != nil {
@@ -67,6 +67,7 @@ func (s *ServicioUsuario) InsertarNuevoUsuario(nombres, apellidos, correo, telef
 		Apellidos:       apellidos,
 		Correo:          correo,
 		Telefono:        telefono,
+		Direccion:       direccion,
 		FechaNacimiento: fechaNacimiento,
 		Contrasenia:     contraseniaEncriptada,
 		Rol:             rol,
@@ -80,7 +81,7 @@ func (s *ServicioUsuario) InsertarNuevoUsuario(nombres, apellidos, correo, telef
 }
 
 // Actualiza los datos de un usuario existente, encriptando la contraseña si se proporciona una nueva
-func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, correo, telefono string, fechaNacimiento time.Time, contrasenia string, rol int, estado bool) (internal.StatusCode, error) {
+func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, correo, telefono, direccion string, fechaNacimiento time.Time, contrasenia string, rol int, estado bool) (internal.StatusCode, error) {
 	// Encriptar la contraseña si se proporciona una nueva
 	contraseniaEncriptada := contrasenia
 	if contrasenia != "" {
@@ -96,6 +97,7 @@ func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, c
 		Apellidos:       apellidos,
 		Correo:          correo,
 		Telefono:        telefono,
+		Direccion:       direccion,
 		FechaNacimiento: fechaNacimiento,
 		Contrasenia:     contraseniaEncriptada,
 		Rol:             rol,
