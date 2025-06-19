@@ -119,7 +119,7 @@ func (s *ServicioUsuario) EliminarUsuario(id int) (internal.StatusCode, error) {
 }
 
 // Devuelve una lista de usuarios de la base de datos según una condición opcional
-func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interface{}) (internal.StatusCode, []UserModels.UsuarioBD, error) {
+func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args []interface{}) (internal.StatusCode, []UserModels.UsuarioBD, error) {
 	var usuarios []UserModels.UsuarioBD
 	columnas := []string{
 		"id_usuario", "nombres", "apellidos", "correo",
@@ -139,6 +139,7 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interfac
 	defer rows.Close()
 	for rows.Next() {
 		var usuario UserModels.UsuarioBD
+		var contraseniaEncriptada string
 		err := rows.Scan(
 			&usuario.IdUsuario,
 			&usuario.DataUsuario.Nombres,
@@ -146,7 +147,7 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interfac
 			&usuario.DataUsuario.Correo,
 			&usuario.DataUsuario.Telefono,
 			&usuario.DataUsuario.FechaNacimiento,
-			&usuario.DataUsuario.Contrasenia,
+			&contraseniaEncriptada,
 			&usuario.DataUsuario.Rol,
 			&usuario.DataUsuario.EstadoAcceso,
 		)
@@ -154,6 +155,13 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args ...interfac
 			s.logger.Log("err", fmt.Sprintf("error al escanear fila: %v", err))
 			return internal.Error, nil, fmt.Errorf("error al escanear fila: %v", err)
 		}
+		// Desencriptar la contraseña
+		contraseniaDescifrada, err := crypton.Decrypt(contraseniaEncriptada, s.cryptConfig)
+		if err != nil {
+			s.logger.Log("err", fmt.Sprintf("error al descifrar contraseña: %v", err))
+			return internal.Error, nil, fmt.Errorf("error al descifrar contraseña: %v", err)
+		}
+		usuario.DataUsuario.Contrasenia = contraseniaDescifrada
 		usuarios = append(usuarios, usuario)
 	}
 	if err = rows.Err(); err != nil {
