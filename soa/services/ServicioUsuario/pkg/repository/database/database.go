@@ -11,7 +11,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/Shauanth/Singleton_Encription_ServiceGolang/crypton"
+	"ServicioUsuario/pkg/repository/crypton"
+
 	_ "github.com/lib/pq"
 )
 
