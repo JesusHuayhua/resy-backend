@@ -50,7 +50,7 @@ func (s *Server) InsertarUsuario(w http.ResponseWriter, r *http.Request) {
 
 // GET /usuarios
 func (s *Server) ListarUsuarios(w http.ResponseWriter, r *http.Request) {
-	_, usuarios, err := s.Svc.SeleccionarUsuarios("", nil)
+	_, usuarios, err := s.Svc.SeleccionarUsuarios("", []interface{}{})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
