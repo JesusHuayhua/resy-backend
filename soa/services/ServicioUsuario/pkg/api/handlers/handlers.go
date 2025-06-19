@@ -1,3 +1,4 @@
+// Package handlers proporciona los controladores HTTP para la gestión de usuarios y roles.
 package handlers
 
 import (
@@ -17,6 +18,8 @@ func NewServer(svc *BDoperators.ServicioUsuario) *Server {
 }
 
 // POST /usuarios
+// InsertarUsuario maneja la creación de un nuevo usuario a través de una petición HTTP POST.
+// Decodifica el cuerpo de la petición, valida los datos y llama al servicio correspondiente.
 func (s *Server) InsertarUsuario(w http.ResponseWriter, r *http.Request) {
 	type reqBody struct {
 		Nombres         string `json:"nombres"`
