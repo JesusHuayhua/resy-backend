@@ -326,7 +326,7 @@ func enviarTokenPorEmail(correo, token string) error {
 	m.SetBody("text/html", htmlBody)
 
 	// Usa tu contraseña real o una variable de entorno
-	d := gomail.NewDialer("smtp.gmail.com", 587, "salonverde620@gmail.com", "T7J4N3N44")
+	d := gomail.NewDialer("smtp.gmail.com", 587, "salonverde620@gmail.com", "wnvv lqlr niqv hwwt")
 
 	return d.DialAndSend(m)
 }
