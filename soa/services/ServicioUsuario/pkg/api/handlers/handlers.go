@@ -320,3 +320,53 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
 }
+
+// POST /recuperar/verificar
+func (s *Server) VerificarTokenRecuperacion(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	type reqBody struct {
+		Correo string `json:"correo"`
+		Token  string `json:"token"`
+	}
+	var req reqBody
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "JSON inválido", http.StatusBadRequest)
+		return
+	}
+	err := s.Svc.VerificarTokenRecuperacion(req.Correo, req.Token)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{"status": "ok"})
+}
+
+// POST /recuperar/actualizar
+func (s *Server) ActualizarPasswordRecuperacion(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	type reqBody struct {
+		Correo        string `json:"correo"`
+		NuevaPassword string `json:"nuevacontrasenia"`
+	}
+	var req reqBody
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "JSON inválido", http.StatusBadRequest)
+		return
+	}
+	err := s.Svc.ActualizarPasswordRecuperacion(req.Correo, req.NuevaPassword)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{"status": "ok"})
+}

@@ -290,6 +290,38 @@ func (s *ServicioUsuario) RecuperarPassword(correo, token, nuevaContrasenia stri
 	return nil
 }
 
+// Verifica si el token es válido para el correo dado
+func (s *ServicioUsuario) VerificarTokenRecuperacion(correo, token string) error {
+	db := s.crud.(*repository.UserRepositoryImpl).Crud().DB
+	var expiraEn time.Time
+	var tokenBD string
+	err := db.QueryRow(`SELECT token, expira_en FROM "RecuperacionPassword" WHERE correo=$1`, correo).Scan(&tokenBD, &expiraEn)
+	if err != nil {
+		_ = eliminarToken(db, correo)
+		return errors.New("token no encontrado o ya utilizado")
+	}
+	if tokenBD != token || time.Now().After(expiraEn) {
+		_ = eliminarToken(db, correo)
+		return errors.New("token inválido o expirado")
+	}
+	return nil
+}
+
+// Actualiza la contraseña (requiere que el token ya haya sido validado)
+func (s *ServicioUsuario) ActualizarPasswordRecuperacion(correo, nuevaContrasenia string) error {
+	db := s.crud.(*repository.UserRepositoryImpl).Crud().DB
+	contraseniaEncriptada, err := crypton.Encrypt(nuevaContrasenia, s.cryptConfig)
+	if err != nil {
+		return errors.New("no se pudo encriptar la contraseña")
+	}
+	_, err = db.Exec(`UPDATE "Usuario" SET contrasenia=$1 WHERE correo=$2`, contraseniaEncriptada, correo)
+	if err != nil {
+		return errors.New("no se pudo actualizar la contraseña")
+	}
+	_ = eliminarToken(db, correo)
+	return nil
+}
+
 func generarToken() (string, error) {
 	bytes := make([]byte, 16)
 	_, err := rand.Read(bytes)
