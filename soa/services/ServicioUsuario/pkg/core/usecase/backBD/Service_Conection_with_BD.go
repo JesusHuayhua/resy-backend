@@ -335,3 +335,46 @@ func eliminarToken(db *sql.DB, correo string) error {
 	_, err := db.Exec(`DELETE FROM "RecuperacionPassword" WHERE correo=$1`, correo)
 	return err
 }
+
+// Login verifica las credenciales y retorna la info del usuario (sin contraseña) y estado de acceso
+func (s *ServicioUsuario) Login(correo, contrasenia string) (bool, UserModels.UsuarioBD, error) {
+	columnas := []string{
+		"id_usuario", "nombres", "apellidos", "correo",
+		"telefono", "direccion", "fechanacimiento", "contrasenia", "rol", "estadoacceso",
+	}
+	rows, err := s.crud.Seleccionar(`"Usuario"`, columnas, "correo = $1", correo)
+	if err != nil {
+		return false, UserModels.UsuarioBD{}, fmt.Errorf("error en select: %v", err)
+	}
+	defer rows.Close()
+	if rows.Next() {
+		var usuario UserModels.UsuarioBD
+		var contraseniaEncriptada string
+		err := rows.Scan(
+			&usuario.IdUsuario,
+			&usuario.DataUsuario.Nombres,
+			&usuario.DataUsuario.Apellidos,
+			&usuario.DataUsuario.Correo,
+			&usuario.DataUsuario.Telefono,
+			&usuario.DataUsuario.Direccion,
+			&usuario.DataUsuario.FechaNacimiento,
+			&contraseniaEncriptada,
+			&usuario.DataUsuario.Rol,
+			&usuario.DataUsuario.EstadoAcceso,
+		)
+		if err != nil {
+			return false, UserModels.UsuarioBD{}, fmt.Errorf("error al escanear fila: %v", err)
+		}
+		// Desencriptar la contraseña
+		contraseniaDescifrada, err := crypton.Decrypt(contraseniaEncriptada, s.cryptConfig)
+		if err != nil {
+			return false, UserModels.UsuarioBD{}, fmt.Errorf("error al descifrar contraseña: %v", err)
+		}
+		// Comparar contraseñas
+		if contraseniaDescifrada == contrasenia {
+			usuario.DataUsuario.Contrasenia = "" // No devolver la contraseña
+			return true, usuario, nil
+		}
+	}
+	return false, UserModels.UsuarioBD{}, nil
+}

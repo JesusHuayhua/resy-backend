@@ -289,3 +289,34 @@ func (s *Server) RecuperarPassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{"status": "ok"})
 }
+
+// POST /login
+func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	type reqBody struct {
+		Correo      string `json:"correo"`
+		Contrasenia string `json:"contrasenia"`
+	}
+	var req reqBody
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "JSON inválido", http.StatusBadRequest)
+		return
+	}
+	ok, usuario, err := s.Svc.Login(req.Correo, req.Contrasenia)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	resp := map[string]interface{}{
+		"acceso": ok,
+	}
+	if ok {
+		resp["usuario"] = usuario
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
