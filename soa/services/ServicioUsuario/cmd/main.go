@@ -34,7 +34,13 @@ func main() {
 	defer dbManager.Cerrar()
 	servicio := backBD.NuevoServicioUsuario(dbManager.DB, encriptacionKey)
 	server := handlers.NewServer(servicio)
-	http.HandleFunc("/usuarios", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+	// Tus rutas normales
+	mux.HandleFunc("/usuarios", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			handlers.OpcionesHandler(w, r)
+			return
+		}
 		switch r.Method {
 		case http.MethodPost:
 			server.InsertarUsuario(w, r)
@@ -48,7 +54,11 @@ func main() {
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
 	})
-	http.HandleFunc("/roles", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/roles", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			handlers.OpcionesHandler(w, r)
+			return
+		}
 		switch r.Method {
 		case http.MethodPost:
 			server.InsertarRol(w, r)
@@ -62,20 +72,38 @@ func main() {
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
 	})
-	http.HandleFunc("/recuperar", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/recuperar", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			handlers.OpcionesHandler(w, r)
+			return
+		}
 		if r.Method == http.MethodPost {
 			server.IniciarRecuperacionPassword(w, r)
 		} else {
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
 	})
-	http.HandleFunc("/recuperar/confirmar", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/recuperar/confirmar", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			handlers.OpcionesHandler(w, r)
+			return
+		}
 		if r.Method == http.MethodPost {
 			server.RecuperarPassword(w, r)
 		} else {
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
 	})
+	// Ruta global para OPTIONS (esto acepta cualquier ruta)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			handlers.OpcionesHandler(w, r)
+			return
+		}
+		// ...aquí puedes delegar a otros handlers si lo deseas...
+		http.NotFound(w, r)
+	})
+
 	log.Println("Servidor escuchando en :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
