@@ -294,16 +294,23 @@ func (s *ServicioUsuario) RecuperarPassword(correo, token, nuevaContrasenia stri
 func (s *ServicioUsuario) VerificarTokenRecuperacion(correo, token string) error {
 	db := s.crud.(*repository.UserRepositoryImpl).Crud().DB
 	var expiraEn time.Time
-	var tokenBD string
-	err := db.QueryRow(`SELECT token, expira_en FROM "RecuperacionPassword" WHERE correo=$1`, correo).Scan(&tokenBD, &expiraEn)
+	s.logger.Log("debug", fmt.Sprintf("Verificando token para correo: %s", correo))
+	s.logger.Log("debug", fmt.Sprintf("Token recibido: %s", token))
+	err := db.QueryRow(`SELECT expira_en FROM "RecuperacionPassword" WHERE correo=$1 AND token=$2`, correo, token).Scan(&expiraEn)
 	if err != nil {
+		s.logger.Log("debug", fmt.Sprintf("Error en SELECT: %v", err))
 		_ = eliminarToken(db, correo)
 		return errors.New("token no encontrado o ya utilizado")
 	}
-	if tokenBD != token || time.Now().After(expiraEn) {
+	s.logger.Log("debug", fmt.Sprintf("Expira en (UTC): %v", expiraEn.UTC()))
+	nowUTC := time.Now().UTC()
+	s.logger.Log("debug", fmt.Sprintf("Hora actual (UTC): %v", nowUTC))
+	if nowUTC.After(expiraEn.UTC()) {
+		s.logger.Log("debug", "Token expirado")
 		_ = eliminarToken(db, correo)
-		return errors.New("token inválido o expirado")
+		return errors.New("token expirado")
 	}
+	s.logger.Log("debug", "Token válido")
 	return nil
 }
 
@@ -332,7 +339,8 @@ func generarToken() (string, error) {
 }
 
 func guardarTokenRecuperacion(db *sql.DB, correo, token string, expira time.Time) error {
-	_, err := db.Exec(`INSERT INTO "RecuperacionPassword" (correo, token, expira_en) VALUES ($1, $2, $3)`, correo, token, expira)
+	// Guardar la fecha de expiración en UTC para evitar problemas de desfase horario
+	_, err := db.Exec(`INSERT INTO "RecuperacionPassword" (correo, token, expira_en) VALUES ($1, $2, $3)`, correo, token, expira.UTC())
 	return err
 }
 

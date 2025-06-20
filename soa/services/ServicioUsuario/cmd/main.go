@@ -5,6 +5,7 @@ import (
 	"ServicioUsuario/pkg/core/usecase/backBD"
 	"log"
 	"net/http"
+	"time"
 
 	"ServicioUsuario/pkg/repository/crypton"
 	"ServicioUsuario/pkg/repository/database"
@@ -136,6 +137,11 @@ func main() {
 		// ...aquí puedes delegar a otros handlers si lo deseas...
 		http.NotFound(w, r)
 	})
+
+	// Ejemplo: mostrar a qué hora apunta un time.Time
+	now := time.Now()
+	log.Printf("Hora local: %v", now)
+	log.Printf("Hora UTC: %v", now.UTC())
 
 	log.Println("Servidor escuchando en :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))
