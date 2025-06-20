@@ -173,11 +173,7 @@ CREATE TABLE "InformacionLocal" (
 );
 
 -- Insertar las modalidades de pedido iniciales
-INSERT INTO "ModalidadesPedido" ("nombre") VALUES
-  ('Delivery'),
-  ('Recojo en Local');
-
+INSERT INTO "ModalidadesPedido" ("nombre") values ('Delivery'), ('Recojo en Local');
 INSERT INTO "Roles" (nombrerol) values ('Admin'),('Cajero'),('Cliente');
-
 INSERT INTO "MetodosPago" ("nombre") values ('Efectivo'), ('Tarjeta'), ('Yape'), ('Plin');
 
