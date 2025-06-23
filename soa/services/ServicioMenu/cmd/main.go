@@ -3,6 +3,7 @@ package main
 import (
 	"ServicioMenu/pkg/api/handlers"
 	"ServicioMenu/pkg/core/usecase/backBD"
+	"ServicioMenu/pkg/repository/crypton"
 	"ServicioMenu/pkg/repository/database"
 	"log"
 	"net/http"
@@ -19,10 +20,7 @@ func main() {
 		DatabaseName: "ResyDB",
 		Password:     "WwF3OBYuf8Tx1opemwPSc4LrAMv2NDQLZ/mYh4HPwcVZymIShg==",
 	}
-	encriptacionKey := struct {
-		EncryptionKey string
-		Salt          string
-	}{
+	encriptacionKey := crypton.Config{
 		EncryptionKey: "53WDFETRFQFC1?*OS!0LNSADJUER2YU8",
 		Salt:          "RCumoV7j",
 	}
@@ -34,7 +32,6 @@ func main() {
 	servicio := backBD.NuevoServicioMenu(dbManager.DB)
 	server := handlers.NewServer(servicio)
 	mux := http.NewServeMux()
-
 	// Rutas para platos
 	mux.HandleFunc("/platos", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
@@ -76,7 +73,7 @@ func main() {
 	})
 
 	// Rutas para menú semanal
-	mux.HandleFunc("/menus", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/menu", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			handlers.OpcionesHandler(w, r)
 			return

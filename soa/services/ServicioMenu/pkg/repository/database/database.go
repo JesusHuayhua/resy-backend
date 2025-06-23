@@ -8,10 +8,9 @@ package database
 // It provides a DBManager struct to handle the database connection and operations.
 
 import (
+	"ServicioMenu/pkg/repository/crypton"
 	"database/sql"
 	"fmt"
-
-	"ServicioUsuario/pkg/repository/crypton"
 
 	_ "github.com/lib/pq"
 )
