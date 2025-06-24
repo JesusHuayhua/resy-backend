@@ -41,9 +41,25 @@ VALUES (1, 1, 10, true), (1, 2, 8, true), (2, 3, 5, true);
 INSERT INTO "Reserva" ("id_cliente", "fecha_reservada", "numPersonas", "estado_reserva", "especificaciones")
 VALUES (1, NOW() + INTERVAL '1 day', 4, 'Pendiente', 'Mesa cerca de la ventana');
 
+-- Reserva para usuario registrado
+INSERT INTO "Reserva" ("id_cliente", "fecha_reservada", "numPersonas", "estado_reserva", "especificaciones")
+VALUES (1, NOW() + INTERVAL '1 day', 4, 'Pendiente', 'Mesa cerca de la ventana');
+
+-- Reserva para NO registrado
+INSERT INTO "Reserva" ("nombre_cliente", "telefono_cliente", "correo_cliente", "fecha_reservada", "numPersonas", "estado_reserva", "especificaciones")
+VALUES ('Carlos López', '912345678', 'carlos@mail.com', NOW() + INTERVAL '2 day', 2, 'Pendiente', 'Sin registro');
+
 -- Pedido (el id_pedido se genera automáticamente)
 INSERT INTO "Pedido" ("id_cliente", "fecha", "total", "estado_pedido", "id_modalidad")
 VALUES (1, NOW(), 75.50, 'Registrado', 1);
+
+-- Pedido para usuario registrado
+INSERT INTO "Pedido" ("id_cliente", "fecha", "total", "estado_pedido", "id_modalidad")
+VALUES (1, NOW(), 75.50, 'Registrado', 1);
+
+-- Pedido para NO registrado
+INSERT INTO "Pedido" ("nombre_cliente", "telefono_cliente", "correo_cliente", "fecha", "total", "estado_pedido", "id_modalidad")
+VALUES ('Maria Torres', '987654321', 'maria@mail.com', NOW(), 50.00, 'Registrado', 2);
 
 -- Linea_Pedido
 INSERT INTO "Linea_Pedido" ("id_pedido", "id_plato", "cantidad_plato", "subtotal")

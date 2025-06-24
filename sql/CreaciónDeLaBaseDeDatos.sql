@@ -74,7 +74,10 @@ CREATE TABLE "Mensaje" (
 
 CREATE TABLE "Reserva" (
   "id_reserva" VARCHAR(8) PRIMARY KEY,
-  "id_cliente" INT REFERENCES "Usuario"("id_usuario"),
+  "id_cliente" INT REFERENCES "Usuario"("id_usuario"), -- ahora puede ser NULL
+  "nombre_cliente" VARCHAR(50),                        -- nuevo campo
+  "telefono_cliente" VARCHAR(20),                      -- nuevo campo
+  "correo_cliente" VARCHAR(50),                        -- nuevo campo
   "fecha_reservada" TIMESTAMP NOT NULL,
   "numPersonas" INT NOT NULL,
   "estado_reserva" "EstadoReserva" NOT NULL,
@@ -84,7 +87,10 @@ CREATE TABLE "Reserva" (
 -- Tabla Pedido modificada con relación a ModalidadesPedido
 CREATE TABLE "Pedido" (
   "id_pedido" VARCHAR(8) PRIMARY KEY,
-  "id_cliente" INT REFERENCES "Usuario"("id_usuario"),
+  "id_cliente" INT REFERENCES "Usuario"("id_usuario"), -- ahora puede ser NULL
+  "nombre_cliente" VARCHAR(50),                        -- nuevo campo
+  "telefono_cliente" VARCHAR(20),                      -- nuevo campo
+  "correo_cliente" VARCHAR(50),                        -- nuevo campo
   "fecha" TIMESTAMP NOT NULL,
   "total" DECIMAL(10,2) NOT NULL,
   "estado_pedido" "EstadosPedido" NOT NULL,
