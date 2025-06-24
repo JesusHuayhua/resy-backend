@@ -12,8 +12,8 @@ INSERT INTO "MetodosPago" ("nombre") VALUES ('Efectivo'), ('Tarjeta'), ('Yape'),
 -- Usuario (no se debe insertar id_usuario, es SERIAL)
 INSERT INTO "Usuario" (nombres, apellidos, correo, telefono, direccion, fechanacimiento, contrasenia, rol)
 VALUES 
-('Juan', 'Pérez', 'juanperez@mail.com', '999888777', 'Av. Siempre Viva 123', '1990-05-10', '123456', 3),
-('Ana', 'García', 'anagarcia@mail.com', '988777666', 'Calle Falsa 456', '1985-08-20', 'abcdef', 1);
+('Juan', 'Pérez', 'juanperez@mail.com', '999888777', 'Av. Siempre Viva 123', '1990-05-10', 'Vc/yfJJ/JzCMwtrpMJ2uHNF0hYEn1vDOaz8Px+pkKp6WTTXRGiX6ALx/', 3),
+('Ana', 'García', 'anagarcia@mail.com', '988777666', 'Calle Falsa 456', '1985-08-20', 'Vc/yfJJ/JzCMwtrpMJ2uHNF0hYEn1vDOaz8Px+pkKp6WTTXRGiX6ALx/', 1);
 
 -- Categorías de platos
 INSERT INTO "CategoriaPlatos" ("nombre") VALUES ('Entradas'), ('Fondos'), ('Postres');
@@ -72,4 +72,4 @@ VALUES ('Lun-Dom 8am-10pm', 'Av. Principal 123', '987654321', 'info@resy.com', '
 select * from "MenuSemanal";
 select * from "Menudia";
 select * from "Roles";
-select * from "Usuario";
+select * from "ResyDB"."Usuario";
