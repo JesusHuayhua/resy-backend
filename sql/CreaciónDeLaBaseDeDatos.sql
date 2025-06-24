@@ -172,8 +172,56 @@ CREATE TABLE "InformacionLocal" (
   "facebook" VARCHAR(100)
 );
 
--- Insertar las modalidades de pedido iniciales
-INSERT INTO "ModalidadesPedido" ("nombre") values ('Delivery'), ('Recojo en Local');
-INSERT INTO "Roles" (nombrerol) values ('Admin'),('Cajero'),('Cliente');
-INSERT INTO "MetodosPago" ("nombre") values ('Efectivo'), ('Tarjeta'), ('Yape'), ('Plin');
+-- Secuencias para PKs personalizados
+CREATE SEQUENCE IF NOT EXISTS "seq_reserva";
+CREATE SEQUENCE IF NOT EXISTS "seq_pedido";
+CREATE SEQUENCE IF NOT EXISTS "seq_menu";
+
+-- Función y trigger para id_reserva
+CREATE OR REPLACE FUNCTION generar_id_reserva()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.id_reserva IS NULL THEN
+    NEW.id_reserva := 'RES' || nextval('seq_reserva');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_id_reserva
+BEFORE INSERT ON "Reserva"
+FOR EACH ROW
+EXECUTE FUNCTION generar_id_reserva();
+
+-- Función y trigger para id_pedido
+CREATE OR REPLACE FUNCTION generar_id_pedido()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.id_pedido IS NULL THEN
+    NEW.id_pedido := 'PED' || nextval('seq_pedido');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_id_pedido
+BEFORE INSERT ON "Pedido"
+FOR EACH ROW
+EXECUTE FUNCTION generar_id_pedido();
+
+-- Función y trigger para id_menu
+CREATE OR REPLACE FUNCTION generar_id_menu()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.id_menu IS NULL THEN
+    NEW.id_menu := 'Men' || nextval('seq_menu');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_id_menu
+BEFORE INSERT ON "MenuSemanal"
+FOR EACH ROW
+EXECUTE FUNCTION generar_id_menu();
 
