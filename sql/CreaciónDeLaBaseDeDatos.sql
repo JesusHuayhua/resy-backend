@@ -67,27 +67,27 @@ CREATE TABLE "RecuperacionPassword" (
 
 CREATE TABLE "Mensaje" (
   "idMensaje" SERIAL PRIMARY KEY,
-  "idDestinatario" INT NOT NULL REFERENCES "Usuario"("id_usuario"),
-  "fechaHoraMensaje" TIMESTAMP NOT NULL,
-  "contenidoMensaje" VARCHAR(100) NOT NULL
+  "idDestino" INT NOT NULL REFERENCES "Usuario"("id_usuario"),
+  "fecha_Mensaje" TIMESTAMP NOT NULL,
+  "contenido" VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE "Reserva" (
   "id_reserva" VARCHAR(8) PRIMARY KEY,
-  "id_clienteSolicitante" INT REFERENCES "Usuario"("id_usuario"),
-  "fechaHoraReservada" TIMESTAMP NOT NULL,
+  "id_cliente" INT REFERENCES "Usuario"("id_usuario"),
+  "fecha_reservada" TIMESTAMP NOT NULL,
   "numPersonas" INT NOT NULL,
-  "estadoReserva" "EstadoReserva" NOT NULL,
-  "especificacionesDeLaReserva" VARCHAR(100)
+  "estado_reserva" "EstadoReserva" NOT NULL,
+  "especificaciones" VARCHAR(100)
 );
 
 -- Tabla Pedido modificada con relación a ModalidadesPedido
 CREATE TABLE "Pedido" (
   "id_pedido" VARCHAR(8) PRIMARY KEY,
-  "id_clienteSolicitante" INT REFERENCES "Usuario"("id_usuario"),
+  "id_cliente" INT REFERENCES "Usuario"("id_usuario"),
   "fecha" TIMESTAMP NOT NULL,
   "total" DECIMAL(10,2) NOT NULL,
-  "estadopedido" "EstadosPedido" NOT NULL,
+  "estado_pedido" "EstadosPedido" NOT NULL,
   "id_modalidad" INT NOT NULL REFERENCES "ModalidadesPedido"("id_modalidad")  -- Nueva relación
 );
 
@@ -98,7 +98,7 @@ CREATE TABLE "CategoriaPlatos" (
 
 CREATE TABLE "Plato" (
   "id_plato" SERIAL PRIMARY KEY,
-  "nombrePlato" VARCHAR(20) NOT NULL,
+  "nombre_plato" VARCHAR(20) NOT NULL,
   "categoria" INT NOT NULL REFERENCES "CategoriaPlatos"("id_categoria"),
   "descripcion" VARCHAR(200) NOT NULL,
   "precio" DECIMAL(10,2) NOT NULL,
@@ -108,8 +108,8 @@ CREATE TABLE "Plato" (
 
 CREATE TABLE "MenuSemanal" (
   "id_menu" VARCHAR(8) PRIMARY KEY,
-  "fechadeinicio" DATE NOT NULL,
-  "fechaFin" DATE NOT NULL
+  "fecha_inicio" DATE NOT NULL,
+  "fecha_fin" DATE NOT NULL
 );
 
 CREATE TABLE "Menudia" (
@@ -121,8 +121,8 @@ CREATE TABLE "Menudia" (
 CREATE TABLE "PlatosEnMenudia" (
   "id_dia" INT NOT NULL REFERENCES "Menudia"("id_dia"),
   "id_plato" INT NOT NULL REFERENCES "Plato"("id_plato"),
-  "cantidadDelPlato" INT not null,
-  "disponibleParaVender" BOOLEAN default true,
+  "cantidad_plato" INT not null,
+  "disponible_venta" BOOLEAN default true,
   PRIMARY KEY ("id_dia", "id_plato")
 );
 
@@ -130,15 +130,15 @@ CREATE TABLE "Linea_Pedido" (
   "id_linea" SERIAL PRIMARY KEY,
   "id_pedido" VARCHAR(8) NOT NULL REFERENCES "Pedido"("id_pedido"),
   "id_plato" INT NOT NULL REFERENCES "Plato"("id_plato"),
-  "cantidad" INT NOT NULL,
+  "cantidad_plato" INT NOT NULL,
   "subtotal" DECIMAL(10,2) NOT NULL
 );
 
 -- Tabla PagoRegistrado con relación a MetodosPago
 CREATE TABLE "PagoRegistrado" (
   "id_pago" SERIAL PRIMARY KEY,
-  "Nombrepagante" VARCHAR(50) NOT NULL,
-  "fecharegistro" TIMESTAMP NOT NULL,
+  "nombre_pagante" VARCHAR(50) NOT NULL,
+  "fecha_registro" TIMESTAMP NOT NULL,
   "monto" DECIMAL(10,2) NOT NULL,
   "id_metodo" INT NOT NULL REFERENCES "MetodosPago"("id_metodo")
 );
@@ -172,8 +172,56 @@ CREATE TABLE "InformacionLocal" (
   "facebook" VARCHAR(100)
 );
 
--- Insertar las modalidades de pedido iniciales
-INSERT INTO "ModalidadesPedido" ("nombre") values ('Delivery'), ('Recojo en Local');
-INSERT INTO "Roles" (nombrerol) values ('Admin'),('Cajero'),('Cliente');
-INSERT INTO "MetodosPago" ("nombre") values ('Efectivo'), ('Tarjeta'), ('Yape'), ('Plin');
+-- Secuencias para PKs personalizados
+CREATE SEQUENCE IF NOT EXISTS "seq_reserva";
+CREATE SEQUENCE IF NOT EXISTS "seq_pedido";
+CREATE SEQUENCE IF NOT EXISTS "seq_menu";
+
+-- Función y trigger para id_reserva
+CREATE OR REPLACE FUNCTION generar_id_reserva()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.id_reserva IS NULL THEN
+    NEW.id_reserva := 'RES' || nextval('seq_reserva');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_id_reserva
+BEFORE INSERT ON "Reserva"
+FOR EACH ROW
+EXECUTE FUNCTION generar_id_reserva();
+
+-- Función y trigger para id_pedido
+CREATE OR REPLACE FUNCTION generar_id_pedido()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.id_pedido IS NULL THEN
+    NEW.id_pedido := 'PED' || nextval('seq_pedido');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_id_pedido
+BEFORE INSERT ON "Pedido"
+FOR EACH ROW
+EXECUTE FUNCTION generar_id_pedido();
+
+-- Función y trigger para id_menu
+CREATE OR REPLACE FUNCTION generar_id_menu()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.id_menu IS NULL THEN
+    NEW.id_menu := 'Men' || nextval('seq_menu');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_id_menu
+BEFORE INSERT ON "MenuSemanal"
+FOR EACH ROW
+EXECUTE FUNCTION generar_id_menu();
 
