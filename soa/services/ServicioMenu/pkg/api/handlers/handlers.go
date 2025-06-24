@@ -165,8 +165,8 @@ func (s *Server) InsertarMenuSemanal(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	type reqBody struct {
 		IDMenu        string `json:"id_menu"`
-		FechaDeInicio string `json:"fechadeinicio"`
-		FechaFin      string `json:"fechafin"`
+		FechaDeInicio string `json:"fecha_inicio"`
+		FechaFin      string `json:"fecha_fin"`
 	}
 	var req reqBody
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {

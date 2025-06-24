@@ -108,8 +108,8 @@ CREATE TABLE "Plato" (
 
 CREATE TABLE "MenuSemanal" (
   "id_menu" VARCHAR(8) PRIMARY KEY,
-  "fechadeinicio" DATE NOT NULL,
-  "fechaFin" DATE NOT NULL
+  "fecha_inicio" DATE NOT NULL,
+  "fecha_fin" DATE NOT NULL
 );
 
 CREATE TABLE "Menudia" (
@@ -121,7 +121,7 @@ CREATE TABLE "Menudia" (
 CREATE TABLE "PlatosEnMenudia" (
   "id_dia" INT NOT NULL REFERENCES "Menudia"("id_dia"),
   "id_plato" INT NOT NULL REFERENCES "Plato"("id_plato"),
-  "cantidadDelPlato" INT not null,
+  "cantidad_Plato" INT not null,
   "disponibleParaVender" BOOLEAN default true,
   PRIMARY KEY ("id_dia", "id_plato")
 );
@@ -137,8 +137,8 @@ CREATE TABLE "Linea_Pedido" (
 -- Tabla PagoRegistrado con relación a MetodosPago
 CREATE TABLE "PagoRegistrado" (
   "id_pago" SERIAL PRIMARY KEY,
-  "Nombrepagante" VARCHAR(50) NOT NULL,
-  "fecharegistro" TIMESTAMP NOT NULL,
+  "Nombre_pagante" VARCHAR(50) NOT NULL,
+  "fecha_registro" TIMESTAMP NOT NULL,
   "monto" DECIMAL(10,2) NOT NULL,
   "id_metodo" INT NOT NULL REFERENCES "MetodosPago"("id_metodo")
 );

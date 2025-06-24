@@ -23,7 +23,7 @@ type MenuSemanal struct {
 }
 
 type MenuSemanalVariable struct {
-	FechaDeInicio time.Time `db:"fechadeinicio"`
+	FechaDeInicio time.Time `db:"fecha_inicio"`
 	FechaFin      time.Time `db:"fecha_fin"`
 	MenusDiarios  []Menudia
 }

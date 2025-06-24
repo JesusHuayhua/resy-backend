@@ -119,8 +119,8 @@ func (s *ServicioMenu) SeleccionarCategorias() ([]MenuModels.CategoriaPlatos, er
 func (s *ServicioMenu) InsertarMenuSemanal(idMenu string, fechaInicio, fechaFin string) error {
 	menu := struct {
 		IDMenu        string `db:"id_menu"`
-		FechaDeInicio string `db:"fechadeinicio"`
-		FechaFin      string `db:"fechafin"`
+		FechaDeInicio string `db:"fecha_inicio"`
+		FechaFin      string `db:"fecha_fin"`
 	}{
 		IDMenu:        idMenu,
 		FechaDeInicio: fechaInicio,
@@ -159,7 +159,7 @@ func (s *ServicioMenu) InsertarPlatoEnMenudia(idDia int, idPlato int, cantidad i
 
 // Listar menús semanales
 func (s *ServicioMenu) ListarMenusSemanales() ([]map[string]interface{}, error) {
-	columnas := []string{"id_menu", "fechadeinicio", "fechafin"}
+	columnas := []string{"id_menu", "fecha_inicio", "fecha_fin"}
 	rows, err := s.crud.Seleccionar(`"MenuSemanal"`, columnas, "")
 	if err != nil {
 		return nil, err
@@ -172,9 +172,9 @@ func (s *ServicioMenu) ListarMenusSemanales() ([]map[string]interface{}, error) 
 			return nil, err
 		}
 		menus = append(menus, map[string]interface{}{
-			"id_menu":       idMenu,
-			"fechadeinicio": fechaInicio,
-			"fechafin":      fechaFin,
+			"id_menu":      idMenu,
+			"fecha_inicio": fechaInicio,
+			"fechafin":     fechaFin,
 		})
 	}
 	return menus, nil

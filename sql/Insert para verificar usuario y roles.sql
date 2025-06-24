@@ -32,7 +32,7 @@ INSERT INTO "Pedido" ("id_clienteSolicitante", "fecha", "total", "estadopedido",
 VALUES (1, NOW(), 75.50, 'Registrado', 1);
 
 -- MenuSemanal (el id_menu se genera automáticamente)
-INSERT INTO "MenuSemanal" ("fechadeinicio", "fechaFin")
+INSERT INTO "MenuSemanal" ("fecha_inicio", "fechaFin")
 VALUES ('2025-06-24', '2025-06-30');
 
 -- Menudia
