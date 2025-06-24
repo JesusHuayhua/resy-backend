@@ -88,6 +88,19 @@ func main() {
 		}
 	})
 
+	// Ruta para obtener menú semanal completo
+	mux.HandleFunc("/menu/completo", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodOptions {
+			handlers.OpcionesHandler(w, r)
+			return
+		}
+		if r.Method == http.MethodGet {
+			server.ObtenerMenuSemanalCompleto(w, r)
+		} else {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+
 	// Rutas para días del menú
 	mux.HandleFunc("/menudia", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {

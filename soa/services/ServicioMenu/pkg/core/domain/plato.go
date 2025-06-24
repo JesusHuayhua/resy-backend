@@ -18,9 +18,17 @@ type Plato struct {
 
 type PlatoVariable struct {
 	NombrePlato string  `db:"nombre_plato"`
-	Categoria   int     `db:"categoria"` // FK a CategoriaPlatos
+	Categoria   int     `db:"categoria"`
 	Descripcion string  `db:"descripcion"`
 	Precio      float64 `db:"precio"`
 	Imagen      string  `db:"imagen"`
 	Estado      bool    `db:"estado"`
+}
+
+// PlatosEnMenudia struct para inserción
+type PlatosEnMenudiaInsert struct {
+	IDDia            int  `db:"id_dia"`
+	IDPlato          int  `db:"id_plato"`
+	CantidadDelPlato int  `db:"cantidad_plato"`
+	DisponibleVenta  bool `db:"disponible_venta"`
 }

@@ -48,6 +48,6 @@ type PlatosEnMenudia struct {
 
 type PlatosEnMenudiaVariable struct {
 	Plato                Plato
-	CantidadDelPlato     int  `db:"cantidad_del_plato"`
+	CantidadDelPlato     int  `db:"cantidad_plato"`
 	DisponibleParaVender bool `db:"disponible_para_vender"`
 }

@@ -67,27 +67,27 @@ CREATE TABLE "RecuperacionPassword" (
 
 CREATE TABLE "Mensaje" (
   "idMensaje" SERIAL PRIMARY KEY,
-  "idDestinatario" INT NOT NULL REFERENCES "Usuario"("id_usuario"),
-  "fechaHoraMensaje" TIMESTAMP NOT NULL,
-  "contenidoMensaje" VARCHAR(100) NOT NULL
+  "idDestino" INT NOT NULL REFERENCES "Usuario"("id_usuario"),
+  "fecha_Mensaje" TIMESTAMP NOT NULL,
+  "contenido" VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE "Reserva" (
   "id_reserva" VARCHAR(8) PRIMARY KEY,
-  "id_clienteSolicitante" INT REFERENCES "Usuario"("id_usuario"),
-  "fechaHoraReservada" TIMESTAMP NOT NULL,
+  "id_cliente" INT REFERENCES "Usuario"("id_usuario"),
+  "fecha_reservada" TIMESTAMP NOT NULL,
   "numPersonas" INT NOT NULL,
-  "estadoReserva" "EstadoReserva" NOT NULL,
-  "especificacionesDeLaReserva" VARCHAR(100)
+  "estado_reserva" "EstadoReserva" NOT NULL,
+  "especificaciones" VARCHAR(100)
 );
 
 -- Tabla Pedido modificada con relación a ModalidadesPedido
 CREATE TABLE "Pedido" (
   "id_pedido" VARCHAR(8) PRIMARY KEY,
-  "id_clienteSolicitante" INT REFERENCES "Usuario"("id_usuario"),
+  "id_cliente" INT REFERENCES "Usuario"("id_usuario"),
   "fecha" TIMESTAMP NOT NULL,
   "total" DECIMAL(10,2) NOT NULL,
-  "estadopedido" "EstadosPedido" NOT NULL,
+  "estado_pedido" "EstadosPedido" NOT NULL,
   "id_modalidad" INT NOT NULL REFERENCES "ModalidadesPedido"("id_modalidad")  -- Nueva relación
 );
 
@@ -98,7 +98,7 @@ CREATE TABLE "CategoriaPlatos" (
 
 CREATE TABLE "Plato" (
   "id_plato" SERIAL PRIMARY KEY,
-  "nombrePlato" VARCHAR(20) NOT NULL,
+  "nombre_plato" VARCHAR(20) NOT NULL,
   "categoria" INT NOT NULL REFERENCES "CategoriaPlatos"("id_categoria"),
   "descripcion" VARCHAR(200) NOT NULL,
   "precio" DECIMAL(10,2) NOT NULL,
@@ -121,8 +121,8 @@ CREATE TABLE "Menudia" (
 CREATE TABLE "PlatosEnMenudia" (
   "id_dia" INT NOT NULL REFERENCES "Menudia"("id_dia"),
   "id_plato" INT NOT NULL REFERENCES "Plato"("id_plato"),
-  "cantidad_Plato" INT not null,
-  "disponibleParaVender" BOOLEAN default true,
+  "cantidad_plato" INT not null,
+  "disponible_venta" BOOLEAN default true,
   PRIMARY KEY ("id_dia", "id_plato")
 );
 
@@ -130,14 +130,14 @@ CREATE TABLE "Linea_Pedido" (
   "id_linea" SERIAL PRIMARY KEY,
   "id_pedido" VARCHAR(8) NOT NULL REFERENCES "Pedido"("id_pedido"),
   "id_plato" INT NOT NULL REFERENCES "Plato"("id_plato"),
-  "cantidad" INT NOT NULL,
+  "cantidad_plato" INT NOT NULL,
   "subtotal" DECIMAL(10,2) NOT NULL
 );
 
 -- Tabla PagoRegistrado con relación a MetodosPago
 CREATE TABLE "PagoRegistrado" (
   "id_pago" SERIAL PRIMARY KEY,
-  "Nombre_pagante" VARCHAR(50) NOT NULL,
+  "nombre_pagante" VARCHAR(50) NOT NULL,
   "fecha_registro" TIMESTAMP NOT NULL,
   "monto" DECIMAL(10,2) NOT NULL,
   "id_metodo" INT NOT NULL REFERENCES "MetodosPago"("id_metodo")

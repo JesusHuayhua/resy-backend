@@ -252,3 +252,20 @@ func (s *Server) ListarPlatosEnMenudia(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(platos)
 }
+
+// GET /menu/completo?id_menu=SEMANA_X
+func (s *Server) ObtenerMenuSemanalCompleto(w http.ResponseWriter, r *http.Request) {
+	habilitarCORS(w)
+	idMenu := r.URL.Query().Get("id_menu")
+	if idMenu == "" {
+		http.Error(w, "id_menu es requerido", http.StatusBadRequest)
+		return
+	}
+	menu, err := s.Svc.ObtenerMenuSemanalCompleto(idMenu)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(menu)
+}
