@@ -1,10 +1,5 @@
 package crypton
 
-// crypton/crypto.go
-// Package crypton provides encryption and decryption functionalities.
-// It uses AES-GCM for secure encryption and decryption of strings.
-// It requires a configuration struct that contains the encryption key and salt.
-// It is designed to be used in conjunction with a database manager to handle encrypted passwords.
 import (
 	"crypto/aes"
 	"crypto/cipher"
@@ -16,13 +11,11 @@ import (
 	"io"
 )
 
-// Config representa la configuración para el cifrado
 type Config struct {
 	EncryptionKey string `json:"encryption_key"`
 	Salt          string `json:"salt"`
 }
 
-// Nota: No hay ningun beneficio practico al reusar el mismo salt en cada ciphertext, mejorar esquema a futuro.
 func loadKey(configuracion Config) ([]byte, error) {
 	if configuracion.EncryptionKey == "" {
 		return nil, errors.New("[crypto] key is empty, have you set it apppropiately?")

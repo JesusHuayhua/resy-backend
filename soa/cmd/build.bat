@@ -29,7 +29,7 @@ if /i "%CMD%"=="build-local" (
       )
     popd
   )
-  echo Compilación completada.
+  echo Compilacion completada.
   exit /b
 )
 
