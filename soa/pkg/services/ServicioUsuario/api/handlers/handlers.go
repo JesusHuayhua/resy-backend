@@ -2,10 +2,10 @@
 package handlers
 
 import (
-	BDoperators "ServicioUsuario/pkg/core/usecase/backBD"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	BDoperators "soa/pkg/services/ServicioUsuario/core/usecase/backBD"
 	"time"
 )
 

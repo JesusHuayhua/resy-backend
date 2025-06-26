@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"ServicioUsuario/pkg/repository/database"
-	"ServicioUsuario/pkg/repository/interfaces"
 	"database/sql"
+	"soa/pkg/services/ServicioUsuario/repository/database"
+	"soa/pkg/services/ServicioUsuario/repository/interfaces"
 )
 
 type UserRepositoryImpl struct {

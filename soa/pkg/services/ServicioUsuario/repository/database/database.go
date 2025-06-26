@@ -11,7 +11,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"ServicioUsuario/pkg/repository/crypton"
+	"soa/pkg/services/ServicioUsuario/repository/crypton"
 
 	_ "github.com/lib/pq"
 )

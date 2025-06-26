@@ -1,11 +1,6 @@
 package backBD
 
 import (
-	UserModels "ServicioUsuario/core/domain"
-	"ServicioUsuario/core/internal"
-	"ServicioUsuario/repository"
-	"ServicioUsuario/repository/crypton"
-	repoInterface "ServicioUsuario/repository/interfaces"
 	"context"
 	"crypto/rand"
 	"database/sql"
@@ -14,6 +9,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	UserModels "soa/pkg/services/ServicioUsuario/core/domain"
+	"soa/pkg/services/ServicioUsuario/core/internal"
+	"soa/pkg/services/ServicioUsuario/repository"
+	"soa/pkg/services/ServicioUsuario/repository/crypton"
+	repoInterface "soa/pkg/services/ServicioUsuario/repository/interfaces"
 	"time"
 
 	log "github.com/go-kit/log"
