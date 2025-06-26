@@ -1,16 +1,10 @@
 @echo off
 setlocal
 
-rem build.bat <command>
-rem   build-local   Inicializa go.mod en soa/ (si hace falta) y compila ambos servicios en soa\cmd\bin
-rem   run-local     Compila + arranca los servicios (puertos 8081/8082)
-
-if "%~1"=="" (
-  set "CMD=build-local"
-) else (
-  set "CMD=%~1"
-)
-
+if "%~1"=="" goto :usage
+ 
+set "CMD=%~1"
+set "SERVICES=ServicioUsuario"
 set "SCRIPT_DIR=%~dp0"
 set "SOA_DIR=%SCRIPT_DIR%.."
 set "CMD_DIR=%SOA_DIR%\cmd"
@@ -20,7 +14,7 @@ set "BIN_DIR=%CMD_DIR%\bin"
 if /i "%CMD%"=="build-local" (
   pushd "%SOA_DIR%"
     if not exist go.mod (
-      echo [GO MOD] no encontrado en %SOA_DIR%, inicializando módulo soa...
+      echo [GO MOD] no encontrado en %SOA_DIR%, inicializando.
       go mod init soa || exit /b 1
       go mod tidy
     ) else (
@@ -28,7 +22,7 @@ if /i "%CMD%"=="build-local" (
     )
   popd
   if not exist "%BIN_DIR%" mkdir "%BIN_DIR%" 
-  for %%S in (ServicioUsuario) do (
+  for %%S in (%SERVICES%) do (
     echo [BUILD] %%S
     pushd "%ENTRYPOINTS_DIR%\%%S"
       go build -ldflags "-s -w" -o "%BIN_DIR%\%%S.exe" . || (
@@ -42,15 +36,19 @@ if /i "%CMD%"=="build-local" (
   exit /b
 )
 
+:: buildeamos y ejecutamos.
 if /i "%CMD%"=="run-local" (
   call "%~dp0build.bat" build-local
-  echo [RUN] ServicioMenu en 8081
-  start "" cmd /k "%BIN_DIR%\ServicioMenu.exe"
-  echo [RUN] ServicioUsuario en 8082
-  start "" cmd /k "%BIN_DIR%\ServicioUsuario.exe"
+  for %%S in (%SERVICES%) do (
+    echo [RUN] %%S ejecutandose
+    start "" cmd /k "%BIN_DIR%\%%S.exe"
+  )
   exit /b
 )
 
-echo Comando desconocido: %CMD%
-echo Uso: %~nx0 [build-local^|run-local]
+:usage
+echo build.bat ^<command^>
+echo  build-local   Inicializa y compila.
+echo  run-local     Compila + arranca los servicios.
+
 exit /b 1
