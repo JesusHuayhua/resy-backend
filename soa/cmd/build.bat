@@ -13,10 +13,8 @@ if /i "%CMD%"=="build-local" (
     if not exist go.mod (
       echo [GO MOD] no encontrado, inicializando…
       go mod init soa || exit /b 1
-      go mod tidy
-    ) else (
-      echo [GO MOD] ya existe, omitiendo.
     )
+    go mod tidy || exit /b 1
   popd
   if not exist "%BIN_DIR%" mkdir "%BIN_DIR%"
   for /D %%D in ("%ENTRYPOINTS_DIR%\*") do (

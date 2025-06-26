@@ -1,17 +1,9 @@
 package database
 
-// database/database.go
-// Package database provides functionalities to manage database connections.
-// It uses the crypton package for secure handling of encrypted passwords.
-// It requires a configuration struct that contains database connection details and an encryption configuration.
-// It is designed to be used with PostgreSQL and supports setting the search path for schemas.
-// It provides a DBManager struct to handle the database connection and operations.
-
 import (
 	"database/sql"
 	"fmt"
-
-	"soa/pkg/services/ServicioUsuario/repository/crypton"
+	"soa/pkg/services/ServicioUsuario/repository/crypto"
 
 	_ "github.com/lib/pq"
 )
@@ -33,9 +25,9 @@ type DBManager struct {
 	DB *sql.DB
 }
 
-func NuevoDBManager(config Config, configuracion crypton.Config) (*DBManager, error) {
+func NuevoDBManager(config Config, cryptoCtx *crypto.EnvelopeCrypto) (*DBManager, error) {
 	// Descifrar la contraseña usando el campo Password del struct Config
-	password, err := crypton.Decrypt(config.Password, configuracion)
+	password, err := cryptoCtx.Decrypt(config.Password)
 	if err != nil {
 		return nil, fmt.Errorf("error al descifrar password: %v", err)
 	}

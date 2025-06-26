@@ -12,7 +12,7 @@ import (
 	UserModels "soa/pkg/services/ServicioUsuario/core/domain"
 	"soa/pkg/services/ServicioUsuario/core/internal"
 	"soa/pkg/services/ServicioUsuario/repository"
-	"soa/pkg/services/ServicioUsuario/repository/crypton"
+	"soa/pkg/services/ServicioUsuario/repository/crypto"
 	repoInterface "soa/pkg/services/ServicioUsuario/repository/interfaces"
 	"time"
 
@@ -21,20 +21,20 @@ import (
 )
 
 type ServicioUsuario struct {
-	logger      log.Logger
-	crud        repoInterface.UserRepository
-	cryptConfig crypton.Config
+	logger    log.Logger
+	crud      repoInterface.UserRepository
+	cryptoCtx *crypto.EnvelopeCrypto
 }
 
 // Permite la Conexion de un nuevo usuario para hacer operaciones CRUD con la base de datos
-func NuevoServicioUsuario(db *sql.DB, cryptConfig crypton.Config) *ServicioUsuario {
+func NuevoServicioUsuario(db *sql.DB, cryptoCtx *crypto.EnvelopeCrypto) *ServicioUsuario {
 	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	crud := repository.NewUserRepository(db)
 	return &ServicioUsuario{
-		logger:      logger,
-		crud:        crud,
-		cryptConfig: cryptConfig,
+		logger:    logger,
+		crud:      crud,
+		cryptoCtx: cryptoCtx,
 	}
 }
 
@@ -56,8 +56,7 @@ func (s *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 
 // Inserta un nuevo usuario en la base de datos y encripta su contraseña
 func (s *ServicioUsuario) InsertarNuevoUsuario(nombres, apellidos, correo, telefono string, fechaNacimiento time.Time, contrasenia string, rol int) (internal.StatusCode, error) {
-	// Encriptar la contraseña antes de guardar
-	contraseniaEncriptada, err := crypton.Encrypt(contrasenia, s.cryptConfig)
+	contraseniaEncriptada, err := s.cryptoCtx.Encrypt(contrasenia)
 	if err != nil {
 		s.logger.Log("err", fmt.Sprintf("error al encriptar contraseña: %v", err))
 		return internal.Error, fmt.Errorf("error al encriptar contraseña: %w", err)
@@ -85,7 +84,7 @@ func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, c
 	contraseniaEncriptada := contrasenia
 	if contrasenia != "" {
 		var err error
-		contraseniaEncriptada, err = crypton.Encrypt(contrasenia, s.cryptConfig)
+		contraseniaEncriptada, err = s.cryptoCtx.Encrypt(contrasenia)
 		if err != nil {
 			s.logger.Log("err", fmt.Sprintf("error al encriptar contraseña: %v", err))
 			return internal.Error, fmt.Errorf("error al encriptar contraseña: %w", err)
@@ -156,7 +155,7 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args []interface
 			return internal.Error, nil, fmt.Errorf("error al escanear fila: %v", err)
 		}
 		// Desencriptar la contraseña
-		contraseniaDescifrada, err := crypton.Decrypt(contraseniaEncriptada, s.cryptConfig)
+		contraseniaDescifrada, err := s.cryptoCtx.Decrypt(contraseniaEncriptada)
 		if err != nil {
 			s.logger.Log("err", fmt.Sprintf("error al descifrar contraseña: %v", err))
 			return internal.Error, nil, fmt.Errorf("error al descifrar contraseña: %v", err)
@@ -275,7 +274,7 @@ func (s *ServicioUsuario) RecuperarPassword(correo, token, nuevaContrasenia stri
 		return errors.New("token inválido o expirado")
 	}
 	// Encriptar la nueva contraseña
-	contraseniaEncriptada, err := crypton.Encrypt(nuevaContrasenia, s.cryptConfig)
+	contraseniaEncriptada, err := s.cryptoCtx.Encrypt(nuevaContrasenia)
 	if err != nil {
 		return errors.New("no se pudo encriptar la contraseña")
 	}
@@ -321,10 +320,7 @@ func enviarTokenPorEmail(correo, token string) error {
         </html>
     `, token)
 	m.SetBody("text/html", htmlBody)
-
-	// Usa tu contraseña real o una variable de entorno
 	d := gomail.NewDialer("smtp.gmail.com", 587, "salonverde620@gmail.com", "T7J4N3N44")
-
 	return d.DialAndSend(m)
 }
 
