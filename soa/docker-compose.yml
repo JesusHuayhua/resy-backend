@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  serviciousuario:
+    image: resy/serviciousuario:latest
+    ports:
+      - "8082:8082"
+    entrypoint: ["/bin/ServicioUsuario"]
+    environment:
+      - PORT=8082
