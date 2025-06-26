@@ -7,6 +7,7 @@ import (
 	"ServicioReserva/pkg/repository/database"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -52,6 +53,26 @@ func main() {
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
 	})
+	// Concurrencia necesaria para recordatorios
+	go func() {
+		for {
+			// Buscar reservas que ocurren en 2 horas (rango de 4 minutos)
+			condicion := `fecha_reservada BETWEEN NOW() + INTERVAL '1 hour 58 minutes' AND NOW() + INTERVAL '2 hour 2 minutes'`
+			reservas, err := servicio.ListarReservas(condicion)
+			if err == nil {
+				for _, r := range reservas {
+					data := r.DataReserva
+					if data.CorreoCliente != "" {
+						_ = backBD.EnviarCorreo(data.CorreoCliente, data.NombreCliente, data.FechaReservada)
+					}
+					if data.TelefonoCliente != "" {
+						_ = backBD.EnviarWhatsApp(data.TelefonoCliente, data.NombreCliente, data.FechaReservada)
+					}
+				}
+			}
+			time.Sleep(5 * time.Minute)
+		}
+	}()
 	log.Println("ServicioReserva escuchando en :8082")
 	log.Fatal(http.ListenAndServe(":8082", mux))
 }
