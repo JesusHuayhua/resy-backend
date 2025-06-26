@@ -4,6 +4,7 @@ setlocal
 if "%~1"=="" goto :usage
  
 set "CMD=%~1"
+:: Al agregar los servicios 
 set "SERVICES=ServicioUsuario"
 set "SCRIPT_DIR=%~dp0"
 set "SOA_DIR=%SCRIPT_DIR%.."
@@ -38,11 +39,19 @@ if /i "%CMD%"=="build-local" (
 
 :: buildeamos y ejecutamos.
 if /i "%CMD%"=="run-local" (
+  rem asegúrate de compilar antes
   call "%~dp0build.bat" build-local
+
+  rem cambiar al directorio de binaria (opcional)
+  pushd "%BIN_DIR%"
+
+  rem -- el bloque FOR con paréntesis --
   for %%S in (%SERVICES%) do (
-    echo [RUN] %%S ejecutandose
-    start "" cmd /k "%BIN_DIR%\%%S.exe"
+    echo [RUN] %%S en ejecucion...
+    start "" cmd /k "%%S.exe"
   )
+
+  popd
   exit /b
 )
 

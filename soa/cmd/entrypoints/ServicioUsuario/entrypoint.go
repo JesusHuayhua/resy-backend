@@ -1,4 +1,4 @@
-package entrypoints
+package main
 
 import (
 	"log"
@@ -8,7 +8,7 @@ import (
 	"soa/pkg/services/ServicioUsuario/repository/crypton"
 	"soa/pkg/services/ServicioUsuario/repository/database"
 
-	_ "github.com/lib/pq" //Driver Para base de datos postgreSQL
+	_ "github.com/lib/pq"
 )
 
 func main() {
