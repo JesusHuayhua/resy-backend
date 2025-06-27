@@ -1,4 +1,4 @@
-package backBD
+package usecase
 
 import (
 	"context"

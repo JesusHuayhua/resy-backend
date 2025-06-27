@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"soa/pkg/services/ServicioUsuario/api/handlers"
-	"soa/pkg/services/ServicioUsuario/core/usecase/backBD"
+	"soa/pkg/services/ServicioUsuario/core/usecase"
 	"soa/pkg/services/ServicioUsuario/repository/crypto"
 	"soa/pkg/services/ServicioUsuario/repository/database"
 
@@ -26,7 +26,7 @@ func main() {
 		DatabaseName: "",
 		Password:     "",
 	}
-	//2. 
+	//2.
 	cryptoCtx, err := crypto.New("", "", 150000)
 	if err != nil {
 		log.Fatalf("Error al crear contexto de crypto %v", err)
@@ -36,7 +36,7 @@ func main() {
 		log.Fatalf("Error al conectar a la BD: %v", err)
 	}
 	defer dbManager.Cerrar()
-	servicio := backBD.NuevoServicioUsuario(dbManager.DB, cryptoCtx)
+	servicio := usecase.NuevoServicioUsuario(dbManager.DB, cryptoCtx)
 	server := handlers.NewServer(servicio)
 	http.HandleFunc("/usuarios", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	BDoperators "soa/pkg/services/ServicioUsuario/core/usecase/backBD"
+	BDoperators "soa/pkg/services/ServicioUsuario/core/usecase"
 	"time"
 )
 
