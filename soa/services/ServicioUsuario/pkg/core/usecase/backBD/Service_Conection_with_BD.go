@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	log "github.com/go-kit/log"
@@ -127,6 +128,15 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args []interface
 		"id_usuario", "nombres", "apellidos", "correo",
 		"telefono", "direccion", "fechanacimiento", "contrasenia", "rol", "estadoacceso",
 	}
+
+	// Asegurar que la condición tenga el formato correcto
+	if condicion != "" {
+		// Reemplazar todos los ? por $n
+		for i := 1; strings.Contains(condicion, "?"); i++ {
+			condicion = strings.Replace(condicion, "?", fmt.Sprintf("$%d", i), 1)
+		}
+	}
+
 	var rows *sql.Rows
 	var err error
 	if condicion == "" {
