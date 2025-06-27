@@ -77,11 +77,24 @@ func (s *Server) ListarUsuarios(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-	_, usuarios, err := s.Svc.SeleccionarUsuarios("", []interface{}{})
+
+	queryParams := r.URL.Query()
+	idUsuario := queryParams.Get("id_usuario")
+
+	var condicion string
+	var args []interface{}
+
+	if idUsuario != "" {
+		condicion = "id_usuario = $1" // Cambiado ? por $1
+		args = append(args, idUsuario)
+	}
+
+	_, usuarios, err := s.Svc.SeleccionarUsuarios(condicion, args)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(usuarios)
 }
