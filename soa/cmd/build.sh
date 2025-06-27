@@ -22,8 +22,6 @@ function init_mod() {
     if [[ ! -f go.mod ]]; then
       echo "[GO MOD] go.mod no encontrado, inicializando módulo 'soa'..."
       go mod init soa
-    else
-      echo "[GO MOD] go.mod ya existe, omitiendo init."
     fi
     go mod tidy
   popd >/dev/null

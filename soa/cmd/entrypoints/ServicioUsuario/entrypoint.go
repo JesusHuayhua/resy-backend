@@ -12,22 +12,25 @@ import (
 )
 
 func main() {
+	//1. Test locally first
 	databaseInformation := database.Config{
-		Driver:       "postgres",
-		TipoDriver:   "PostgreSQL",
-		DBName:       "ingesoft1",
-		Host:         "ingesoft1.cyofngbo9tfh.us-east-1.rds.amazonaws.com",
-		Port:         "5432",
-		User:         "ingesoft1",
-		DatabaseName: "ResyDB",
-		Password:     "WwF3OBYuf8Tx1opemwPSc4LrAMv2NDQLZ/mYh4HPwcVZymIShg==",
+		Driver:     "postgres",
+		TipoDriver: "PostgreSQL",
+		DBName:     "ingesoft1",
+		//Host:         "ingesoft1.cyofngbo9tfh.us-east-1.rds.amazonaws.com",
+		Host: "127.0.0.1",
+		Port: "5432",
+		User: "ingesoft1",
+		//DatabaseName: "ResyDB",
+		//Password:     "WwF3OBYuf8Tx1opemwPSc4LrAMv2NDQLZ/mYh4HPwcVZymIShg==",
+		DatabaseName: "",
+		Password:     "",
 	}
-	//
+	//2. 
 	cryptoCtx, err := crypto.New("", "", 150000)
 	if err != nil {
 		log.Fatalf("Error al crear contexto de crypto %v", err)
 	}
-
 	dbManager, err := database.NuevoDBManager(databaseInformation, cryptoCtx)
 	if err != nil {
 		log.Fatalf("Error al conectar a la BD: %v", err)

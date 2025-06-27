@@ -38,12 +38,13 @@ type EnvelopeCrypto struct {
 }
 
 func New(kmsKeyARN, passphraseName string, iter int) (*EnvelopeCrypto, error) {
-	cfg, err := config.LoadDefaultConfig(context.Background())
+	ctx := context.Background()
+	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		return nil, err
 	}
 	smClient := sm.NewFromConfig(cfg)
-	out, err := smClient.GetSecretValue(context.Background(), &sm.GetSecretValueInput{
+	out, err := smClient.GetSecretValue(ctx, &sm.GetSecretValueInput{
 		SecretId: aws.String(passphraseName),
 	})
 	if err != nil {
@@ -60,11 +61,12 @@ func New(kmsKeyARN, passphraseName string, iter int) (*EnvelopeCrypto, error) {
 
 func (e *EnvelopeCrypto) Encrypt(plaintext string) (string, error) {
 	salt := make([]byte, 16)
+	ctx := context.Background()
 	if _, err := io.ReadFull(rand.Reader, salt); err != nil {
 		return "", err
 	}
 	localKey := pbkdf2.Key([]byte(e.passphrase), salt, e.iter, 32, sha512.New)
-	genOut, err := e.kmsClient.GenerateDataKey(context.Background(), &kms.GenerateDataKeyInput{
+	genOut, err := e.kmsClient.GenerateDataKey(ctx, &kms.GenerateDataKeyInput{
 		KeyId:   &e.keyID,
 		KeySpec: types.DataKeySpecAes256,
 	})
@@ -93,7 +95,6 @@ func (e *EnvelopeCrypto) Encrypt(plaintext string) (string, error) {
 		Salt:          base64.StdEncoding.EncodeToString(salt),
 		Iter:          e.iter,
 	}
-
 	data, err := json.Marshal(env)
 	if err != nil {
 		return "", err
@@ -114,10 +115,12 @@ func (e *EnvelopeCrypto) Decrypt(envJSON string) (string, error) {
 	ct, _ := base64.StdEncoding.DecodeString(env.Ciphertext)
 	salt, _ := base64.StdEncoding.DecodeString(env.Salt)
 	e.iter = env.Iter
+	ctx := context.Background()
 
-	decOut, err := e.kmsClient.Decrypt(context.Background(), &kms.DecryptInput{
+	decOut, err := e.kmsClient.Decrypt(ctx, &kms.DecryptInput{
 		CiphertextBlob: kmsCt,
 	})
+
 	if err != nil {
 		return "", err
 	}
