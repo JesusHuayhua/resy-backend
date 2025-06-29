@@ -79,7 +79,7 @@ CREATE TABLE "Reserva" (
   "telefono_cliente" VARCHAR(20),                      -- nuevo campo
   "correo_cliente" VARCHAR(50),                        -- nuevo campo
   "fecha_reservada" TIMESTAMP NOT NULL,
-  "numPersonas" INT NOT NULL,
+  "num_personas" INT NOT NULL,
   "estado_reserva" "EstadoReserva" NOT NULL,
   "especificaciones" VARCHAR(100)
 );

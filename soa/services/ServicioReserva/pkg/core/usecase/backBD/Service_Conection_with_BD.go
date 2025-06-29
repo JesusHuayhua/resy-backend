@@ -34,20 +34,45 @@ func (s *ServicioReserva) EliminarReserva(id string) error {
 
 // Listar reservas (todas o por filtro)
 func (s *ServicioReserva) ListarReservas(condicion string, args ...interface{}) ([]ReservaModels.Reserva, error) {
-	columnas := []string{"id_reserva", "id_cliente", "nombre_cliente", "telefono_cliente", "correo_cliente", "fecha_reservada", "numPersonas", "estado_reserva", "especificaciones"}
+	columnas := []string{
+		"id_reserva",
+		"id_cliente",
+		"nombre_cliente",
+		"telefono_cliente",
+		"correo_cliente",
+		"fecha_reservada",
+		"num_personas",
+		"estado_reserva",
+		"especificaciones",
+	}
+
 	rows, err := s.crud.Seleccionar(`"ResyDB"."Reserva"`, columnas, condicion, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
+
 	var reservas []ReservaModels.Reserva
 	for rows.Next() {
 		var r ReservaModels.Reserva
 		var data ReservaModels.ReservaData
-		err := rows.Scan(&r.IDReserva, &data.IDCliente, &data.NombreCliente, &data.TelefonoCliente, &data.CorreoCliente, &data.FechaReservada, &data.NumPersonas, &data.EstadoReserva, &data.Especificaciones)
+
+		err := rows.Scan(
+			&r.IDReserva,
+			&data.IDCliente,
+			&data.NombreCliente,
+			&data.TelefonoCliente,
+			&data.CorreoCliente,
+			&data.FechaReservada,
+			&data.NumPersonas,
+			&data.EstadoReserva,
+			&data.Especificaciones,
+		)
+
 		if err != nil {
 			return nil, err
 		}
+
 		r.DataReserva = data
 		reservas = append(reservas, r)
 	}

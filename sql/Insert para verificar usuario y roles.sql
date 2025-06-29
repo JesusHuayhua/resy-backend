@@ -38,15 +38,15 @@ INSERT INTO "PlatosEnMenudia" ("id_dia", "id_plato", "cantidad_plato", "disponib
 VALUES (1, 1, 10, true), (1, 2, 8, true), (2, 3, 5, true);
 
 -- Reserva (el id_reserva se genera automáticamente)
-INSERT INTO "Reserva" ("id_cliente", "fecha_reservada", "numPersonas", "estado_reserva", "especificaciones")
+INSERT INTO "Reserva" ("id_cliente", "fecha_reservada", "num_personas", "estado_reserva", "especificaciones")
 VALUES (1, NOW() + INTERVAL '1 day', 4, 'Pendiente', 'Mesa cerca de la ventana');
 
 -- Reserva para usuario registrado
-INSERT INTO "Reserva" ("id_cliente", "fecha_reservada", "numPersonas", "estado_reserva", "especificaciones")
+INSERT INTO "Reserva" ("id_cliente", "fecha_reservada", "num_personas", "estado_reserva", "especificaciones")
 VALUES (1, NOW() + INTERVAL '1 day', 4, 'Pendiente', 'Mesa cerca de la ventana');
 
 -- Reserva para NO registrado
-INSERT INTO "Reserva" ("nombre_cliente", "telefono_cliente", "correo_cliente", "fecha_reservada", "numPersonas", "estado_reserva", "especificaciones")
+INSERT INTO "Reserva" ("nombre_cliente", "telefono_cliente", "correo_cliente", "fecha_reservada", "num_personas", "estado_reserva", "especificaciones")
 VALUES ('Carlos López', '912345678', 'carlos@mail.com', NOW() + INTERVAL '2 day', 2, 'Pendiente', 'Sin registro');
 
 -- Pedido (el id_pedido se genera automáticamente)
