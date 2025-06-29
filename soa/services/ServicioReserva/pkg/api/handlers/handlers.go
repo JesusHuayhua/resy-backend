@@ -3,6 +3,7 @@ package handlers
 import (
 	ReservaModels "ServicioReserva/pkg/core/domain"
 	"ServicioReserva/pkg/core/usecase/backBD"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -34,13 +35,53 @@ func (s *Server) InsertarReserva(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
-	var req ReservaModels.ReservaData
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+
+	type tempReserva struct {
+		IDCliente        *int      `json:"id_cliente"`
+		NombreCliente    string    `json:"nombre_cliente"`
+		TelefonoCliente  string    `json:"telefono_cliente"`
+		CorreoCliente    string    `json:"correo_cliente"`
+		FechaReservada   time.Time `json:"fecha_reservada"`
+		NumPersonas      int       `json:"num_personas"`
+		EstadoReserva    string    `json:"estado_reserva"`
+		Especificaciones string    `json:"especificaciones"`
+	}
+
+	var tempReq tempReserva
+	if err := json.NewDecoder(r.Body).Decode(&tempReq); err != nil {
 		http.Error(w, "JSON inválido", http.StatusBadRequest)
 		return
 	}
-	// Parse fecha si es string
-	// req.FechaReservada = ...
+
+	// Validar el estado de la reserva
+	estadosPermitidos := map[string]bool{
+		"Pendiente":  true,
+		"Confirmada": true,
+		"Cancelada":  true,
+	}
+
+	if !estadosPermitidos[tempReq.EstadoReserva] {
+		http.Error(w, "Estado de reserva inválido. Valores permitidos: Pendiente, Confirmada, Cancelada", http.StatusBadRequest)
+		return
+	}
+
+	// Convierte a la estructura final con NullTypes
+	req := ReservaModels.ReservaData{
+		FechaReservada:   tempReq.FechaReservada,
+		NumPersonas:      tempReq.NumPersonas,
+		EstadoReserva:    tempReq.EstadoReserva,
+		Especificaciones: tempReq.Especificaciones,
+		NombreCliente:    sql.NullString{String: tempReq.NombreCliente, Valid: tempReq.NombreCliente != ""},
+		TelefonoCliente:  sql.NullString{String: tempReq.TelefonoCliente, Valid: tempReq.TelefonoCliente != ""},
+		CorreoCliente:    sql.NullString{String: tempReq.CorreoCliente, Valid: tempReq.CorreoCliente != ""},
+	}
+
+	if tempReq.IDCliente != nil {
+		req.IDCliente = sql.NullInt64{Int64: int64(*tempReq.IDCliente), Valid: true}
+	} else {
+		req.IDCliente = sql.NullInt64{Valid: false}
+	}
+
 	if err := s.Svc.InsertarReserva(req); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -51,7 +92,8 @@ func (s *Server) InsertarReserva(w http.ResponseWriter, r *http.Request) {
 // GET /reservas
 func (s *Server) ListarReservas(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
-	reservas, err := s.Svc.ListarReservas("", nil)
+	// Cambia esto:
+	reservas, err := s.Svc.ListarReservas("") // Sin segundo parámetro
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
