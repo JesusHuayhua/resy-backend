@@ -29,7 +29,7 @@ func (s *ServicioMenu) InsertarPlato(nombre string, categoria int, descripcion s
 		Imagen:      imagen,
 		Estado:      estado,
 	}
-	return s.crud.Insertar(`"Plato"`, plato)
+	return s.crud.Insertar(`"ResyDB"."Plato"`, plato)
 }
 
 func (s *ServicioMenu) ActualizarPlato(id int, nombre string, categoria int, descripcion string, precio float64, imagen string, estado bool) error {
@@ -42,11 +42,11 @@ func (s *ServicioMenu) ActualizarPlato(id int, nombre string, categoria int, des
 		Estado:      estado,
 	}
 	where := "id_plato = $1"
-	return s.crud.Actualizar(`"Plato"`, plato, where, id)
+	return s.crud.Actualizar(`"ResyDB"."Plato"`, plato, where, id)
 }
 
 func (s *ServicioMenu) EliminarPlato(id int) error {
-	return s.crud.Eliminar(`"Plato"`, "id_plato")
+	return s.crud.Eliminar(`"ResyDB"."Plato"`, "id_plato")
 }
 
 func (s *ServicioMenu) SeleccionarPlatos(condicion string, args []interface{}) ([]MenuModels.Plato, error) {
@@ -91,7 +91,7 @@ func (s *ServicioMenu) InsertarCategoria(nombre string) error {
 func (s *ServicioMenu) ActualizarCategoria(id int, nombre string) error {
 	cat := MenuModels.CategoriaPlatosVariable{Nombre: nombre}
 	where := "id_categoria = $1"
-	return s.crud.Actualizar(`"CategoriaPlatos"`, cat, where, id)
+	return s.crud.Actualizar(`"ResyDB"."CategoriaPlatos"`, cat, where, id)
 }
 
 func (s *ServicioMenu) EliminarCategoria(id int) error {
