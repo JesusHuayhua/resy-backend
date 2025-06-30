@@ -74,7 +74,7 @@ func (s *ServicioUsuario) InsertarNuevoUsuario(nombres, apellidos, correo, telef
 		Rol:             rol,
 		EstadoAcceso:    true,
 	}
-	if err := s.crud.Insertar(`"Usuario"`, datos); err != nil {
+	if err := s.crud.Insertar(`"ResyDB"."Usuario"`, datos); err != nil {
 		s.logger.Log("err", fmt.Sprintf("error al insertar usuario: %v", err))
 		return internal.Error, err
 	}
@@ -105,7 +105,7 @@ func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, c
 		EstadoAcceso:    estado,
 	}
 	where := "id_usuario = $1"
-	if err := s.crud.Actualizar(`"Usuario"`, datos, where, idUsuario); err != nil {
+	if err := s.crud.Actualizar(`"ResyDB"."Usuario"`, datos, where, idUsuario); err != nil {
 		s.logger.Log("err", fmt.Sprintf("error al actualizar usuario: %v", err))
 		return internal.Error, err
 	}
@@ -114,7 +114,7 @@ func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, c
 
 // Elimina un usuario de la base de datos por su ID de manera LOGICA
 func (s *ServicioUsuario) EliminarUsuario(id int) (internal.StatusCode, error) {
-	if err := s.crud.Eliminar(`"Usuario"`, fmt.Sprintf("%d", id)); err != nil {
+	if err := s.crud.Eliminar(`"ResyDB"."Usuario"`, fmt.Sprintf("%d", id)); err != nil {
 		s.logger.Log("err", fmt.Sprintf("error al eliminar usuario: %v", err))
 		return internal.Error, err
 	}
@@ -140,9 +140,9 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args []interface
 	var rows *sql.Rows
 	var err error
 	if condicion == "" {
-		rows, err = s.crud.Seleccionar(`"Usuario"`, columnas, "", args...)
+		rows, err = s.crud.Seleccionar(`"ResyDB"."Usuario"`, columnas, "", args...)
 	} else {
-		rows, err = s.crud.Seleccionar(`"Usuario"`, columnas, condicion, args...)
+		rows, err = s.crud.Seleccionar(`"ResyDB"."Usuario"`, columnas, condicion, args...)
 	}
 	if err != nil {
 		s.logger.Log("err", fmt.Sprintf("error en Select: %v", err))
@@ -188,7 +188,7 @@ func (s *ServicioUsuario) InsertarNuevoRol(nombre string) (internal.StatusCode, 
 	datos := UserModels.Rol{
 		NombreRol: nombre,
 	}
-	if err := s.crud.Insertar(`"Roles"`, datos); err != nil {
+	if err := s.crud.Insertar(`"ResyDB"."Roles"`, datos); err != nil {
 		return internal.Error, err
 	}
 	return internal.InProgress, nil
@@ -199,14 +199,14 @@ func (s *ServicioUsuario) ActualizarRol(id int, nombre string) (internal.StatusC
 		NombreRol: nombre,
 	}
 	where := "id_rol = $1"
-	if err := s.crud.Actualizar(`"Roles"`, datos, where, id); err != nil {
+	if err := s.crud.Actualizar(`"ResyDB"."Roles"`, datos, where, id); err != nil {
 		return internal.Error, err
 	}
 	return internal.InProgress, nil
 }
 
 func (s *ServicioUsuario) EliminarRol(id int) (internal.StatusCode, error) {
-	if err := s.crud.Eliminar(`"Roles"`, fmt.Sprintf("%d", id)); err != nil {
+	if err := s.crud.Eliminar(`"ResyDB"."Roles"`, fmt.Sprintf("%d", id)); err != nil {
 		return internal.Error, err
 	}
 	return internal.InProgress, nil
@@ -218,9 +218,9 @@ func (s *ServicioUsuario) SeleccionarRoles(filtro string, params []interface{}) 
 	var rows *sql.Rows
 	var err error
 	if filtro == "" {
-		rows, err = s.crud.Seleccionar(`"Roles"`, columnas, "", params...)
+		rows, err = s.crud.Seleccionar(`"ResyDB"."Roles"`, columnas, "", params...)
 	} else {
-		rows, err = s.crud.Seleccionar(`"Roles"`, columnas, filtro, params...)
+		rows, err = s.crud.Seleccionar(`"ResyDB"."Roles"`, columnas, filtro, params...)
 	}
 	if err != nil {
 		return internal.Error, nil, err
@@ -247,7 +247,7 @@ func (s *ServicioUsuario) SeleccionarRoles(filtro string, params []interface{}) 
 func (s *ServicioUsuario) IniciarRecuperacionPassword(correo string) (string, error) {
 	// Verifica si el correo existe
 	var existe int
-	err := s.crud.(*repository.UserRepositoryImpl).Crud().DB.QueryRow(`SELECT COUNT(*) FROM "Usuario" WHERE correo=$1`, correo).Scan(&existe)
+	err := s.crud.(*repository.UserRepositoryImpl).Crud().DB.QueryRow(`SELECT COUNT(*) FROM "ResyDB"."Usuario" WHERE correo=$1`, correo).Scan(&existe)
 	if err != nil || existe == 0 {
 		return "", errors.New("correo no registrado")
 	}
@@ -278,7 +278,7 @@ func (s *ServicioUsuario) RecuperarPassword(correo, token, nuevaContrasenia stri
 	db := s.crud.(*repository.UserRepositoryImpl).Crud().DB
 	var expiraEn time.Time
 	var tokenBD string
-	err := db.QueryRow(`SELECT token, expira_en FROM "RecuperacionPassword" WHERE correo=$1`, correo).Scan(&tokenBD, &expiraEn)
+	err := db.QueryRow(`SELECT token, expira_en FROM "ResyDB"."RecuperacionPassword" WHERE correo=$1`, correo).Scan(&tokenBD, &expiraEn)
 	if err != nil {
 		_ = eliminarToken(db, correo)
 		return errors.New("token no encontrado o ya utilizado")
@@ -292,7 +292,7 @@ func (s *ServicioUsuario) RecuperarPassword(correo, token, nuevaContrasenia stri
 	if err != nil {
 		return errors.New("no se pudo encriptar la contraseña")
 	}
-	_, err = db.Exec(`UPDATE "Usuario" SET contrasenia=$1 WHERE correo=$2`, contraseniaEncriptada, correo)
+	_, err = db.Exec(`UPDATE "ResyDB"."Usuario" SET contrasenia=$1 WHERE correo=$2`, contraseniaEncriptada, correo)
 	if err != nil {
 		return errors.New("no se pudo actualizar la contraseña")
 	}
@@ -306,7 +306,7 @@ func (s *ServicioUsuario) VerificarTokenRecuperacion(correo, token string) error
 	var expiraEn time.Time
 	s.logger.Log("debug", fmt.Sprintf("Verificando token para correo: %s", correo))
 	s.logger.Log("debug", fmt.Sprintf("Token recibido: %s", token))
-	err := db.QueryRow(`SELECT expira_en FROM "RecuperacionPassword" WHERE correo=$1 AND token=$2`, correo, token).Scan(&expiraEn)
+	err := db.QueryRow(`SELECT expira_en FROM "ResyDB"."RecuperacionPassword" WHERE correo=$1 AND token=$2`, correo, token).Scan(&expiraEn)
 	if err != nil {
 		s.logger.Log("debug", fmt.Sprintf("Error en SELECT: %v", err))
 		_ = eliminarToken(db, correo)
@@ -331,7 +331,7 @@ func (s *ServicioUsuario) ActualizarPasswordRecuperacion(correo, nuevaContraseni
 	if err != nil {
 		return errors.New("no se pudo encriptar la contraseña")
 	}
-	_, err = db.Exec(`UPDATE "Usuario" SET contrasenia=$1 WHERE correo=$2`, contraseniaEncriptada, correo)
+	_, err = db.Exec(`UPDATE "ResyDB"."Usuario" SET contrasenia=$1 WHERE correo=$2`, contraseniaEncriptada, correo)
 	if err != nil {
 		return errors.New("no se pudo actualizar la contraseña")
 	}
@@ -350,7 +350,7 @@ func generarToken() (string, error) {
 
 func guardarTokenRecuperacion(db *sql.DB, correo, token string, expira time.Time) error {
 	// Guardar la fecha de expiración en UTC para evitar problemas de desfase horario
-	_, err := db.Exec(`INSERT INTO "RecuperacionPassword" (correo, token, expira_en) VALUES ($1, $2, $3)`, correo, token, expira.UTC())
+	_, err := db.Exec(`INSERT INTO "ResyDB"."RecuperacionPassword" (correo, token, expira_en) VALUES ($1, $2, $3)`, correo, token, expira.UTC())
 	return err
 }
 
@@ -382,7 +382,7 @@ func enviarTokenPorEmail(correo, token string) error {
 }
 
 func eliminarToken(db *sql.DB, correo string) error {
-	_, err := db.Exec(`DELETE FROM "RecuperacionPassword" WHERE correo=$1`, correo)
+	_, err := db.Exec(`DELETE FROM "ResyDB"."RecuperacionPassword" WHERE correo=$1`, correo)
 	return err
 }
 
@@ -392,7 +392,7 @@ func (s *ServicioUsuario) Login(correo, contrasenia string) (bool, UserModels.Us
 		"id_usuario", "nombres", "apellidos", "correo",
 		"telefono", "direccion", "fechanacimiento", "contrasenia", "rol", "estadoacceso",
 	}
-	rows, err := s.crud.Seleccionar(`"Usuario"`, columnas, "correo = $1", correo)
+	rows, err := s.crud.Seleccionar(`"ResyDB"."Usuario"`, columnas, "correo = $1", correo)
 	if err != nil {
 		return false, UserModels.UsuarioBD{}, fmt.Errorf("error en select: %v", err)
 	}
