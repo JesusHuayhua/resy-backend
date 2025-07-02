@@ -1,15 +1,19 @@
+// +// Paquete repository contiene implementaciones de repositorios para interactuar con la base de datos
 package repository
 
+// +// Este paquete define la interfaz UserRepository y su implementación UserRepositoryImpl.
 import (
 	"ServicioUsuario/pkg/repository/database"
 	"ServicioUsuario/pkg/repository/interfaces"
 	"database/sql"
 )
 
+// UserRepositoryImpl es la implementación de la interfaz UserRepository
 type UserRepositoryImpl struct {
 	crud *database.CRUD
 }
 
+// NewUserRepository crea una nueva instancia de UserRepositoryImpl
 func NewUserRepository(db *sql.DB) interfaces.UserRepository {
 	return &UserRepositoryImpl{
 		crud: database.NuevoCRUD(db),

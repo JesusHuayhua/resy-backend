@@ -1,3 +1,6 @@
+// Intermedio entre operaciones CRUD y la lógica de negocio del servicio de usuario
+// Este paquete maneja la conexión a la base de datos y las operaciones CRUD para el servicio
+// de usuario, incluyendo la encriptación de contraseñas y la gestión de roles.
 package backBD
 
 import (

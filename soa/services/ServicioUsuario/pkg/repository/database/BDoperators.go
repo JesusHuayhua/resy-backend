@@ -1,3 +1,5 @@
+// Paquete database proporciona operaciones CRUD genéricas para cualquier tabla en una base de datos SQL
+// Este paquete utiliza reflect para manejar estructuras de datos y construir consultas SQL dinámicamente.
 package database
 
 import (
