@@ -1,3 +1,4 @@
+// interfaces para las operacione con BD
 package interfaces
 
 import "database/sql"

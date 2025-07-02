@@ -13,7 +13,21 @@ import (
 	_ "github.com/lib/pq" //Driver Para base de datos postgreSQL
 )
 
+// main es el punto de entrada de la aplicación.
+// Aquí se configura la conexión a la base de datos, se inicializa el servicio de usuario
+// y se configuran las rutas del servidor HTTP.
+// También maneja las solicitudes HTTP para las operaciones CRUD de usuarios y roles,
+// así como las operaciones de recuperación de contraseña y autenticación.
+// El servidor escucha en el puerto 8080 y maneja las solicitudes de manera concurrente.
+// Se utiliza un enrutador HTTP simple para manejar las diferentes rutas y métodos HTTP.
+// Además, se implementa un manejador para las solicitudes OPTIONS, lo que permite
+// que el servidor responda a las solicitudes de preflight CORS, lo cual es útil
+// para aplicaciones web que interactúan con el servidor desde diferentes dominios.
+// La configuración de la base de datos y la clave de encriptación se obtienen de una estructura
+// de configuración, que se inicializa con los valores necesarios para conectarse a la base de datos
+// y para realizar operaciones de encriptación y desencriptación de datos sensibles.
 func main() {
+	//PONER EN UN .env ambos
 	databaseInformation := database.Config{
 		Driver:       "postgres",
 		TipoDriver:   "PostgreSQL",

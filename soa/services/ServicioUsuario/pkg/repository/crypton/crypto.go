@@ -1,3 +1,5 @@
+// Paquete de encriptación y desencriptación de datos
+// Este paquete proporciona funciones para encriptar y desencriptar datos utilizando AES-GCM.
 package crypton
 
 // crypton/crypto.go

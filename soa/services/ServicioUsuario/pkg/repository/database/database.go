@@ -1,3 +1,4 @@
+// Singleton de conexion con BD
 package database
 
 // database/database.go

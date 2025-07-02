@@ -9,10 +9,12 @@ import (
 	"time"
 )
 
+// Server representa el servidor HTTP que maneja las solicitudes relacionadas con usuarios y roles.
 type Server struct {
 	Svc *BDoperators.ServicioUsuario // Cambiado a puntero para evitar copia innecesaria
 }
 
+// NewServer crea una nueva instancia de Server con el servicio de usuario proporcionado.
 func NewServer(svc *BDoperators.ServicioUsuario) *Server {
 	return &Server{Svc: svc}
 }
@@ -33,6 +35,14 @@ func OpcionesHandler(w http.ResponseWriter, r *http.Request) {
 // POST /usuarios
 // InsertarUsuario maneja la creación de un nuevo usuario a través de una petición HTTP POST.
 // Decodifica el cuerpo de la petición, valida los datos y llama al servicio correspondiente.
+// Se espera que el cuerpo de la petición contenga los campos necesarios para crear un usuario.
+// El campo FechaNacimiento debe estar en formato "YYYY-MM-DD".
+// Si la inserción es exitosa, se devuelve un JSON con el estado de la operación.
+// Si ocurre un error al decodificar el JSON o al insertar el usuario, se devuelve
+// un error HTTP 400 o 500 respectivamente.
+// La función habilita CORS para permitir solicitudes desde diferentes orígenes.
+// Si la petición es OPTIONS, se responde con un estado 200 OK para manejar CORS.
+// La función espera un cuerpo de petición en formato JSON con los siguientes campos:
 func (s *Server) InsertarUsuario(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -71,6 +81,21 @@ func (s *Server) InsertarUsuario(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /usuarios
+// ListarUsuarios maneja la obtención de usuarios a través de una petición HTTP GET.
+// Permite filtrar por ID de usuario a través de parámetros de consulta.
+// Si se proporciona el parámetro id_usuario, se filtran los usuarios por ese ID.
+// Si no se proporciona, se devuelven todos los usuarios.
+// La respuesta se devuelve en formato JSON.
+// Si ocurre un error al obtener los usuarios, se devuelve un error HTTP 500.
+// Si la petición es OPTIONS, se responde con un estado 200 OK para manejar CORS.
+// Se espera que la petición tenga un parámetro de consulta opcional "id_usuario" para filtrar los resultados.
+// Si el parámetro "id_usuario" está presente, se utiliza para filtrar los usuarios
+// y se devuelve una lista de usuarios que coinciden con ese ID.
+// Si el parámetro no está presente, se devuelven todos los usuarios.
+// La respuesta se envía en formato JSON con el encabezado "Content-Type" establecido a "application/json".
+// Si ocurre un error al obtener los usuarios, se devuelve un error HTTP 500 con el
+// mensaje de error correspondiente.
+// Si la petición es OPTIONS, se responde con un estado 200 OK para manejar CORS
 func (s *Server) ListarUsuarios(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -100,6 +125,12 @@ func (s *Server) ListarUsuarios(w http.ResponseWriter, r *http.Request) {
 }
 
 // PUT /usuarios/{id}
+// ActualizarUsuario maneja la actualización de un usuario existente a través de una petición HTTP PUT.
+// Decodifica el cuerpo de la petición, valida los datos y llama al servicio correspondiente.
+// Se espera que el cuerpo de la petición contenga los campos necesarios para actualizar el usuario.
+// El campo FechaNacimiento debe estar en formato "YYYY-MM-DD".
+// El ID del usuario a actualizar se obtiene del cuerpo de la petición.
+// Si la actualización es exitosa, se devuelve un JSON con el estado de la operación.
 func (s *Server) ActualizarUsuario(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -138,6 +169,10 @@ func (s *Server) ActualizarUsuario(w http.ResponseWriter, r *http.Request) {
 }
 
 // DELETE /usuarios/{id}
+// EliminarUsuario maneja la eliminación de un usuario existente a través de una petición HTTP DELETE.
+// El ID del usuario a eliminar se obtiene de los parámetros de consulta.
+// Si el ID no se proporciona, se devuelve un error HTTP 400.
+// Si la eliminación es exitosa, se devuelve un JSON con el estado de la operación.
 func (s *Server) EliminarUsuario(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -161,6 +196,16 @@ func (s *Server) EliminarUsuario(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST /roles
+// InsertarRol maneja la creación de un nuevo rol a través de una petición HTTP POST.
+// Decodifica el cuerpo de la petición, valida los datos y llama al servicio correspondiente.
+// Se espera que el cuerpo de la petición contenga el nombre del rol.
+// Si la inserción es exitosa, se devuelve un JSON con el estado de la operación
+// Si ocurre un error al decodificar el JSON o al insertar el rol, se devuelve
+// un error HTTP 400 o 500 respectivamente.
+// La función habilita CORS para permitir solicitudes desde diferentes orígenes.
+// Si la petición es OPTIONS, se responde con un estado 200 OK para manejar CORS
+// La función espera un cuerpo de petición en formato JSON con el siguiente campo:
+// - nombrerol: el nombre del rol a insertar.
 func (s *Server) InsertarRol(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -215,6 +260,11 @@ func (s *Server) ActualizarRol(w http.ResponseWriter, r *http.Request) {
 }
 
 // DELETE /roles/{id}
+// EliminarRol maneja la eliminación de un rol existente a través de una petición HTTP DELETE.
+// El ID del rol a eliminar se obtiene de los parámetros de consulta.
+// Si el ID no se proporciona, se devuelve un error HTTP 400.
+// Si la eliminación es exitosa, se devuelve un JSON con el estado de la operación.
+
 func (s *Server) EliminarRol(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -238,6 +288,13 @@ func (s *Server) EliminarRol(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /roles
+// ListarRoles maneja la obtención de roles a través de una petición HTTP GET.
+// Permite filtrar por nombre de rol a través de parámetros de consulta.
+// Si se proporciona el parámetro nombrerol, se filtran los roles por ese nombre.
+// Si no se proporciona, se devuelven todos los roles.
+// La respuesta se devuelve en formato JSON.
+// Si ocurre un error al obtener los roles, se devuelve un error HTTP 500.
+// Si la petición es OPTIONS, se responde con un estado 200 OK para manejar CORS.
 func (s *Server) ListarRoles(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -278,6 +335,21 @@ func (s *Server) IniciarRecuperacionPassword(w http.ResponseWriter, r *http.Requ
 }
 
 // POST /recuperar/confirmar
+// RecuperarPassword maneja la recuperación de la contraseña a través de una petición HTTP POST.
+// Decodifica el cuerpo de la petición, valida los datos y llama al servicio correspondiente.
+// Se espera que el cuerpo de la petición contenga el correo, el token de recuperación y
+// la nueva contraseña.
+// Si la recuperación es exitosa, se devuelve un JSON con el estado de la operación.
+// Si ocurre un error al decodificar el JSON o al recuperar la contraseña, se devuelve
+// un error HTTP 400 o 500 respectivamente.
+// La función habilita CORS para permitir solicitudes desde diferentes orígenes.
+// Si la petición es OPTIONS, se responde con un estado 200 OK para manejar CORS
+// La función espera un cuerpo de petición en formato JSON con los siguientes campos:
+// - correo: el correo electrónico del usuario.
+// - token: el token de recuperación de contraseña.
+// - nuevacontrasenia: la nueva contraseña que se desea establecer.
+// Si la recuperación es exitosa, se devuelve un JSON con el estado "ok"
+// Si la recuperación falla, se devuelve un error HTTP 400 con el mensaje de error correspondiente.
 func (s *Server) RecuperarPassword(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -304,6 +376,22 @@ func (s *Server) RecuperarPassword(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST /login
+// Login maneja el inicio de sesión de un usuario a través de una petición HTTP POST.
+// Decodifica el cuerpo de la petición, valida los datos y llama al servicio correspondiente.
+// Se espera que el cuerpo de la petición contenga el correo y la contraseña del usuario.
+// Si el inicio de sesión es exitoso, se devuelve un JSON con el estado de acceso
+// y los datos del usuario.
+// Si ocurre un error al decodificar el JSON o al iniciar sesión, se devuelve
+// un error HTTP 400 o 500 respectivamente.
+// La función habilita CORS para permitir solicitudes desde diferentes orígenes.
+// Si la petición es OPTIONS, se responde con un estado 200 OK para manejar CORS.
+// La función espera un cuerpo de petición en formato JSON con los siguientes campos:
+// - correo: el correo electrónico del usuario.
+// - contrasenia: la contraseña del usuario.
+// Si el inicio de sesión es exitoso, se devuelve un JSON con los siguientes campos:
+// - acceso: un booleano que indica si el inicio de sesión fue exitoso.
+// - usuario: un objeto que contiene los datos del usuario si el inicio de sesión fue exitoso.
+// Si el inicio de sesión falla, se devuelve un JSON con acceso: false.
 func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -335,6 +423,20 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 // POST /recuperar/verificar
+// VerificarTokenRecuperacion maneja la verificación del token de recuperación de contraseña a través de una petición HTTP POST.
+// Decodifica el cuerpo de la petición, valida los datos y llama al servicio correspondiente.
+// Se espera que el cuerpo de la petición contenga el correo y el token de recuperación.
+// Si la verificación es exitosa, se devuelve un JSON con el estado de la operación
+// Si ocurre un error al decodificar el JSON o al verificar el token, se devuelve
+// un error HTTP 400 o 500 respectivamente.
+// La función habilita CORS para permitir solicitudes desde diferentes orígenes.
+// Si la petición es OPTIONS, se responde con un estado 200 OK para manejar CORS
+// La función espera un cuerpo de petición en formato JSON con los siguientes campos:
+// - correo: el correo electrónico del usuario.
+// - token: el token de recuperación de contraseña.
+// Si la verificación es exitosa, se devuelve un JSON con el estado "ok"
+// Si la verificación falla, se devuelve un error HTTP 400 con el mensaje de error correspondiente.
+// Si la verificación es exitosa, se devuelve un JSON con el estado "ok".
 func (s *Server) VerificarTokenRecuperacion(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {
@@ -360,6 +462,20 @@ func (s *Server) VerificarTokenRecuperacion(w http.ResponseWriter, r *http.Reque
 }
 
 // POST /recuperar/actualizar
+// ActualizarPasswordRecuperacion maneja la actualización de la contraseña de recuperación a través de una petición HTTP POST.
+// Decodifica el cuerpo de la petición, valida los datos y llama al servicio correspondiente.
+// Se espera que el cuerpo de la petición contenga el correo y la nueva contraseña.
+// Si la actualización es exitosa, se devuelve un JSON con el estado de la operación
+// Si ocurre un error al decodificar el JSON o al actualizar la contraseña, se devuelve
+// un error HTTP 400 o 500 respectivamente.
+// La función habilita CORS para permitir solicitudes desde diferentes orígenes.
+// Si la petición es OPTIONS, se responde con un estado 200 OK para manejar CORS
+// La función espera un cuerpo de petición en formato JSON con los siguientes campos:
+// - correo: el correo electrónico del usuario.
+// - nuevacontrasenia: la nueva contraseña que se desea establecer.
+// Si la actualización es exitosa, se devuelve un JSON con el estado "ok"
+// Si la actualización falla, se devuelve un error HTTP 400 con el mensaje de error correspondiente.
+// Si la actualización es exitosa, se devuelve un JSON con el estado "ok".
 func (s *Server) ActualizarPasswordRecuperacion(w http.ResponseWriter, r *http.Request) {
 	habilitarCORS(w)
 	if r.Method == http.MethodOptions {

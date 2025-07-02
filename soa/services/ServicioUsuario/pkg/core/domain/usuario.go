@@ -1,3 +1,4 @@
+// Manejador de roles y usuarios
 package UserModels
 
 import "time"
