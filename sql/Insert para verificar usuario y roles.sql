@@ -13,6 +13,7 @@ INSERT INTO "MetodosPago" ("nombre") VALUES ('Efectivo'), ('Tarjeta'), ('Yape'),
 INSERT INTO "Usuario" (nombres, apellidos, correo, telefono, direccion, fechanacimiento, contrasenia, rol)
 VALUES 
 ('Juan', 'Pérez', 'juanperez@mail.com', '999888777', 'Av. Siempre Viva 123', '1990-05-10', 'Vc/yfJJ/JzCMwtrpMJ2uHNF0hYEn1vDOaz8Px+pkKp6WTTXRGiX6ALx/', 3),
+('Juan', 'Kambria', 'lolapalusa@mail.com', '993388777', 'Av. Siempre Viva 323', '1990-05-10', 'Vc/yfJJ/JzCMwtrpMJ2uHNF0hYEn1vDOaz8Px+pkKp6WTTXRGiX6ALx/', 2),
 ('Ana', 'García', 'anagarcia@mail.com', '988777666', 'Calle Falsa 456', '1985-08-20', 'Vc/yfJJ/JzCMwtrpMJ2uHNF0hYEn1vDOaz8Px+pkKp6WTTXRGiX6ALx/', 1);
 
 -- Categorías de platos

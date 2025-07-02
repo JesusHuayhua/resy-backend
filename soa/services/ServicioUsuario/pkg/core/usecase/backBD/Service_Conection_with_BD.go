@@ -126,7 +126,7 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args []interface
 	var usuarios []UserModels.UsuarioBD
 	columnas := []string{
 		"id_usuario", "nombres", "apellidos", "correo",
-		"telefono", "direccion", "fechanacimiento", "contrasenia", "rol", "estadoacceso",
+		"telefono", "direccion", "fechanacimiento", "contrasenia", "rol", "estadoacceso", "fecha_creacion",
 	}
 
 	// Asegurar que la condición tenga el formato correcto
@@ -163,6 +163,7 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args []interface
 			&contraseniaEncriptada,
 			&usuario.DataUsuario.Rol,
 			&usuario.DataUsuario.EstadoAcceso,
+			&usuario.Fechacreacion,
 		)
 		if err != nil {
 			s.logger.Log("err", fmt.Sprintf("error al escanear fila: %v", err))
@@ -390,7 +391,7 @@ func eliminarToken(db *sql.DB, correo string) error {
 func (s *ServicioUsuario) Login(correo, contrasenia string) (bool, UserModels.UsuarioBD, error) {
 	columnas := []string{
 		"id_usuario", "nombres", "apellidos", "correo",
-		"telefono", "direccion", "fechanacimiento", "contrasenia", "rol", "estadoacceso",
+		"telefono", "direccion", "fechanacimiento", "contrasenia", "rol", "estadoacceso", "fecha_creacion",
 	}
 	rows, err := s.crud.Seleccionar(`"ResyDB"."Usuario"`, columnas, "correo = $1", correo)
 	if err != nil {
@@ -411,6 +412,7 @@ func (s *ServicioUsuario) Login(correo, contrasenia string) (bool, UserModels.Us
 			&contraseniaEncriptada,
 			&usuario.DataUsuario.Rol,
 			&usuario.DataUsuario.EstadoAcceso,
+			&usuario.Fechacreacion,
 		)
 		if err != nil {
 			return false, UserModels.UsuarioBD{}, fmt.Errorf("error al escanear fila: %v", err)

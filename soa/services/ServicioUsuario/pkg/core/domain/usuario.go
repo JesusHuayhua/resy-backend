@@ -14,6 +14,7 @@ type UsuarioVariable struct {
 	EstadoAcceso    bool      `db:"estadoacceso"`
 }
 type UsuarioBD struct {
-	IdUsuario   int `db:"id_usuario"`
-	DataUsuario UsuarioVariable
+	IdUsuario     int `db:"id_usuario"`
+	DataUsuario   UsuarioVariable
+	Fechacreacion time.Time `db:"fecha_creacion"`
 }
