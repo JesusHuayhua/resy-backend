@@ -56,8 +56,7 @@ func main() {
 	// Concurrencia necesaria para recordatorios
 	go func() {
 		for {
-			condicion := `fecha_reservada BETWEEN NOW() + INTERVAL '1 hour 58 minutes' AND NOW() + INTERVAL '2 hour 2 minutes'`
-			reservas, err := servicio.ListarReservas(condicion)
+			reservas, err := servicio.ListarReservasParaRecordatorio()
 			if err == nil {
 				for _, r := range reservas {
 					data := r.DataReserva

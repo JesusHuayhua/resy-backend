@@ -56,7 +56,8 @@ CREATE TABLE "Usuario" (
   "fechanacimiento" DATE,
   "contrasenia" TEXT NOT NULL,
   "rol" INT NOT NULL REFERENCES "Roles"("id_rol"),
-  "estadoacceso" BOOLEAN default true
+  "estadoacceso" BOOLEAN default true,
+  "fecha_creacion" Date default Now()
 );
 
 CREATE TABLE "RecuperacionPassword" (
