@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"soa/pkg/services/ServicioMenu/api/handlers"
 	"soa/pkg/services/ServicioMenu/core/usecase/backBD"
-	"soa/pkg/services/ServicioMenu/repository/crypton"
-	"soa/pkg/services/ServicioMenu/repository/database"
+	"soa/pkg/services/shared/crypto"
+	"soa/pkg/services/shared/database"
 )
 
 func main() {
@@ -20,11 +20,11 @@ func main() {
 		DatabaseName: "ResyDB",
 		Password:     "WwF3OBYuf8Tx1opemwPSc4LrAMv2NDQLZ/mYh4HPwcVZymIShg==",
 	}
-	encriptacionKey := crypton.Config{
-		EncryptionKey: "53WDFETRFQFC1?*OS!0LNSADJUER2YU8",
-		Salt:          "RCumoV7j",
+	cryptoCtx, err := crypto.New("alias/resy_master_key", "us-east-1", "prod/crypto_passphrase", 150000)
+	if err != nil {
+		log.Fatalf("Error al crear contexto de crypto %v", err)
 	}
-	dbManager, err := database.NuevoDBManager(databaseInformation, encriptacionKey)
+	dbManager, err := database.NuevoDBManager(databaseInformation, cryptoCtx)
 	if err != nil {
 		log.Fatalf("Error al conectar a la BD: %v", err)
 	}

@@ -14,9 +14,9 @@ import (
 	"os"
 	UserModels "soa/pkg/services/ServicioUsuario/core/domain"
 	"soa/pkg/services/ServicioUsuario/core/internal"
-	"soa/pkg/services/ServicioUsuario/repository"
-	"soa/pkg/services/ServicioUsuario/repository/crypton"
-	repoInterface "soa/pkg/services/ServicioUsuario/repository/interfaces"
+	repository "soa/pkg/services/shared"
+	"soa/pkg/services/shared/crypto"
+	repoInterface "soa/pkg/services/shared/interfaces"
 	"strings"
 	"time"
 
@@ -25,20 +25,20 @@ import (
 )
 
 type ServicioUsuario struct {
-	logger      log.Logger
-	crud        repoInterface.UserRepository
-	cryptConfig crypton.Config
+	logger    log.Logger
+	crud      repoInterface.Repository
+	cryptoCtx *crypto.EnvelopeCrypto
 }
 
 // Permite la Conexion de un nuevo usuario para hacer operaciones CRUD con la base de datos
-func NuevoServicioUsuario(db *sql.DB, cryptConfig crypton.Config) *ServicioUsuario {
+func NuevoServicioUsuario(db *sql.DB, cryptoCtx *crypto.EnvelopeCrypto) *ServicioUsuario {
 	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
-	crud := repository.NewUserRepository(db)
+	crud := repository.NewRepository(db)
 	return &ServicioUsuario{
-		logger:      logger,
-		crud:        crud,
-		cryptConfig: cryptConfig,
+		logger:    logger,
+		crud:      crud,
+		cryptoCtx: cryptoCtx,
 	}
 }
 
@@ -61,7 +61,7 @@ func (s *ServicioUsuario) ServiceStatus(_ context.Context) (int, error) {
 // Inserta un nuevo usuario en la base de datos y encripta su contraseña
 func (s *ServicioUsuario) InsertarNuevoUsuario(nombres, apellidos, correo, telefono, direccion string, fechaNacimiento time.Time, contrasenia string, rol int) (internal.StatusCode, error) {
 	// Encriptar la contraseña antes de guardar
-	contraseniaEncriptada, err := crypton.Encrypt(contrasenia, s.cryptConfig)
+	contraseniaEncriptada, err := s.cryptoCtx.Encrypt(contrasenia)
 	if err != nil {
 		s.logger.Log("err", fmt.Sprintf("error al encriptar contraseña: %v", err))
 		return internal.Error, fmt.Errorf("error al encriptar contraseña: %w", err)
@@ -90,7 +90,7 @@ func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, c
 	contraseniaEncriptada := contrasenia
 	if contrasenia != "" {
 		var err error
-		contraseniaEncriptada, err = crypton.Encrypt(contrasenia, s.cryptConfig)
+		contraseniaEncriptada, err = s.cryptoCtx.Encrypt(contrasenia)
 		if err != nil {
 			s.logger.Log("err", fmt.Sprintf("error al encriptar contraseña: %v", err))
 			return internal.Error, fmt.Errorf("error al encriptar contraseña: %w", err)
@@ -173,7 +173,7 @@ func (s *ServicioUsuario) SeleccionarUsuarios(condicion string, args []interface
 			return internal.Error, nil, fmt.Errorf("error al escanear fila: %v", err)
 		}
 		// Desencriptar la contraseña
-		contraseniaDescifrada, err := crypton.Decrypt(contraseniaEncriptada, s.cryptConfig)
+		contraseniaDescifrada, err := s.cryptoCtx.Decrypt(contraseniaEncriptada)
 		if err != nil {
 			s.logger.Log("err", fmt.Sprintf("error al descifrar contraseña: %v", err))
 			return internal.Error, nil, fmt.Errorf("error al descifrar contraseña: %v", err)
@@ -251,7 +251,7 @@ func (s *ServicioUsuario) SeleccionarRoles(filtro string, params []interface{}) 
 func (s *ServicioUsuario) IniciarRecuperacionPassword(correo string) (string, error) {
 	// Verifica si el correo existe
 	var existe int
-	err := s.crud.(*repository.UserRepositoryImpl).Crud().DB.QueryRow(`SELECT COUNT(*) FROM "ResyDB"."Usuario" WHERE correo=$1`, correo).Scan(&existe)
+	err := s.crud.(*repository.RepositoryImpl).Crud().DB.QueryRow(`SELECT COUNT(*) FROM "ResyDB"."Usuario" WHERE correo=$1`, correo).Scan(&existe)
 	if err != nil || existe == 0 {
 		return "", errors.New("correo no registrado")
 	}
@@ -264,7 +264,7 @@ func (s *ServicioUsuario) IniciarRecuperacionPassword(correo string) (string, er
 
 	// Guardar token en la base de datos
 	expira := time.Now().Add(15 * time.Minute)
-	db := s.crud.(*repository.UserRepositoryImpl).Crud().DB
+	db := s.crud.(*repository.RepositoryImpl).Crud().DB
 	if err := guardarTokenRecuperacion(db, correo, token, expira); err != nil {
 		return "", err
 	}
@@ -279,7 +279,7 @@ func (s *ServicioUsuario) IniciarRecuperacionPassword(correo string) (string, er
 
 // Cambia la contraseña si el token es válido
 func (s *ServicioUsuario) RecuperarPassword(correo, token, nuevaContrasenia string) error {
-	db := s.crud.(*repository.UserRepositoryImpl).Crud().DB
+	db := s.crud.(*repository.RepositoryImpl).Crud().DB
 	var expiraEn time.Time
 	var tokenBD string
 	err := db.QueryRow(`SELECT token, expira_en FROM "ResyDB"."RecuperacionPassword" WHERE correo=$1`, correo).Scan(&tokenBD, &expiraEn)
@@ -292,7 +292,7 @@ func (s *ServicioUsuario) RecuperarPassword(correo, token, nuevaContrasenia stri
 		return errors.New("token inválido o expirado")
 	}
 	// Encriptar la nueva contraseña
-	contraseniaEncriptada, err := crypton.Encrypt(nuevaContrasenia, s.cryptConfig)
+	contraseniaEncriptada, err := s.cryptoCtx.Encrypt(nuevaContrasenia)
 	if err != nil {
 		return errors.New("no se pudo encriptar la contraseña")
 	}
@@ -306,7 +306,7 @@ func (s *ServicioUsuario) RecuperarPassword(correo, token, nuevaContrasenia stri
 
 // Verifica si el token es válido para el correo dado
 func (s *ServicioUsuario) VerificarTokenRecuperacion(correo, token string) error {
-	db := s.crud.(*repository.UserRepositoryImpl).Crud().DB
+	db := s.crud.(*repository.RepositoryImpl).Crud().DB
 	var expiraEn time.Time
 	s.logger.Log("debug", fmt.Sprintf("Verificando token para correo: %s", correo))
 	s.logger.Log("debug", fmt.Sprintf("Token recibido: %s", token))
@@ -330,8 +330,8 @@ func (s *ServicioUsuario) VerificarTokenRecuperacion(correo, token string) error
 
 // Actualiza la contraseña (requiere que el token ya haya sido validado)
 func (s *ServicioUsuario) ActualizarPasswordRecuperacion(correo, nuevaContrasenia string) error {
-	db := s.crud.(*repository.UserRepositoryImpl).Crud().DB
-	contraseniaEncriptada, err := crypton.Encrypt(nuevaContrasenia, s.cryptConfig)
+	db := s.crud.(*repository.RepositoryImpl).Crud().DB
+	contraseniaEncriptada, err := s.cryptoCtx.Encrypt(nuevaContrasenia)
 	if err != nil {
 		return errors.New("no se pudo encriptar la contraseña")
 	}
@@ -421,7 +421,7 @@ func (s *ServicioUsuario) Login(correo, contrasenia string) (bool, UserModels.Us
 			return false, UserModels.UsuarioBD{}, fmt.Errorf("error al escanear fila: %v", err)
 		}
 		// Desencriptar la contraseña
-		contraseniaDescifrada, err := crypton.Decrypt(contraseniaEncriptada, s.cryptConfig)
+		contraseniaDescifrada, err := s.cryptoCtx.Decrypt(contraseniaEncriptada)
 		if err != nil {
 			return false, UserModels.UsuarioBD{}, fmt.Errorf("error al descifrar contraseña: %v", err)
 		}

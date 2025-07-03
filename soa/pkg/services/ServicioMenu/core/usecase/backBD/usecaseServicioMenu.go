@@ -4,18 +4,18 @@ import (
 	"database/sql"
 	"fmt"
 	MenuModels "soa/pkg/services/ServicioMenu/core/domain"
-	"soa/pkg/services/ServicioMenu/repository"
-	repoInterface "soa/pkg/services/ServicioMenu/repository/interfaces"
+	repository "soa/pkg/services/shared"
+	repoInterface "soa/pkg/services/shared/interfaces"
 	"strconv"
 	"time"
 )
 
 type ServicioMenu struct {
-	crud repoInterface.PlatoRepository
+	crud repoInterface.Repository
 }
 
 func NuevoServicioMenu(db *sql.DB) *ServicioMenu {
-	crud := repository.NewPlatoRepository(db)
+	crud := repository.NewRepository(db)
 	return &ServicioMenu{crud: crud}
 }
 

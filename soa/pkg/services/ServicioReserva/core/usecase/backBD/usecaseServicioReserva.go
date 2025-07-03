@@ -4,18 +4,18 @@ import (
 	"database/sql"
 	"fmt"
 	ReservaModels "soa/pkg/services/ServicioReserva/core/domain"
-	"soa/pkg/services/ServicioReserva/repository"
-	repoInterface "soa/pkg/services/ServicioReserva/repository/interfaces"
+	repository "soa/pkg/services/shared"
+	repoInterface "soa/pkg/services/shared/interfaces"
 	"strings"
 	"time"
 )
 
 type ServicioReserva struct {
-	crud repoInterface.ReservaRepository
+	crud repoInterface.Repository
 }
 
 func NuevoServicioReserva(db *sql.DB) *ServicioReserva {
-	crud := repository.NewReservaRepository(db)
+	crud := repository.NewRepository(db)
 	return &ServicioReserva{crud: crud}
 }
 

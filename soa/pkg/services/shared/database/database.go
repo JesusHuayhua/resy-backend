@@ -11,8 +11,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
-
-	"soa/pkg/services/ServicioUsuario/repository/crypton"
+	"soa/pkg/services/shared/crypto"
 
 	_ "github.com/lib/pq"
 )
@@ -34,9 +33,9 @@ type DBManager struct {
 	DB *sql.DB
 }
 
-func NuevoDBManager(config Config, configuracion crypton.Config) (*DBManager, error) {
+func NuevoDBManager(config Config, cryptoCtx *crypto.EnvelopeCrypto) (*DBManager, error) {
 	// Descifrar la contraseña usando el campo Password del struct Config
-	password, err := crypton.Decrypt(config.Password, configuracion)
+	password, err := cryptoCtx.Decrypt(config.Password)
 	if err != nil {
 		return nil, fmt.Errorf("error al descifrar password: %v", err)
 	}
