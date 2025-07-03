@@ -21,7 +21,7 @@ if /i "%CMD%"=="build-local" (
     set "SVC=%%~nxD"
     echo [BUILD] !SVC!
     pushd "%ENTRYPOINTS_DIR%\!SVC!"
-      go build -ldflags "-s -w" -o "%BIN_DIR%\!SVC!.exe" . || (
+      go build -gcflags="all=-N -l" -o "%BIN_DIR%\!SVC!.exe" . || (
         echo ERROR building !SVC!
         exit /b 1
       )

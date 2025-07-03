@@ -12,22 +12,17 @@ import (
 )
 
 func main() {
-	//1. Test locally first
 	databaseInformation := database.Config{
-		Driver:     "postgres",
-		TipoDriver: "PostgreSQL",
-		DBName:     "ingesoft1",
-		//Host:         "ingesoft1.cyofngbo9tfh.us-east-1.rds.amazonaws.com",
-		Host: "127.0.0.1",
-		Port: "5432",
-		User: "ingesoft1",
-		//DatabaseName: "ResyDB",
-		//Password:     "WwF3OBYuf8Tx1opemwPSc4LrAMv2NDQLZ/mYh4HPwcVZymIShg==",
-		DatabaseName: "",
-		Password:     "",
+		Driver:       "postgres",
+		TipoDriver:   "PostgreSQL",
+		DBName:       "postgres",
+		Host:         "127.0.0.1",
+		Port:         "5432",
+		User:         "postgres",
+		DatabaseName: "ResyDB",
+		Password:     "eyJrbXNDaXBoZXJ0ZXh0IjoiQVFJREFIaW4wYXVRQnR4dXppdldKY1ZHVkRMTThIQllFTTVhbFRhWEV3ZlpqZk1XTFFFbTNlVmlySGlONDlTUm00QklzQzFjQUFBQWZqQjhCZ2txaGtpRzl3MEJCd2FnYnpCdEFnRUFNR2dHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNSWVsYW84OHN4MnlNSElGOUFnRVFnRHU2eGU5Zk5pQXY2SCtOSnNYaDB0NDFFWkdGWTVMYm1HZXh1dnlINTNkaURZbHc1NUFDUi9TcUF2bGU5aXMvNlNBL2szNlo2cFBDVjZKNkh3PT0iLCJ3cmFwTm9uY2UiOiIzeDl5SGUzMXNhTVpxV3FQIiwid3JhcHBlZEtleSI6IjVDbWhycHFyVk1hbEo3dDRaTkJMdldsUzA3d3VVR1p0UDRXMnJ6aE53REhGbFU4MGcrbmx2ZDRMODdUY3UzSnMiLCJwYXlsb2FkTm9uY2UiOiIwWFRxbGl0S2k2am13OGFqIiwiY2lwaGVydGV4dCI6IlF0YkFCeTJaMFRXeE5WQ3NhdzdsNkhIL0N3PT0iLCJzYWx0IjoibjNKbHl3TjFXNGpyakdUQ1RyeUdDdz09IiwiaXRlciI6MTUwMDAwfQ==",
 	}
-	//2.
-	cryptoCtx, err := crypto.New("", "", 150000)
+	cryptoCtx, err := crypto.New("alias/resy_master_key", "us-east-1", "prod/crypto_passphrase", 150000)
 	if err != nil {
 		log.Fatalf("Error al crear contexto de crypto %v", err)
 	}

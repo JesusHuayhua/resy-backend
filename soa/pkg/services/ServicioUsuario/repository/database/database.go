@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"soa/pkg/services/ServicioUsuario/repository/crypto"
 
@@ -26,8 +27,11 @@ type DBManager struct {
 }
 
 func NuevoDBManager(config Config, cryptoCtx *crypto.EnvelopeCrypto) (*DBManager, error) {
-	// Descifrar la contraseña usando el campo Password del struct Config
-	password, err := cryptoCtx.Decrypt(config.Password)
+	decoded, err := base64.StdEncoding.DecodeString(config.Password)
+	if err != nil {
+		fmt.Errorf("Error al desencodear b64 config, error: %v", err)
+	}
+	password, err := cryptoCtx.Decrypt(string(decoded))
 	if err != nil {
 		return nil, fmt.Errorf("error al descifrar password: %v", err)
 	}

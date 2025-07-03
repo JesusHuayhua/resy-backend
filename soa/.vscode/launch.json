@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug binario Go",
+      "type": "go",
+      "request": "launch",
+      "mode": "exec",                             
+      "program": "${workspaceFolder}\\cmd\\bin\\ServicioUsuario.exe",   
+      "cwd": "${workspaceFolder}",                 
+      "args": [],                               
+      "env": {},                                  
+      "showLog": true                             
+    }
+  ]
+}
