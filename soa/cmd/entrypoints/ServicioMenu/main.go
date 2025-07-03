@@ -9,6 +9,11 @@ import (
 	"soa/pkg/services/shared/database"
 )
 
+/*
+func test_crypto(ctx *crypto.EnvelopeCrypto, pwd string) {
+	print(ctx.Encrypt(pwd))
+}*/
+
 func main() {
 	databaseInformation := database.Config{
 		Driver:       "postgres",
@@ -18,12 +23,13 @@ func main() {
 		Port:         "5432",
 		User:         "ingesoft1",
 		DatabaseName: "ResyDB",
-		Password:     "WwF3OBYuf8Tx1opemwPSc4LrAMv2NDQLZ/mYh4HPwcVZymIShg==",
+		Password:     "eyJrbXNDaXBoZXJ0ZXh0IjoiQVFJREFIaW4wYXVRQnR4dXppdldKY1ZHVkRMTThIQllFTTVhbFRhWEV3ZlpqZk1XTFFGbml5cWdnZmRTQ1RsUEE4YkdvZm9IQUFBQWZqQjhCZ2txaGtpRzl3MEJCd2FnYnpCdEFnRUFNR2dHQ1NxR1NJYjNEUUVIQVRBZUJnbGdoa2dCWlFNRUFTNHdFUVFNUkRMdk1OVlp3UnJNcDNHL0FnRVFnRHY4RlFuOW0zM2RLdlRRTzN0YzlFQTFBKzVSRXFPZ1BJWDdRRThCS3F5YzJwak41K1NPd2x4elhuNU5yVTRKa0JLREtzaTZ0N1RwZlJ4d3pnPT0iLCJ3cmFwTm9uY2UiOiI1YkRnSElPWElta3dXMUVEIiwid3JhcHBlZEtleSI6IjBqandHblhDZXNKWmxVNytWUFMxRHAvK2hCeDBOK1lKT2pYUUVuNzdJcjdIdjhWcEowQ052YlFJSW5nM0pwUTciLCJwYXlsb2FkTm9uY2UiOiI1M1NBWWIzUnRCSkU0SjI0IiwiY2lwaGVydGV4dCI6InlNaVRzZVBiSzgyM1dCaER2Rkx5Qzd4Z2duOUNaOVVwaFE9PSIsInNhbHQiOiJzN1RyNHRHUEJOZWpraERRRW4rNW53PT0iLCJpdGVyIjoxNTAwMDB9",
 	}
 	cryptoCtx, err := crypto.New("alias/resy_master_key", "us-east-1", "prod/crypto_passphrase", 150000)
 	if err != nil {
 		log.Fatalf("Error al crear contexto de crypto %v", err)
 	}
+	//test_crypto(cryptoCtx, databaseInformation.Password)
 	dbManager, err := database.NuevoDBManager(databaseInformation, cryptoCtx)
 	if err != nil {
 		log.Fatalf("Error al conectar a la BD: %v", err)
