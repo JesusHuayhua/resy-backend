@@ -2,14 +2,12 @@ package database
 
 import (
 	"database/sql"
-	"encoding/base64"
 	"fmt"
 	"soa/pkg/services/ServicioUsuario/repository/crypto"
 
 	_ "github.com/lib/pq"
 )
 
-// Config representa la estructura del JSON
 type Config struct {
 	Driver       string `json:"driver"`
 	TipoDriver   string `json:"tipo_de_driver"`
@@ -18,30 +16,25 @@ type Config struct {
 	Port         string `json:"puerto"`
 	User         string `json:"usuario"`
 	DatabaseName string `json:"esquemabd"`
-	Password     string `json:"contrasenha"` // Asumimos que está cifrada
+	Password     string `json:"contrasenha"`
 }
 
-// DBManager maneja la conexión a la BD
 type DBManager struct {
 	DB *sql.DB
 }
 
 func NuevoDBManager(config Config, cryptoCtx *crypto.EnvelopeCrypto) (*DBManager, error) {
-	decoded, err := base64.StdEncoding.DecodeString(config.Password)
-	if err != nil {
-		fmt.Errorf("Error al desencodear b64 config, error: %v", err)
-	}
-	password, err := cryptoCtx.Decrypt(string(decoded))
+	password, err := cryptoCtx.Decrypt(config.Password)
 	if err != nil {
 		return nil, fmt.Errorf("error al descifrar password: %v", err)
 	}
-	// Crear la cadena de conexión para PostgreSQL
+	//Workaround temporal de sslmode desactivado (en AWS si puedes usar require)
 	connStr := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		config.Host,
 		config.Port,
 		config.User,
-		password, // Contraseña descifrada
+		password, //
 		config.DBName,
 	)
 	db, err := sql.Open(config.Driver, connStr)

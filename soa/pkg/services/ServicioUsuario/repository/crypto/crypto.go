@@ -10,6 +10,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 
@@ -126,11 +127,16 @@ func (e *EnvelopeCrypto) Encrypt(plaintext string) (string, error) {
 		Ciphertext:    base64.StdEncoding.EncodeToString(ct),
 	}
 	out, err := json.Marshal(env)
-	return string(out), err
+	ciphertext := base64.StdEncoding.EncodeToString(out)
+	return string(ciphertext), err
 }
 
-func (e *EnvelopeCrypto) Decrypt(envJSON string) (string, error) {
+func (e *EnvelopeCrypto) Decrypt(enc string) (string, error) {
 	var env Envelope
+	envJSON, err := base64.StdEncoding.DecodeString(enc)
+	if err != nil {
+		return "", fmt.Errorf("error al desencodear b64 config, error: %v", err)
+	}
 	if err := json.Unmarshal([]byte(envJSON), &env); err != nil {
 		return "", err
 	}
