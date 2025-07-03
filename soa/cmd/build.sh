@@ -34,7 +34,7 @@ function build_local() {
     svc_name="$(basename "$dir")"
     echo "[BUILD] $svc_name"
     pushd "$dir" >/dev/null
-      go build -ldflags="-s -w" -o "$BIN_DIR/$svc_name"
+      go build -gcflags="all=-N -l" -o "$BIN_DIR/$svc_name"
     popd >/dev/null
   done
   echo "Compilacion completada."
