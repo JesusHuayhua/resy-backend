@@ -22,9 +22,9 @@ INSERT INTO "CategoriaPlatos" ("nombre") VALUES ('Entradas'), ('Fondos'), ('Post
 -- Plato
 INSERT INTO "Plato" ("nombre_plato", "categoria", "descripcion", "precio", "imagen")
 VALUES 
-('Ceviche', 1, 'Ceviche clásico de pescado', 25.00, 'ceviche.jpg'),
-('Lomo Saltado', 2, 'Lomo saltado tradicional', 30.00, 'lomo.jpg'),
-('Suspiro Limeño', 3, 'Postre tradicional', 12.00, 'suspiro.jpg');
+('Ceviche', 1, 'Ceviche clásico de pescado', 25.00, 'https://resy-ingesoft.s3.us-east-1.amazonaws.com/imagen_2025-06-21_213926386.png'),
+('Lomo Saltado', 2, 'Lomo saltado tradicional', 30.00, 'https://resy-ingesoft.s3.us-east-1.amazonaws.com/imagen_2025-06-21_213926386.png'),
+('Suspiro Limeño', 3, 'Postre tradicional', 12.00, 'https://resy-ingesoft.s3.us-east-1.amazonaws.com/imagen_2025-06-21_213926386.png');
 
 -- MenuSemanal (id_menu se autogenera por trigger)
 INSERT INTO "MenuSemanal" ("fecha_inicio", "fecha_fin")
@@ -86,7 +86,91 @@ VALUES ('RES1', 1, 2, 50.00);
 INSERT INTO "InformacionLocal" ("horarios", "direccion", "telefono", "correo", "facebook")
 VALUES ('Lun-Dom 8am-10pm', 'Av. Principal 123', '987654321', 'info@resy.com', 'facebook.com/resy');
 
+-- Más Platos
+INSERT INTO "Plato" ("nombre_plato", "categoria", "descripcion", "precio", "imagen")
+VALUES
+('Aji de Gallina', 2, 'Clásico ají de gallina cremoso', 28.00, 'https://resy-ingesoft.s3.us-east-1.amazonaws.com/imagen_2025-06-21_213926386.png'),
+('Causa Rellena', 1, 'Causa de papa con relleno de atún', 20.00, 'https://resy-ingesoft.s3.us-east-1.amazonaws.com/imagen_2025-06-21_213926386.png'),
+('Arroz con Leche', 3, 'Postre tradicional de arroz con leche', 10.00, 'https://resy-ingesoft.s3.us-east-1.amazonaws.com/imagen_2025-06-21_213926386.png'),
+('Sopa Criolla', 1, 'Sopa sustanciosa con fideos y huevo', 15.00, 'https://resy-ingesoft.s3.us-east-1.amazonaws.com/imagen_2025-06-21_213926386.png'),
+('Arroz con Pato', 2, 'Arroz verde con pato tierno', 35.00, 'https://resy-ingesoft.s3.us-east-1.amazonaws.com/imagen_2025-06-21_213926386.png'),
+('Mazamorra Morada', 3, 'Dulce tradicional de maíz morado', 9.00, 'https://resy-ingesoft.s3.us-east-1.amazonaws.com/imagen_2025-06-21_213926386.png');
+
+-- Nuevo MenuSemanal (id_menu se autogenera por trigger)
+INSERT INTO "MenuSemanal" ("fecha_inicio", "fecha_fin")
+VALUES ('2025-07-01', '2025-07-07');
+
+-- Más Menudia para 'Men1' (Semana 1: 2025-06-24 a 2025-06-30)
+INSERT INTO "Menudia" ("id_menu", "dia_semana")
+VALUES
+('Men1', 'Miercoles'),
+('Men1', 'Jueves'),
+('Men1', 'Viernes'),
+('Men1', 'Sabado'),
+('Men1', 'Domingo');
+
+-- Menudia para 'Men2' (Semana 2: 2025-07-01 a 2025-07-07)
+INSERT INTO "Menudia" ("id_menu", "dia_semana")
+VALUES
+('Men2', 'Lunes'),
+('Men2', 'Martes'),
+('Men2', 'Miercoles'),
+('Men2', 'Jueves'),
+('Men2', 'Viernes'),
+('Men2', 'Sabado'),
+('Men2', 'Domingo');
+
+-- PlatosEnMenudia para los nuevos días de 'Men1'
+-- Asumiendo que el id_dia para Miercoles es 3, Jueves 4, etc. (ajusta según tus IDs reales si usas una secuencia que ya ha corrido)
+-- Para este ejemplo, estoy asumiendo que los IDs de Menudia se incrementan secuencialmente.
+-- Puedes verificar los IDs con SELECT * FROM "Menudia"; si no estás seguro.
+INSERT INTO "PlatosEnMenudia" ("id_dia", "id_plato", "cantidad_plato", "disponible_venta")
+VALUES
+-- Miercoles (id_dia 3, asumiendo)
+(3, 1, 12, true), -- Ceviche
+(3, 4, 7, true),  -- Aji de Gallina
+(3, 6, 6, true),  -- Arroz con Leche
+
+-- Jueves (id_dia 4, asumiendo)
+(4, 5, 9, true),  -- Causa Rellena
+(4, 2, 10, true), -- Lomo Saltado
+(4, 7, 5, true),  -- Sopa Criolla
+
+-- Viernes (id_dia 5, asumiendo)
+(5, 1, 15, true), -- Ceviche
+(5, 8, 8, true),  -- Arroz con Pato
+(5, 3, 10, true), -- Suspiro Limeño
+
+-- Sabado (id_dia 6, asumiendo)
+(6, 4, 11, true), -- Aji de Gallina
+(6, 2, 9, true),  -- Lomo Saltado
+(6, 9, 7, true),  -- Mazamorra Morada
+
+-- Domingo (id_dia 7, asumiendo)
+(7, 7, 10, true), -- Sopa Criolla
+(7, 8, 10, true), -- Arroz con Pato
+(7, 3, 8, true);  -- Suspiro Limeño
+
+-- PlatosEnMenudia para los días de 'Men2'
+-- Asumiendo que los IDs de Menudia para 'Men2' comienzan desde 8.
+INSERT INTO "PlatosEnMenudia" ("id_dia", "id_plato", "cantidad_plato", "disponible_venta")
+VALUES
+-- Lunes (id_dia 8, asumiendo)
+(8, 2, 10, true), -- Lomo Saltado
+(8, 4, 8, true),  -- Aji de Gallina
+(8, 6, 6, true),  -- Arroz con Leche
+
+-- Martes (id_dia 9, asumiendo)
+(9, 1, 12, true), -- Ceviche
+(9, 5, 7, true),  -- Causa Rellena
+(9, 9, 5, true),  -- Mazamorra Morada
+
+-- Miercoles (id_dia 10, asumiendo)
+(10, 8, 9, true), -- Arroz con Pato
+(10, 7, 10, true), -- Sopa Criolla
+(10, 3, 12, true); -- Suspiro Limeño
+
 select * from "MenuSemanal";
 select * from "Menudia";
 select * from "Roles";
-select * from "ResyDB"."Usuario";
+select * from "ResyDB"."Plato";
