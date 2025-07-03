@@ -105,7 +105,7 @@ CREATE TABLE "CategoriaPlatos" (
 
 CREATE TABLE "Plato" (
   "id_plato" SERIAL PRIMARY KEY,
-  "nombre_plato" VARCHAR(20) NOT NULL,
+  "nombre_plato" VARCHAR(20) unique NOT NULL,
   "categoria" INT NOT NULL REFERENCES "CategoriaPlatos"("id_categoria"),
   "descripcion" VARCHAR(200) NOT NULL,
   "precio" DECIMAL(10,2) NOT NULL,
@@ -231,4 +231,3 @@ CREATE TRIGGER trigger_id_menu
 BEFORE INSERT ON "MenuSemanal"
 FOR EACH ROW
 EXECUTE FUNCTION generar_id_menu();
-
