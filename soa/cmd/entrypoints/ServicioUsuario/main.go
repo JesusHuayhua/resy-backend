@@ -156,6 +156,6 @@ func main() {
 	log.Printf("Hora local: %v", now)
 	log.Printf("Hora UTC: %v", now.UTC())
 
-	log.Println("Servidor escuchando en :8080")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Println("Servidor escuchando en :8083")
+	log.Fatal(http.ListenAndServe(":8083", mux))
 }
