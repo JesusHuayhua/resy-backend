@@ -13,6 +13,8 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
+	"strings"
 
 	"golang.org/x/crypto/pbkdf2"
 
@@ -49,23 +51,38 @@ Referencias:
 	- https://cloud.google.com/kms/docs/envelope-encryption
 */
 
-/*
-Cuando se esta ejecutando en maquina local, se requiere dumpear las credenciales, esto se puede hacer con.
-aws configure get aws_secret_access_key
-aws configure get aws_session_token
-aws configure get aws_access_key_id
-T.B.D:
-*/
+func IsRunningInDocker() bool {
+	data, err := os.ReadFile("/proc/1/cgroup")
+	if err != nil {
+		return false
+	}
+	return strings.Contains(string(data), "docker")
+}
+
 func New(keyAlias string, region string, passphraseName string, iter int) (*EnvelopeCrypto, error) {
 	ctx := context.TODO()
-	cfg, err := config.LoadDefaultConfig(ctx,
-		config.WithRegion(region),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
-			"ASIAW3MEC65RQDVR76XU",
-			"sIkpmYqgIErRXnhMYTI6JrGfbXRsTTlJDQejuoOe",
-			"IQoJb3JpZ2luX2VjEBQaCXVzLXdlc3QtMiJHMEUCIQCBZ+zrnksUubDQuuc7WFeEIJ3Nd8jqxEUG1x9LyOCRLgIgYzNy9sF6C35aLoo1jlI2FjC91F9XfarLQhSmGwq4dZsqrwIIHRAAGgw0NzExMTI4MDgyOTEiDAU9CXNt+Tp0fQv6hiqMAnP67gAkpArtMigANzCZQRSgaLe5wyxfODw2la7ta9iGHJxnSt/rxFlTI/Mu9WcJPLZIvUgB2IRPSZt0NdOqcyv3/h+80lHafubdHIYvPNWDl397MxF4smmGFx4rDtE1fGBl6JugZBg1qwmloNOoI6elvtYrofjlvu5Q/7XRlFS67mSA3L3+1JvUYTGbwE5eF6CoScmAE6xFV0KBhgAb1h2bc7u+E1BI0bVIah/cyTWmZrW7Kr17vT5tLNuFF5UkT6k/97x0PFv1cEK88Vmrj3UD/WbW3F/pOPbqVEd89yKqYMPc17Ponijk4PQS9helUeF6MGgs0hnI0gtPLz0ciAalAQGK49NbQYdqVCYw9MGbwwY6nQEX5JHaK9DZnxhPZFUhDwchRTLmCzH/2QK/B9lqDcjkfS65yvoZKrbBxQpHxHl+4AhYBgosNAla/u6Dphh0BwZ9n++RvntBSH6HvN4FiqJmkLrtGyWPE9SLALK2CLImbkXAAV9ObBKJA+Dh9qCNTIkBB/R8ko10CYW3T9XendBzaIsAgMFGHFOh+9xwKndKUhTIi8Qp21RIt6yStEjt"),
-		),
-	)
+	var cfg aws.Config
+	var err error
+	if IsRunningInDocker() {
+		cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(region))
+		log.Println("[LOG] Running within DOCKER context.")
+	} else {
+		/*
+			Cuando se esta ejecutando en maquina local, se requiere dumpear las credenciales, esto se puede hacer con.
+			aws configure get aws_secret_access_key
+			aws configure get aws_session_token
+			aws configure get aws_access_key_id
+			Cada 4 horas cambia.
+		*/
+		cfg, err = config.LoadDefaultConfig(ctx,
+			config.WithRegion(region),
+			config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
+				"ASIAW3MEC65RQDVR76XU",
+				"sIkpmYqgIErRXnhMYTI6JrGfbXRsTTlJDQejuoOe",
+				"IQoJb3JpZ2luX2VjEBQaCXVzLXdlc3QtMiJHMEUCIQCBZ+zrnksUubDQuuc7WFeEIJ3Nd8jqxEUG1x9LyOCRLgIgYzNy9sF6C35aLoo1jlI2FjC91F9XfarLQhSmGwq4dZsqrwIIHRAAGgw0NzExMTI4MDgyOTEiDAU9CXNt+Tp0fQv6hiqMAnP67gAkpArtMigANzCZQRSgaLe5wyxfODw2la7ta9iGHJxnSt/rxFlTI/Mu9WcJPLZIvUgB2IRPSZt0NdOqcyv3/h+80lHafubdHIYvPNWDl397MxF4smmGFx4rDtE1fGBl6JugZBg1qwmloNOoI6elvtYrofjlvu5Q/7XRlFS67mSA3L3+1JvUYTGbwE5eF6CoScmAE6xFV0KBhgAb1h2bc7u+E1BI0bVIah/cyTWmZrW7Kr17vT5tLNuFF5UkT6k/97x0PFv1cEK88Vmrj3UD/WbW3F/pOPbqVEd89yKqYMPc17Ponijk4PQS9helUeF6MGgs0hnI0gtPLz0ciAalAQGK49NbQYdqVCYw9MGbwwY6nQEX5JHaK9DZnxhPZFUhDwchRTLmCzH/2QK/B9lqDcjkfS65yvoZKrbBxQpHxHl+4AhYBgosNAla/u6Dphh0BwZ9n++RvntBSH6HvN4FiqJmkLrtGyWPE9SLALK2CLImbkXAAV9ObBKJA+Dh9qCNTIkBB/R8ko10CYW3T9XendBzaIsAgMFGHFOh+9xwKndKUhTIi8Qp21RIt6yStEjt"),
+			))
+		log.Println("[LOG] Running within local-machine context, update credentials accordingly.")
+	}
 	if err != nil {
 		return nil, err
 	}
