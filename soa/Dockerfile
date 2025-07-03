@@ -22,7 +22,7 @@ COPY --from=builder /bin/ServicioMenu    /bin/ServicioMenu
 COPY --from=builder /bin/ServicioReserva /bin/ServicioReserva
 COPY --from=builder /bin/ServicioUsuario /bin/ServicioUsuario
 
-# Genera entrypoint.sh al momento que entrypoint.sh cuando se invoke a dockerfile.
+# Genera entrypoint.sh al momento que entrypoint.sh se invoke a dockerfile.
 RUN echo '#!/bin/sh' > /entrypoint.sh && \
     echo 'echo "Iniciando ServicioMenu..."' >> /entrypoint.sh && \
     echo '/bin/ServicioMenu &' >> /entrypoint.sh && \
