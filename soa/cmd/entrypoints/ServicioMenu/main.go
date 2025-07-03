@@ -32,7 +32,6 @@ func main() {
 	servicio := backBD.NuevoServicioMenu(dbManager.DB)
 	server := handlers.NewServer(servicio)
 	mux := http.NewServeMux()
-	// Rutas para platos
 	mux.HandleFunc("/platos", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			handlers.OpcionesHandler(w, r)

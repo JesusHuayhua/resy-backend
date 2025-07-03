@@ -47,17 +47,6 @@ Referencias:
 	- https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/concepts.html
 	- https://www.mongodb.com/docs/manual/core/csfle/fundamentals/automatic-encryption/
 	- https://cloud.google.com/kms/docs/envelope-encryption
-
-La encriptacion consta de 3 capas
-Encriptacion:
-	-
-	-
-Desencriptacion
-	-
-	-
-Incluso si el atacante tiene la informacion de JSON, tiene que comprometer las credenciales del usuario.const
-	-
-
 */
 
 /*
