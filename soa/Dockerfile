@@ -1,20 +1,19 @@
 FROM golang:1.24.4-bookworm AS builder
-WORKDIR /app
-COPY go.mod go.sum ./
-RUN go mod download
+WORKDIR /app 
+COPY . . 
+RUN if [ ! -f go.mod ]; then \
+      echo "[GO MOD] go.mod not found, initializing…"; \
+      go mod init soa; \
+    fi && \
+    echo "[GO MOD] running go mod tidy…" && \
+    go mod tidy
 
-COPY pkg/ pkg/
-COPY cmd/entrypoints/ServicioMenu    cmd/entrypoints/ServicioMenu
-COPY cmd/entrypoints/ServicioReserva cmd/entrypoints/ServicioReserva
-COPY cmd/entrypoints/ServicioUsuario cmd/entrypoints/ServicioUsuario
-
-# Commandline de depuracion (pero no lo voy a tocar ahorita)
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-      go build  -gcflags="all=-N -l" -o /bin/ServicioMenu    ./cmd/entrypoints/ServicioMenu && \
+      go build -gcflags="all=-N -l" -o /bin/ServicioMenu    ./cmd/entrypoints/ServicioMenu && \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-      go build  -gcflags="all=-N -l" -o /bin/ServicioReserva ./cmd/entrypoints/ServicioReserva && \
+      go build -gcflags="all=-N -l" -o /bin/ServicioReserva ./cmd/entrypoints/ServicioReserva && \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-      go build  -gcflags="all=-N -l" -o /bin/ServicioUsuario ./cmd/entrypoints/ServicioUsuario
+      go build -gcflags="all=-N -l" -o /bin/ServicioUsuario ./cmd/entrypoints/ServicioUsuario
 
 FROM alpine:3.18 AS final
 #RUN apk add --no-cache ca-certificates bash
