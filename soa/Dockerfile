@@ -21,6 +21,7 @@ WORKDIR /app
 COPY --from=builder /bin/ServicioMenu    /bin/ServicioMenu
 COPY --from=builder /bin/ServicioReserva /bin/ServicioReserva
 COPY --from=builder /bin/ServicioUsuario /bin/ServicioUsuario
+COPY config.json /app/config.json
 
 # Genera entrypoint.sh al momento que entrypoint.sh se invoke a dockerfile.
 RUN echo '#!/bin/sh' > /entrypoint.sh && \
