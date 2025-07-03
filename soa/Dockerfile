@@ -10,26 +10,26 @@ COPY cmd/entrypoints/ServicioMenu    cmd/entrypoints/ServicioMenu
 COPY cmd/entrypoints/ServicioReserva cmd/entrypoints/ServicioReserva
 COPY cmd/entrypoints/ServicioUsuario cmd/entrypoints/ServicioUsuario
 
+#Compilar con todo... por el momento.
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-      go build -ldflags="-s -w" -o /bin/ServicioMenu    ./cmd/entrypoints/ServicioMenu && \
+      go build  -gcflags="all=-N -l" -o /bin/ServicioMenu    ./cmd/entrypoints/ServicioMenu && \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-      go build -ldflags="-s -w" -o /bin/ServicioReserva ./cmd/entrypoints/ServicioReserva && \
+      go build  -gcflags="all=-N -l" -o /bin/ServicioReserva ./cmd/entrypoints/ServicioReserva && \
     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-      go build -ldflags="-s -w" -o /bin/ServicioUsuario ./cmd/entrypoints/ServicioUsuario
+      go build  -gcflags="all=-N -l" -o -o /bin/ServicioUsuario ./cmd/entrypoints/ServicioUsuario
 
 
 
-# Instalar shell y certificados (si usas HTTPS)
-RUN apk add --no-cache ca-certificates bash
+#
+#RUN apk add --no-cache ca-certificates bash
 WORKDIR /app
 COPY --from=builder /bin/ServicioMenu    /bin/ServicioMenu
 COPY --from=builder /bin/ServicioReserva /bin/ServicioReserva
 COPY --from=builder /bin/ServicioUsuario /bin/ServicioUsuario
+#Falta entrypoint.sh (para exportar variables de entorno de AWS)
 COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /entrypoint.sh
-
-# Exponer todos los puertos
+RUN chmod +x /entrypoint.sh 
 EXPOSE 8081 8082 8083
 
 ENTRYPOINT ["/entrypoint.sh"]
