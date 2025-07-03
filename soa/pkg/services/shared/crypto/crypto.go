@@ -88,7 +88,7 @@ func New(keyAlias string, region string, passphraseName string, iter int) (*Enve
 		log.Println("[LOG] Running within AWS DOCKER context.")
 	} else {
 		/*
-			Cuando se esta ejecutando en maquina local, se requiere dumpear las credenciales, esto se puede hacer con.
+			Cuando se esta ejecutando en maquina local, se requiere dumpear las credenciales, esto se puede hacer con
 			aws configure get aws_secret_access_key
 			aws configure get aws_session_token
 			aws configure get aws_access_key_id
