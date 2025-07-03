@@ -11,8 +11,8 @@ BIN_DIR="$SOA_DIR/cmd/bin"
 function usage() {
   cat <<EOF
 Usage: $(basename "$0") <command>
-  build-local   Inicializa go.mod (si hace falta) y compila todos los entrypoints en $BIN_DIR
-  run-local     Ejecuta build-local y luego arranca cada ejecutable en segundo plano
+  build-local   Inicializa y compila todos los entrypoints.
+  run-local     Compila y arranca cada ejecutable en su propia ventana.
 EOF
   exit 1
 }
