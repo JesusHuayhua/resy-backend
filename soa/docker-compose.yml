@@ -13,9 +13,7 @@ services:
     environment:  
       # configuracion que se ve en servicios.
       - DB_HOST=postgres
-      - DB_PORT=5432 
-    depends_on:
-      - postgres
+      - DB_PORT=5432  
     networks:
       - backend
 
