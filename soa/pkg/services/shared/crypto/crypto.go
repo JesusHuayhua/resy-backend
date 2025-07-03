@@ -14,7 +14,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"strings"
 
 	"golang.org/x/crypto/pbkdf2"
 
@@ -51,19 +50,20 @@ Referencias:
 	- https://cloud.google.com/kms/docs/envelope-encryption
 */
 
-func IsRunningInDocker() bool {
-	data, err := os.ReadFile("/proc/1/cgroup")
-	if err != nil {
-		return false
-	}
-	return strings.Contains(string(data), "docker")
+func isRunningInECS() bool {
+	return os.Getenv("AWS_CONTAINER_CREDENTIALS_RELATIVE_URI") != ""
+}
+
+func isRunningInDocker() bool {
+	_, err := os.Stat("/.dockerenv")
+	return err == nil
 }
 
 func New(keyAlias string, region string, passphraseName string, iter int) (*EnvelopeCrypto, error) {
 	ctx := context.TODO()
 	var cfg aws.Config
 	var err error
-	if IsRunningInDocker() {
+	if isRunningInDocker() && isRunningInECS() {
 		cfg, err = config.LoadDefaultConfig(ctx, config.WithRegion(region))
 		log.Println("[LOG] Running within DOCKER context.")
 	} else {

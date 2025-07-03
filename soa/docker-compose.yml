@@ -10,30 +10,12 @@ services:
       - "8081:8081"  # ServicioMenu
       - "8082:8082"  # ServicioReserva
       - "8083:8083"  # ServicioUsuario
-    environment:
-      - MENU_PORT=8081
-      - RESERVA_PORT=8082
-      - USUARIO_PORT=8083 
-      # Datos de BD
+    environment:  
+      # configuracion que se ve en servicios.
       - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=appuser
-      - DB_PASS=secret
-      - DB_NAME=resydb
+      - DB_PORT=5432 
     depends_on:
       - postgres
-    networks:
-      - backend
-
-  postgres:
-    image: postgres:15
-    restart: always
-    environment:
-      - POSTGRES_USER=appuser
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=resydb
-    volumes:
-      - pgdata:/var/lib/postgresql/data
     networks:
       - backend
 
