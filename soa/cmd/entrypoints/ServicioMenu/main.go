@@ -9,12 +9,6 @@ import (
 	"soa/pkg/services/shared/database"
 )
 
-/*
-Usa si quieres encriptar la contraseña hardcodeada... no deberia ser, pero es lo que es.
-func test_crypto(ctx *crypto.EnvelopeCrypto, pwd string) {
-	print(ctx.Encrypt(pwd))
-}*/
-
 func main() {
 	databaseInformation := database.Config{
 		Driver:       "postgres",
