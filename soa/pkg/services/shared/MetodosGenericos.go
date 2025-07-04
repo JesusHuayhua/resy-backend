@@ -27,8 +27,8 @@ func (r *RepositoryImpl) Actualizar(tabla string, datos interface{}, whereClause
 	return r.crud.Actualizar(tabla, datos, whereClause, whereArgs...)
 }
 
-func (r *RepositoryImpl) Eliminar(tabla string, id string) error {
-	return r.crud.Eliminar(tabla, id)
+func (r *RepositoryImpl) Eliminar(tabla string, columna string, id string) error {
+	return r.crud.Eliminar(tabla, columna, id)
 }
 
 func (r *RepositoryImpl) Seleccionar(tabla string, columnas []string, whereClause string, args ...interface{}) (*sql.Rows, error) {
