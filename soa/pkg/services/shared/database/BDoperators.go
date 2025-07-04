@@ -121,8 +121,8 @@ func (c *CRUD) Actualizar(tabla string, datos interface{}, whereClause string, w
 }
 
 // Eliminar elimina un registro de la tabla especificada
-func (c *CRUD) Eliminar(tabla string, id string) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE id = $1", tabla)
+func (c *CRUD) Eliminar(tabla string, columna string, id string) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE %s = $1", tabla, columna)
 	_, err := c.DB.Exec(query, id)
 	if err != nil {
 		return fmt.Errorf("error al eliminar de la tabla %s: %v", tabla, err)

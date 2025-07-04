@@ -117,7 +117,7 @@ func (s *ServicioUsuario) ActualizarUsuario(idUsuario int, nombres, apellidos, c
 
 // Elimina un usuario de la base de datos por su ID de manera LOGICA
 func (s *ServicioUsuario) EliminarUsuario(id int) (internal.StatusCode, error) {
-	if err := s.crud.Eliminar(`"ResyDB"."Usuario"`, fmt.Sprintf("%d", id)); err != nil {
+	if err := s.crud.Eliminar(`"ResyDB"."Usuario"`, "id_usuario", fmt.Sprintf("%d", id)); err != nil {
 		s.logger.Log("err", fmt.Sprintf("error al eliminar usuario: %v", err))
 		return internal.Error, err
 	}
@@ -210,7 +210,7 @@ func (s *ServicioUsuario) ActualizarRol(id int, nombre string) (internal.StatusC
 }
 
 func (s *ServicioUsuario) EliminarRol(id int) (internal.StatusCode, error) {
-	if err := s.crud.Eliminar(`"ResyDB"."Roles"`, fmt.Sprintf("%d", id)); err != nil {
+	if err := s.crud.Eliminar(`"ResyDB"."Roles"`, "id_rol", fmt.Sprintf("%d", id)); err != nil {
 		return internal.Error, err
 	}
 	return internal.InProgress, nil

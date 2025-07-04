@@ -46,7 +46,7 @@ func (s *ServicioMenu) ActualizarPlato(id int, nombre string, categoria int, des
 }
 
 func (s *ServicioMenu) EliminarPlato(id int) error {
-	return s.crud.Eliminar(`"ResyDB"."Plato"`, "id_plato")
+	return s.crud.Eliminar(`"ResyDB"."Plato"`, "id_plato", strconv.Itoa(id))
 }
 
 func (s *ServicioMenu) SeleccionarPlatos(condicion string, args []interface{}) ([]MenuModels.Plato, error) {
@@ -95,7 +95,7 @@ func (s *ServicioMenu) ActualizarCategoria(id int, nombre string) error {
 }
 
 func (s *ServicioMenu) EliminarCategoria(id int) error {
-	return s.crud.Eliminar(`"ResyDB"."CategoriaPlatos"`, strconv.Itoa(id))
+	return s.crud.Eliminar(`"ResyDB"."CategoriaPlatos"`, "id_categoria", strconv.Itoa(id))
 }
 
 func (s *ServicioMenu) SeleccionarCategorias() ([]MenuModels.CategoriaPlatos, error) {

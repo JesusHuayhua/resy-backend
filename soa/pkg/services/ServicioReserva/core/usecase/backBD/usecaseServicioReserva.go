@@ -32,7 +32,7 @@ func (s *ServicioReserva) ActualizarReserva(id string, data ReservaModels.Reserv
 
 // Eliminar una reserva
 func (s *ServicioReserva) EliminarReserva(id string) error {
-	return s.crud.Eliminar(`"ResyDB"."Reserva"`, id)
+	return s.crud.Eliminar(`"ResyDB"."Reserva"`, "id_reserva", id)
 }
 
 // ListarReservas lista reservas aplicando filtros opcionales.
