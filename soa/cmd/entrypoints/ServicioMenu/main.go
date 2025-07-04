@@ -89,7 +89,7 @@ func main() {
 	})
 
 	// Ruta para obtener menú semanal completo
-	mux.HandleFunc("/menu/completo", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/menucompleto", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodOptions {
 			handlers.OpcionesHandler(w, r)
 			return
