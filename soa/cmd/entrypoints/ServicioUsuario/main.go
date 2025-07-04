@@ -25,6 +25,7 @@ import (
 // La configuración de la base de datos y la clave de encriptación se obtienen de una estructura
 // de configuración, que se inicializa con los valores necesarios para conectarse a la base de datos
 // y para realizar operaciones de encriptación y desencriptación de datos sensibles.
+
 func main() {
 	//PONER EN UN .env ambos
 	databaseInformation := database.Config{
