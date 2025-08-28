@@ -1,94 +1,34 @@
-# Backend - RESI
+# Salon Verde - Sistema de Reservas
 
-## Requerimientos
-1. **Visual Studio Code** (you need to install Golang plugins inside VS Code)  
-2. **Postgres SQL 17.4.1**  
-3. **DBeaver 25.0.1** for GUI 
-4. **Golang** tested with ```go version go1.24.1 windows/amd64```
+Bienvenido al sistema de reservas de Salon Verde. Este proyecto es el backend de nuestra aplicación web, que permite a los usuarios gestionar sus reservas en el restaurante Salon Verde. La aplicación está construida enteramente con Golang y usa una base de datos en PostgreSQL para almacenar la información de los usuarios y las reservas.
 
-## Jerarquia de directorios
+## Tabla de Contenidos
 
-```
-Resy-Backen.
-|   .gitignore
-|   README.md
-|   
-+---Datos Extras
-|       Correo oficial Salon Verde.txt
-|       
-+---soa
-|   \---services
-|       +---ServicioMenu #servicio para trabajar lo relacionado a Menús 
-|       |       build.bat
-|       |       
-|       \---ServicioUsuario #Servicio para trabajar lo relacionado a Usuarios
-|           |   build.bat
-|           |   go.mod
-|           |   go.sum
-|           |   
-|           +---cmd
-|           |       main.go
-|           |       
-|           \---pkg
-|               +---api
-|               |   \---handlers
-|               |           handlers.go
-|               |           
-|               +---core
-|               |   +---domain
-|               |   |       rol.go
-|               |   |       usuario.go
-|               |   |       
-|               |   +---internal
-|               |   |       internal.go
-|               |   |       
-|               |   +---response
-|               |   |       user_service_response.go
-|               |   |       
-|               |   \---usecase
-|               |       \---backBD
-|               |               Service_Conection_with_BD.go
-|               |               
-|               \---repository
-|                   |   MetodosGenericos.go
-|                   |   
-|                   +---crypton
-|                   |       crypto.go
-|                   |       
-|                   +---database
-|                   |       BDoperators.go
-|                   |       database.go
-|                   |       
-|                   \---interfaces
-|                           interface_repository.go
-|                           
-\---sql
-        Creaci¾nDeLaBaseDeDatos.sql
-        Insert para verificar usuario y roles.sql
-        Notaimportante.txt
-```
+- [Salon Verde - Sistema de Reservas](#salon-verde---sistema-de-reservas)
+	- [Tabla de Contenidos](#tabla-de-contenidos)
+	- [Integrantes del proyecto](#integrantes-del-proyecto)
+	- [Documentos realizados](#documentos-realizados)
 
-### Build para testeo local 
-- Build: Execute ```build.bat``` within ```soa``` folder using ```cmd.exe``` or ```VS Code terminal```
-- Run:  Either ```go run main.go``` or debug within VS Code.
+---
 
-### Developer considerations:
-- If additional features were to be added, implement considering:
-	```go 
-	import(
-		"soa/example_dir/example_package"   //example_package would be the new directory within "example_dir" example directory.
-	)
-	```
-	Add as needed inside each ```example_dir``` directory, **DO NOT CHANGE THE TOP-LEVEL DIRECTORY HIERARCHY (soa)**.  
-		
+## Integrantes del proyecto
 
-### Recommendations
-- *Windows*: Make sure the enviroment variable PATH contains the path with the golang binaries, the path is usually ```C:\Go\bin``` 
-- *Linux*: T.B.D
+- [ Fabrizzio Gomez  ](https://github.com/Shauanth)
+- [ Jorge Quiroa](https://github.com/Coco12-code)
+- [ Rodrigo Medina](https://github.com/homuposting123)
+- [ Leoncio Villanueva ](https://github.com/darkfrozen132)
+- [ Camilo Váques ](https://github.com/CaVassM)
+- [ Martín Sayago ](https://github.com/Martin-a24)
+- [ Luis Martinez ](https://github.com/toniprogram)
+- [ Jesus Huayhua ](https://github.com/JesusHuayhua)
+- [ Diego Chupurgo ](https://github.com/DiegoEduChG)
 
+--- 
 
-### Referencias adicionales
-1. https://www.velotio.com/engineering-blog/build-a-containerized-microservice-in-golang
-2. https://gokit.io/examples/stringsvc.html
-3. https://github.com/athun-me/GO-microservice-clean-architecture/tree/master
+## Documentos realizados
 
+- [Documento de visión](documentos/Documento_de_Visión.pdf)
+- [Catalogo de Requerimiento](documentos/Catalgo_de_Requerimiento.pdf)
+- [Especificación de Requisitos de Software](documentos/Especificación_de_Requisitos_de_Software.pdf)
+- [Documento de Arquitectura](documentos/Documento_de_Arquitectura.docx.pdf)
+- [Documento de Pruebas](documentos/Documentos_de_pruebas.pdf)
