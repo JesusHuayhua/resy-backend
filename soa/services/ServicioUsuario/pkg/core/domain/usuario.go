@@ -7,6 +7,7 @@ type UsuarioVariable struct {
 	Apellidos       string    `db:"apellidos"`
 	Correo          string    `db:"correo"`
 	Telefono        string    `db:"telefono"`
+	Direccion       string    `db:"direccion"`
 	FechaNacimiento time.Time `db:"fechanacimiento"`
 	Contrasenia     string    `db:"contrasenia"`
 	Rol             int       `db:"rol"`

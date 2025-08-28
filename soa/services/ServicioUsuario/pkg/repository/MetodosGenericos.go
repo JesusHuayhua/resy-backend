@@ -1,10 +1,9 @@
 package repository
 
 import (
+	"ServicioUsuario/pkg/repository/database"
 	"ServicioUsuario/pkg/repository/interfaces"
 	"database/sql"
-
-	"github.com/Shauanth/Singleton_Encription_ServiceGolang/database"
 )
 
 type UserRepositoryImpl struct {
